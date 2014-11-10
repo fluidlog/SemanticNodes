@@ -1,0 +1,424 @@
+@prefix ns0:	<http://www.fluidlog.com/2013/05/loglink/core#> .
+@prefix ns1:	<http://www.fluidlog.com/> .
+@prefix ns2:	<http://www.fluidlog.com/loglink/domain/> .
+ns1:loglink	ns0:domain	ns2:loglink11 .
+ns2:loglink11	ns0:label	"loglink11" ;
+	ns0:node_id	"90" ;
+	ns0:node	<http://www.fluidlog.com/loglink/domain/loglink11/node/73> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/74> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/75> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/76> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/77> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/78> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/79> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/80> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/65> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/66> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/67> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/68> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/69> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/70> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/71> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/72> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/89> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/90> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/81> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/82> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/83> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/84> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/85> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/86> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/87> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/88> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/42> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/43> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/44> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/45> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/46> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/47> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/48> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/57> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/58> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/59> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/60> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/61> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/62> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/63> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/64> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/49> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/50> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/51> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/52> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/53> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/54> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/55> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/56> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/36> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/37> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/38> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/39> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/40> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/41> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/12> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/13> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/14> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/15> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/16> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/17> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/18> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/19> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/4> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/5> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/7> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/8> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/9> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/10> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/11> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/28> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/29> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/30> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/32> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/33> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/34> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/35> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/20> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/21> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/22> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/23> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/24> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/25> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/26> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/27> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/0> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/1> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/2> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/3> .
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/0>	rdfs:label	"Marwen" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/2> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/1> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/1>	rdfs:label	"Photographie" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/79> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/5> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/2>	rdfs:label	"Informatique" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/3> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/4> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/3>	rdfs:label	"JAVA" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/4>	rdfs:label	"AGILE" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/5>	rdfs:label	"Site web photo" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/90> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/6>	rdfs:label	"Expo WAVE" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/30> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/7> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/54> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/11> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/14> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/15> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/19> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/7>	rdfs:label	"Laurent HADDAD" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/10> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/8> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/8>	rdfs:label	"Communication digitale" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/9> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/9>	rdfs:label	"R\u00E9seaux sociaux" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/18> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/10>	rdfs:label	"D\u00E9mocratie participative" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/11>	rdfs:label	"C\u00E9cile RAY" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/10> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/12> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/12>	rdfs:label	"Projets \u00E9ducatifs" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/13> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/13>	rdfs:label	"MOOC" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/14>	rdfs:label	"Parc de la vilette" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/15>	rdfs:label	"Pascal JOUXTEL" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/11> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/16> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/17> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/16>	rdfs:label	"M\u00E9tamorphose des orga" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/11> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/17>	rdfs:label	"IMAGINAL" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/11> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/18>	rdfs:label	"LinkedIn" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/17> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/19>	rdfs:label	"Marc TIREL" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/15> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/25> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/22> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/20> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/21> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/20>	rdfs:label	"EGPC" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/23> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/24> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/21>	rdfs:label	"Tout va trop vite !" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/22> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/22>	rdfs:label	"Ralen-tissons" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/23>	rdfs:label	"B\u00E9n\u00E9dicte FUMEY" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/24> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/19> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/24>	rdfs:label	"Pacte civique" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/25>	rdfs:label	"Christophe DUCAMP" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/28> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/26> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/27> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/26>	rdfs:label	"Wiki des maker" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/27>	rdfs:label	"Castorama" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/28>	rdfs:label	"Banques" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/29> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/29>	rdfs:label	"BNP" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/75> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/73> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/74> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/30>	rdfs:label	"Francis MOREL" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/34> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/32> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/31>	rdfs:label	"Assembl\u00E9e Virtuelle" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/58> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/48> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/87> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/72> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/67> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/38> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/39> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/36> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/37> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/35> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/33> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/32>	rdfs:label	"Practishare" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/33>	rdfs:label	"Fil rouge" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/44> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/34>	rdfs:label	"D\u00E9veloppement durable" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/51> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/32> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/35>	rdfs:label	"Nicolas DUFFILLOT" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/30> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/36>	rdfs:label	"Carto des assos parisiennes" ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/37>	rdfs:label	"S\u00E9bastien FALQUE" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/35> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/38>	rdfs:label	"Yannick DUTHE" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/57> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/42> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/39> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/40> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/39>	rdfs:label	"Guillaume PERRILLAT" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/42> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/40> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/41> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/40>	rdfs:label	"Collaboratif" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/41>	rdfs:label	"R-Evolution" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/43> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/42>	rdfs:label	"Visualisation" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/43>	rdfs:label	"Vivendi" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/44>	rdfs:label	"Cobusiness" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/47> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/45> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/46> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/45>	rdfs:label	"Vincent DE MONTALIVET" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/47> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/46>	rdfs:label	"C\u00E9sar LAGARDE" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/1> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/8> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/33> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/47> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/45> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/47>	rdfs:label	"Economie circulaire" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/48>	rdfs:label	"Patrick MUNSCH" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/1> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/34> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/40> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/45> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/49> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/49>	rdfs:label	"QARNOT COMPUTING" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/50> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/50>	rdfs:label	"Energie positive" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/34> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/76> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/51>	rdfs:label	"Boris BERGER" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/52> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/53> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/52>	rdfs:label	"AGORA" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/10> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/53> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/53>	rdfs:label	"Adrien FABRE" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/10> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/54>	rdfs:label	"Claude" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/19> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/55> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/56> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/55>	rdfs:label	"Econologie" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/56>	rdfs:label	"Livre participatif" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/55> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/57>	rdfs:label	"FLUIDLOG" ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/58>	rdfs:label	"Martin PRUVOST-BEAURAIN" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/61> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/62> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/59> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/59>	rdfs:label	"Ergonomie cognitive" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/60> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/60>	rdfs:label	"Physiologie de la d\u00E9cision" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/61>	rdfs:label	"Mod\u00E9lisation" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/62>	rdfs:label	"Cl\u00E9ment FURIET" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/63> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/64> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/63>	rdfs:label	"Curiosit\u00E9" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/64>	rdfs:label	"Mairie de Paris" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/65> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/65>	rdfs:label	"La grande cause" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/66> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/66>	rdfs:label	"Lutte contre l'exclusion" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/64> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/67>	rdfs:label	"Auli K\u00DCTT" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/68> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/69> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/68>	rdfs:label	"OuiShare Labs" ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/69>	rdfs:label	"IndieWeb" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/70> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/70>	rdfs:label	"Known" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/71> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/71>	rdfs:label	"R\u00E9seau social distribu\u00E9" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/77> ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/72>	rdfs:label	"Marguerite GRANDJEAN" ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/73>	rdfs:label	"www.pretrelais.com" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/74>	rdfs:label	"www.credit-relais.fr" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/75>	rdfs:label	"achatrevente.com" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/76>	rdfs:label	"Colibris" ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/77>	rdfs:label	"Mozilla" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/78> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/78>	rdfs:label	"Andr\u00E9 REINALD" ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/79>	rdfs:label	"Karina W." ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/6> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/4> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/12> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/13> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/19> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/22> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/40> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/47> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/59> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/80> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/83> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/84> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/81> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/82> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/85> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/86> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/80>	rdfs:label	"Partage" ;
+	rdfs:type	"ressource" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/81>	rdfs:label	"Pollinisation des savoirs" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/82>	rdfs:label	"Albert JACQUARD" ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/83>	rdfs:label	"Energie libre" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/84>	rdfs:label	"Art" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/85>	rdfs:label	"Cr\u00E9ativit\u00E9" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/86>	rdfs:label	"Imagination" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/87>	rdfs:label	"Franck CALIS" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/88> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/89> ;
+	rdfs:type	"actor" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/88>	rdfs:label	"Ecosyst\u00E8me Transmedia" ;
+	ns0:linkedto	<http://www.fluidlog.com/loglink/domain/loglink11/node/8> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/13> ,
+		<http://www.fluidlog.com/loglink/domain/loglink11/node/31> ;
+	rdfs:type	"project" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/89>	rdfs:label	"Conception innovante" ;
+	rdfs:type	"idea" .
+<http://www.fluidlog.com/loglink/domain/loglink11/node/90>	rdfs:label	"George" ;
+	rdfs:type	"idea" .

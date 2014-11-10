@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>PAIR à PAIR party !</title>
+	<link rel="stylesheet" type="text/css" href="css/loglink1.1.css" />
+
+	<!--[if lt IE 9]>
+	Votre navigateur est obselète.
+	Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
+	<![endif]-->
+
+	<script src="../../js/jquery-1.8.2.js"></script>
+	<script src="../../js/d3.v2.min.js"></script>
+</head>
+<body>
+	<div id="waiting" class="waiting"><img alt="waiting icon" src="../../img/waiting.gif"/></div>
+	<div class="return" id="return">
+		<div style="color : #00A; left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
+	</div>
+	<div class="menu" id="menu">
+		<div style="color : #df2a21; font-size:14px;font-weight:bold;display:inline;">PAIR à PAIR</div>
+		<button id="initKernelGraph" title="Initialization">0</button>
+		 <button id="refreshGraph" title="Refresh">!</button>
+	</div>
+	<div id="chart"></div>
+	<div class="message" id="message" style="display:none;"></div>
+	<div class="debug" id="debug"></div>
+	<div class="help" id="help">
+	<b>?----- Aide -----?</b><br>
+	<br>
+	Pour ajouter un noeud, "tirer" un noeud existant<br>
+	Vous pouvez lier deux noeuds entre eux<br>
+	Pour initialiser le graphe, clickez sur [0]<br>
+	Pour rafraichir le graphe, clickez sur [!]<br>
+	Vous pouvez zoomer et déplacer la carto panoramiquement<br>
+	<br>
+	Légende :
+	<ul>
+	<li style="color:#9451D4">Project</li>
+	<li style="color:#FC5460">Actor</li>
+	<li style="color:#FFF655">Idea</li>
+	<li style="color:#62E84D">Ressource</li>
+	</ul>
+	</div>
+</body>
+	<script src="js/functions.js"></script>
+	<script src="js/debug_functions.js"></script>
+	<script src="js/sparql_functions.js"></script>
+	<script src="js/main.js"></script>
+<footer>
+<p>
+	<a href="../../fluidadmin/index.html">Admin</a> /
+	<a href="../../sparql/main.php">Debug</a> /
+	<a href=https://fluidlog.cloud.xwiki.com/xwiki/bin/view/Main/loglink11 target="_blank">Wiki</a> /
+    <a href=http://twitter.com/fluidlog>Contact</a>.
+</p>
+</footer>
+
+</html>

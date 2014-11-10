@@ -1,0 +1,225 @@
+@CHARSET "UTF-8";
+
+body {
+  font: 13px sans-serif;
+  position: relative;
+  width: 960px;
+  height: 500px;
+}
+
+a 
+{ 
+	outline: 0; 
+	color: #05C; 
+	margin: 0;
+	padding: 0;
+	text-decoration:none;
+}
+
+.return {
+    position: fixed;
+    left: 0;
+	padding: 5px;
+	margin-left: 10px;
+    background: #DDD;
+    width: 50px;
+	text-align: right;
+	color: gray;
+	z-index:10;
+	display:inline;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.menu {
+    position: fixed;
+    left: 100px;
+	padding: 5px;
+	margin-left: 25px;
+    background: #DDD;
+    width: 200px;
+	text-align: right;
+	color: gray;
+	z-index:10;
+	display:inline;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.node_circle {
+  stroke: #DDD;
+  stroke-width: 7px;
+  cursor:pointer;
+}
+
+.circle_options {
+  fill: transparent;
+  stroke: #aaa;
+  stroke-width: 15px;
+  stroke-opacity: .5;
+  stroke-dasharray: 10,5;
+}
+
+.circle_id {
+  stroke: #DDD;
+  fill: #DDD;
+  pointer-events: none;
+  stroke-width:2px;
+  cursor:pointer;
+}
+
+.circle_id_selected {
+  stroke: #999;
+  fill: #999;
+}
+
+.text_id {
+  font-size: 12px;
+  text-anchor: middle;
+  stroke: #999;
+  fill: #999;
+  pointer-events: none;
+  font-family: "Helvetica Neue, Helvetica, Arial, sans-serif;";
+}
+
+.text_id_selected {
+  stroke: #EEE;
+  fill: #EEE;
+}
+
+.circle_type {
+  stroke: #DDD;
+  fill: #EEE;
+  pointer-events: none;
+  stroke-width:3px;
+  cursor:pointer;
+}
+
+.circle_type_selected {
+  stroke: #999;
+}
+
+.circle_change_type {
+  stroke: #DDD;
+  fill: white;
+  pointer-events: none;
+  stroke-width:2px;
+  cursor:pointer;
+}
+
+.node_selected {
+  stroke: #999;
+}
+
+.drag_line {
+  stroke: #999;
+  stroke-width: 5;
+  pointer-events: none;
+}
+
+.drag_line_hidden {
+  stroke: #999;
+  stroke-width: 0;
+  pointer-events: none;
+}
+
+.link {
+  stroke: #DDD;
+  stroke-width: 7;
+  cursor: pointer;
+}
+
+.link_selected {
+  stroke: #999;
+}
+
+.waiting {
+    position: fixed;
+    left: 500px;
+    top: 10px; 
+}
+
+.message {
+    position: fixed;
+    left: 0;
+    bottom : 0;
+	background: gray;
+    width: 300px;
+    padding: 5px;
+	margin: 20px;
+	text-align: center;
+	font-family:arial, helvetica; 
+	font-size:16px; 
+	color: black;
+	z-index:12;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.debug {
+    position: fixed;
+    right: 0;
+    bottom: 0; 
+    border: 2px solid #DDD;
+    background: #FFF;
+	font-family: "courrier new"; 
+	font-size:8px;
+    padding: 5px;
+    margin-bottom: 30px;
+	z-index:12;
+}
+
+.help {
+    position: fixed;
+    right: 0;
+    top: 0; 
+    background: #EEE;
+	font-family: "courrier new"; 
+	font-size:8px;
+    padding: 5px;
+    margin-bottom: 30px;
+	z-index:10;
+	text-align:center;
+	
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+/*
+ * Footer
+ * ========
+ */
+
+footer {
+    position: fixed;
+    bottom: 0; right: 0;
+    padding: 5px;
+    font-size: .7em;
+    opacity: .6;
+	z-index:5;
+}
+
+footer:hover { opacity: 1 }
