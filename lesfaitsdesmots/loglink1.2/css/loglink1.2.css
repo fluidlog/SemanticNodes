@@ -3,8 +3,7 @@
 body {
   font: 13px sans-serif;
   position: relative;
-  width: 960px;
-  height: 500px;
+  background: #AAA;
 }
 
 a 
@@ -21,7 +20,7 @@ a
     left: 0;
 	padding: 5px;
 	margin-left: 10px;
-    background: #DDD;
+    background: #AAA;
     width: 50px;
 	text-align: right;
 	color: gray;
@@ -39,15 +38,16 @@ a
 
 .menu {
     position: fixed;
-    left: 100px;
+    left: 10px;
+    background: #AAA;
+    font-size:14px;
+    font-weight:bold;
+    display:inline;
+    margin: 10px;
 	padding: 5px;
-	margin-left: 25px;
-    background: #DDD;
     width: 200px;
 	text-align: right;
-	color: gray;
 	z-index:10;
-	display:inline;
 
     -moz-border-radius:    5px;
     -webkit-border-radius: 5px;
@@ -56,6 +56,107 @@ a
     -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
     -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
     box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.help_configuration {
+    position: fixed;
+    right: 15px;
+    top: 10px; 
+    background: #AAA;
+	font-size:12px;
+    margin: 10px;
+    padding: 5px;
+	z-index:10;
+	font-family:"Helvetica Neue, Helvetica, Arial, sans-serif;"; 
+	text-align:center;
+	
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.help_configuration_header
+{
+  	cursor:pointer;
+	font-weight:bold;
+    background: #EEE;
+    padding: 5px;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.hidden_help_configuration
+{
+	display: none;
+}
+
+.help
+{
+	padding: 5px;
+	cursor:default;
+}
+
+.configuration
+{
+	padding: 5px;
+	cursor:default;
+}
+
+.node_opacity
+{
+	opacity:.2;
+}
+
+.filter_project {padding: 5px;	cursor:pointer;}
+.filter_actor {padding: 5px;	cursor:pointer;}
+.filter_idea {padding: 5px;	cursor:pointer;}
+.filter_ressource {padding: 5px;	cursor:pointer;}
+.filter_without {padding: 5px;	cursor:pointer;}
+
+.message {
+    position: fixed;
+    left: 0;
+    bottom : 0;
+	background: gray;
+    width: 300px;
+    padding: 5px;
+	margin: 20px;
+	text-align: center;
+	font-family:arial, helvetica; 
+	font-size:16px; 
+	color: black;
+	z-index:12;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.debug {
+    position: fixed;
+    right: 0;
+    bottom: 0; 
+    border: 2px solid #DDD;
+    background: #FFF;
+	font-family: "courrier new"; 
+	font-size:8px;
+    padding: 5px;
+    margin-bottom: 30px;
+	z-index:12;
 }
 
 .node_circle {
@@ -149,63 +250,6 @@ a
     position: fixed;
     left: 500px;
     top: 10px; 
-}
-
-.message {
-    position: fixed;
-    left: 0;
-    bottom : 0;
-	background: gray;
-    width: 300px;
-    padding: 5px;
-	margin: 20px;
-	text-align: center;
-	font-family:arial, helvetica; 
-	font-size:16px; 
-	color: black;
-	z-index:12;
-
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
-}
-
-.debug {
-    position: fixed;
-    right: 0;
-    bottom: 0; 
-    border: 2px solid #DDD;
-    background: #FFF;
-	font-family: "courrier new"; 
-	font-size:8px;
-    padding: 5px;
-    margin-bottom: 30px;
-	z-index:12;
-}
-
-.help {
-    position: fixed;
-    right: 0;
-    top: 0; 
-    background: #EEE;
-	font-family: "courrier new"; 
-	font-size:8px;
-    padding: 5px;
-    margin-bottom: 30px;
-	z-index:10;
-	text-align:center;
-	
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
 }
 
 /*
