@@ -1,76 +1,100 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-	<meta charset="utf-8">
-	<title>Carto PAIR à PAIR</title>
-	<link rel="stylesheet" type="text/css" href="css/loglink1.2.css" />
 
-	<!--[if lt IE 9]>
-	Votre navigateur est obselète.
-	Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
-	<![endif]-->
+    <head>
+        <meta charset="utf-8">
 
-	<script src="../../js/jquery-1.8.2.js"></script>
-	<script src="../../js/d3.v2.min.js"></script>
+        <title>Carto PAIR à PAIR</title>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/loglink1.2.css"/>
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+        <!--[if lt IE 9]>
+        Votre navigateur est obsolète.
+        Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
+        <![endif]-->
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-	<div id="waiting" class="waiting"><img alt="waiting icon" src="../../img/waiting.gif"/></div>
-<!-- 	<div class="return" id="return">
-		<div style="left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
-	</div>
- -->	<div class="menu" id="menu">
-		<div style="display:inline;">EGPC / Positiva</div>
-		<button id="initKernelGraph" title="Initialization">0</button>
-		 <button id="refreshGraph" title="Refresh">!</button>
-	</div>
-	<div id="chart"></div>
-<!-- 	<div class="message" id="message" style="display:none;"></div>
-	<div class="debug" id="debug"></div>
- -->	
- 	<div class="help_configuration" id="help_configuration">
-		<div class="help_configuration_header" id="help_configuration_header">
-		Aide / configuration
-		</div>
-		<div class="help">
-		<b>Aide :</b><br>
-		Pour ajouter un noeud, "tirer" un noeud existant<br>
-		Vous pouvez lier deux noeuds entre eux<br>
-		Pour initialiser le graphe, cliquez sur [0]<br>
-		Pour rafraichir le graphe, cliquez sur [!]<br>
-		Vous pouvez zoomer et déplacer la carto panoramiquement<br>
-		Pour supprimer un noeud, sélectionnez le et cliquez sur la touche "suppr"<br>
-		Pour supprimer un lien, sélectionnez le et cliquez sur la touche "suppr"<br>
-		</div>
-		<div class="configuration">
-		<b>Configuration (Clicker pour filtrer)</b><br>
-		<div class="filter_project" id="filter_project" style="background:#89A5E5">Project</div>
-		<div class="filter_actor" id="filter_actor" style="background:#F285B9">Actor</div>
-		<div class="filter_idea" id="filter_idea" style="background:#FFD98D">Idea</div>
-		<div class="filter_ressource" id="filter_ressource" style="background:#CDF989">Ressource</div>
-		<div class="filter_without" id="filter_without" style="background:#FFF">Vide</div>
-		</div>
-	</div>
-</body>
-	<script src="js/functions.js"></script>
-	<script src="js/debug_functions.js"></script>
-	<script src="js/sparql_functions.js"></script>
-	<script src="js/main.js"></script>
-<footer>
-<p>
-	<a href="../../fluidadmin/index.html">Admin</a> /
-	<a href="../../sparql/main.php">Debug</a> /
-	<a href=https://fluidlog.cloud.xwiki.com/xwiki/bin/view/Main/loglink11 target="_blank">Wiki</a> /
-    <a href=http://twitter.com/fluidlog>Contact</a>.
-</p>
-</footer>
+        <script src="../../js/jquery.min.js"></script>
+
+        <script src="../../js/d3.v2.min.js"></script>
+
+        <link rel="stylesheet" href="../../css/semantic.min.css">
+
+        <link rel="stylesheet" href="../../css/layout.css">
+
+    </head>
+
+    <body>
+
+        <div id="waiting" class="waiting">
+            <img alt="waiting icon" src="../../img/waiting.gif"/>
+        </div>
+
+        <!-- 	<div class="return" id="return">
+                <div style="left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
+            </div>
+         -->
+
+        <div class="menu" id="menu">
+            <div style="display:inline;">EGPC / Positiva</div>
+            <button id="initKernelGraph" title="Initialization">0</button>
+            <button id="refreshGraph" title="Refresh">!</button>
+        </div>
+
+        <div id="chart"></div>
+        <!-- 	<div class="message" id="message" style="display:none;"></div>
+            <div class="debug" id="debug"></div>
+         -->
+        <div class="help_configuration" id="help_configuration">
+
+            <div class="help_configuration_header" id="help_configuration_header">
+                Aide / configuration
+            </div>
+
+            <div class="help">
+                <b>Aide :</b><br>
+                Pour ajouter un noeud, "tirer" un noeud existant<br>
+                Vous pouvez lier deux noeuds entre eux<br>
+                Pour initialiser le graphe, cliquez sur [0]<br>
+                Pour rafraichir le graphe, cliquez sur [!]<br>
+                Vous pouvez zoomer et déplacer la carto panoramiquement<br>
+                Pour supprimer un noeud, sélectionnez le et cliquez sur la touche "suppr"<br>
+                Pour supprimer un lien, sélectionnez le et cliquez sur la touche "suppr"<br>
+            </div>
+
+            <div class="configuration">
+                <b>Configuration (Clicker pour filtrer)</b><br>
+
+                <div class="filter_project ui toggle button filter" id="filter_project" style="background:#89A5E5">Project</div>
+                <div class="filter_actor ui toggle button filter" id="filter_actor" style="background:#F285B9">Actor</div>
+                <div class="filter_idea ui toggle button filter" id="filter_idea" style="background:#FFD98D">Idea</div>
+                <div class="filter_ressource ui toggle button filter" id="filter_ressource" style="background:#CDF989">Ressource</div>
+                <div class="filter_without ui toggle button filter" id="filter_without" style="background:#FFF">Vide</div>
+            </div>
+
+        </div>
+
+
+        <footer>
+
+            <p>
+                <a href="../../fluidadmin/index.html">Admin</a> /
+                <a href="../../sparql/main.php">Debug</a> /
+                <a href=https://fluidlog.cloud.xwiki.com/xwiki/bin/view/Main/loglink11 target="_blank">Wiki</a> /
+                <a href=http://twitter.com/fluidlog>Contact</a>.
+            </p>
+
+        </footer>
+
+        <script src="js/functions.js"></script>
+
+        <script src="js/debug_functions.js"></script>
+
+        <script src="js/sparql_functions.js"></script>
+
+        <script src="js/main.js"></script>
+
+        <script src="../../js/semantic.js"></script>
+
+    </body>
 
 </html>

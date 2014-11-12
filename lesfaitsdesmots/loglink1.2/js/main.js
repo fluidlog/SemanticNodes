@@ -4,7 +4,7 @@
 	var default_domain = "loglink11";
 	var dataset;
 	var new_domain = false;
-	
+
 	$('#initKernelGraph').bind('click', function()
 			{
 				if (online)
@@ -15,7 +15,7 @@
 				location.reload()
 			}
 	);
-	
+
 	$('#refreshGraph').bind('click', function()
 			{
 				location.reload()
@@ -47,7 +47,7 @@
 
 	//local ou distant ?
 	var online = navigator.onLine;
-	
+
 	if (online)
 	{
 		if (debug)
@@ -60,23 +60,23 @@
 		dataset = debug_get_dataset("1");
 		message (message_offline,"warning");
 	}
-	
+
 	//mouse event vars
 	var selected_node = null,
 	    selected_link = null,
 	    mousedown_link = null,
 	    mousedown_node = null,
 	    mouseup_node = null;
-	
+
 	var width = window.innerWidth - 20,
 	    height = window.innerHeight - 20;
-	
+
 	// init svg
 	var outer = d3.select("#chart")
 	  .append("svg:svg")
 	    .attr("width", width)
 	    .attr("height", height)
-	
+
 	var svg = outer
 	  .append('svg:g')
 	    .call(d3.behavior.zoom().on("zoom", rescale))
@@ -85,7 +85,7 @@
 	    .on("mousemove", mousemove)
 	    .on("mousedown", mousedown)
 	    .on("mouseup", mouseup)
-	
+
 	var node_drag = d3.behavior.drag()
 					.on("dragstart", dragstart)
 					.on("drag", dragmove)
@@ -97,7 +97,7 @@
 	    .attr('width', width*3)
 	    .attr('height', height*3)
 	    .attr('fill', '#EEE')
-	
+
 	// init force layout
 	var force = d3.layout.force()
 	    .size([width, height])
@@ -117,25 +117,25 @@
 	    .attr("y1", 0)
 	    .attr("x2", 0)
 	    .attr("y2", 0);
-	
+
 	var nodes = force.nodes(),
 	    links = force.links(),
 	    node = svg.selectAll(".node"),
 	    link = svg.selectAll(".link");
-	
+
 	// add keyboard callback
 	if (online)
 	{
 		d3.select(window)
 		    .on("keydown", keydown);
 	}
-	else 
+	else
 		message (message_offline,"warning");
-	
+
 	redraw();
-	
+
 	// redraw force layout
-	function redraw() 
+	function redraw()
 	{
 		link = link.data(links, function(d) { return d.source.iri_id + "-" + d.target.iri_id; });
 		link.enter()
@@ -145,20 +145,20 @@
 		  .attr("y1", function(d) { return d.source.y; })
 		  .attr("x2", function(d) { return d.target.x; })
 		  .attr("y2", function(d) { return d.target.y; })
-	      .on("mousedown", 
-	        function(d) { 
-	          mousedown_link = d; 
+	      .on("mousedown",
+	        function(d) {
+	          mousedown_link = d;
 	          if (mousedown_link == selected_link) selected_link = null;
-	          else selected_link = mousedown_link; 
-	          selected_node = null; 
-	          redraw(); 
+	          else selected_link = mousedown_link;
+	          selected_node = null;
+	          redraw();
 	        })
 
         link.exit().remove();
-	
-		link.classed("link_selected", function(d) 
-				{ 
-					return d === selected_link; 
+
+		link.classed("link_selected", function(d)
+				{
+					return d === selected_link;
 				});
 
 		node = node.data(nodes, function(d) { return d.iri_id;});
@@ -166,7 +166,7 @@
 				.append("g")
 	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : d.type;})
 				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-		
+
 		/* Cercle qui apparait sur le hover */
 		node_enter_g.append("circle")
 			.attr("r", 0)
@@ -174,7 +174,7 @@
 		    .on("click", function ()
 		    		{
 	            var d3event = d3.event;
-	            d3event.stopPropagation();		    	
+	            d3event.stopPropagation();
 		    		})
 
 
@@ -186,7 +186,7 @@
 				  .transition()
 				  .duration(500)
 				  .attr("r", rayon)
-	
+
 		/* Cercle entourant l'iri_id du noeud */
 		node_enter_g.append("circle")
 			.attr("cx", 0)
@@ -199,8 +199,8 @@
 			.attr("dx", -1)
 			.attr("dy", -rayon+9)
 		    .attr("class", "text_id")
-			.text(function(d) { 
-				  return d.iri_id; 
+			.text(function(d) {
+				  return d.iri_id;
 			  })
 
 		/* Option de déplacement */
@@ -237,7 +237,7 @@
 				.attr("fill", "white")
 				.style("pointer-events", "none")
 				.style("stroke-width", "2")
-	
+
 			node_enter_g.append("svg:image")
 			    		.attr("class", "image_edit")
 						.attr('x', +rayon-5)
@@ -249,14 +249,14 @@
 						.attr("xlink:href","../../img/edit_64.png")
 						.on("click", make_editable)
 						.append("title").text("Click to edit label")
-	
+
 			/* Option de changement de type */
 			node_enter_g.append("circle")
 				.attr("cx", +rayon+5)
 				.attr("cy", +rayon+5)
 				.attr("r", 0)
 			    .attr("class", "circle_change_type")
-	
+
 			node_enter_g.append("svg:image")
 			    		.attr("class", "image_change_type")
 						.attr('x', +rayon-5)
@@ -284,18 +284,18 @@
 									return "../../img/without.png";
 									break;
 							}
-							
+
 						})
 						.on("click", click_image_type)
 						.append("title").text("Click to change the type")
-	
+
 			/* cercle en tourant le type du noeud*/
 			node_enter_g.append("circle")
 				.attr("cx", 0)
 				.attr("cy", +rayon-10)
 				.attr("r", 11)
 			    .attr("class", "circle_type")
-	
+
 			/* Image du type du noeud */
 			node_enter_g.append("svg:image")
 			    		.attr("class", "image_type")
@@ -322,10 +322,10 @@
 									return "../../img/without.png";
 									break;
 							}
-							
+
 						})
 						.style("cursor", "pointer")
-	
+
 			// text sur le noeud principal
 			node_enter_g.append("text")
 				.attr("text-anchor", "middle")
@@ -342,16 +342,16 @@
     	else
     		message (message_offline,"warning");
 
-		node.select(".node_circle").on("mousedown", 
-	        function(d) { 
+		node.select(".node_circle").on("mousedown",
+	        function(d) {
 	          // disable zoom
 	          svg.call(d3.behavior.zoom().on("zoom"), null);
-	
+
 	          mousedown_node = d;
 	          if (mousedown_node == selected_node) selected_node = null;
-	          else selected_node = mousedown_node; 
-	          selected_link = null; 
-	
+	          else selected_node = mousedown_node;
+	          selected_link = null;
+
 	          // reposition drag line
 	          drag_line
 	              .attr("class", "link")
@@ -359,78 +359,78 @@
 	              .attr("y1", mousedown_node.y)
 	              .attr("x2", mousedown_node.x)
 	              .attr("y2", mousedown_node.y);
-	
-	          redraw(); 
+
+	          redraw();
 	        })
 	      .on("mousedrag",
 	        function(d) {
 	          // redraw();
 	        })
-	      .on("mouseup", 
-	        function(d) { 
+	      .on("mouseup",
+	        function(d) {
 	    	  //lorsqu'on lache la souris au dessus d'un noeud
 	          if (mousedown_node) {
-	            mouseup_node = d; 
-	            
+	            mouseup_node = d;
+
 	            //Si on lache la souris au dessus du noeud sur lequel on vient de clicker
 	            //On le sélectionne et on réinitialise les variables de gestion d'evenements de souris
-	            if (mouseup_node == mousedown_node) 
+	            if (mouseup_node == mousedown_node)
 	            {
 	            	//On met toutes les partie du noeud intérieur en surbrillance
-	        		node.select(".node_circle").classed("node_selected", function(d) 
-	        				{ 
-	        					return d === selected_node; 
+	        		node.select(".node_circle").classed("node_selected", function(d)
+	        				{
+	        					return d === selected_node;
 	        				})
-	        		node.select(".circle_id").classed("circle_id_selected", function(d) 
-	        				{ 
-	        					return d === selected_node; 
+	        		node.select(".circle_id").classed("circle_id_selected", function(d)
+	        				{
+	        					return d === selected_node;
 	        				})
-	        		node.select(".text_id").classed("text_id_selected", function(d) 
-	        				{ 
-	        					return d === selected_node; 
+	        		node.select(".text_id").classed("text_id_selected", function(d)
+	        				{
+	        					return d === selected_node;
 	        				})
-	        		node.select(".circle_type").classed("circle_type_selected", function(d) 
-	        				{ 
-	        					return d === selected_node; 
+	        		node.select(".circle_type").classed("circle_type_selected", function(d)
+	        				{
+	        					return d === selected_node;
 	        				})
-	        		
-	            	resetMouseVars(); 
-	            	return; 
+
+	            	resetMouseVars();
+	            	return;
 	            }
-	
+
 	            // Sinon, on créer un lien entre le noeud source et celui sur lequel on est
 	            var link = {source: mousedown_node, target: mouseup_node};
 	            links.push(link);
-	
+
 	            // select new link
 	            selected_link = link;
 	            selected_node = null;
-	            
+
 	            //Ajoute le lien dans le triplestore via la fonction "fluidlog" Addlink
 	            if (online)
 	            	sparql_add_link(mousedown_node.iri_id, mouseup_node.iri_id);
-	
+
 	            // enable zoom
 	            svg.call(d3.behavior.zoom().on("zoom"), rescale);
 	            redraw();
-	          } 
+	          }
 	        })
-	
+
 		  node.exit().transition()
 		      .attr("r", 0)
 		    .remove();
-	
-		  if (d3.event) 
+
+		  if (d3.event)
 		  {
 		    // prevent browser's default behavior
 		    d3.event.preventDefault();
 		  }
-	
+
 		node_enter_g.on("mouseover",function(d)
 		{
 						d3.select(this).select('.node_circle')
 										.style("opacity", fade(.2,"#DDD"))
-						
+
 						d3.select(this).select('.circle_options')
 										.transition()
 										.duration(300)
@@ -455,7 +455,7 @@
 										.transition()
 										.duration(300)
 										.attr("r", 15)
-						
+
 						d3.select(this).select('.image_change_type')
 										.transition()
 										.duration(300)
@@ -466,7 +466,7 @@
 										.duration(300)
 										.attr("r", 15)
 		});
-					 
+
 		node_enter_g.on("mouseout", function(d)
 		{
 						d3.select(this).select('.node_circle')
@@ -496,7 +496,7 @@
 										.transition()
 										.duration(300)
 										.attr("r", 0)
-										
+
 						d3.select(this).select('.image_change_type')
 										.transition()
 										.duration(300)
@@ -511,66 +511,67 @@
 		//lancement du tick
 		d3.select("#waiting").style("display", "none");
 		force.on("tick", tick);
-	
+
 		//On supprime tous les noeuds "deleted"
 		d3.selectAll(".deleted").remove();
 
 	}
-	
- 	$('#filter_project').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
 
- 	$('#filter_actor').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
+  var filters = {
+    "actor": {
+      "key": "actor",
+      "selector": ".actor",
+      "filter": "#filter_actor"
+    },
+    "idea": {
+      "key": "idea",
+      "selector": ".idea",
+      "filter": "#filter_idea"
+    },
+    "project": {
+      "key": "project",
+      "selector": ".project",
+      "filter": "#filter_project"
+    },
+    "ressource": {
+      "key": "ressource",
+      "selector": ".ressource",
+      "filter": "#filter_ressource"
+    },
+    "without": {
+      "key": "without",
+      "selector": ".without",
+      "filter": "#filter_without"
+    }
+  };
 
- 	$('#filter_idea').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
+  var toggleFilter = function (target) {
+    d3.selectAll(target.selector).style("opacity", function () {
+      return this.classList.remove("node_opacity")}
+    );
 
- 	$('#filter_ressource').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
+    var filterName;
+    for (filterName in filters) {
+      if (filterName !== target.key) {
+        d3.selectAll(filters[filterName].selector).style("opacity", function () {
+          return this.classList.add("node_opacity")}
+        )
+      }
+    }
+  };
 
- 	$('#filter_without').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
+  var filterName;
+  var filterNames = Object.keys(filters);
+
+  var k;
+  for (k = 0; k < filterNames.length; k = k + 1) {
+    filterName = filters[filterNames[k]];
+
+    $(filterName.filter).click(function () {
+      var filterKey = $(this).attr('id').substring('filter_'.length);
+      toggleFilter(filters[filterKey]);
+    });
+  }
 
  	var linkedByIndex = {};
 	dataset.edges.forEach(function(d) {
@@ -581,27 +582,27 @@
 	    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
 	}
 
-	function fade(opacity,color) 
+	function fade(opacity,color)
 	{
-	    return function(d) 
+	    return function(d)
 	    {
 	    	node.select(".node_circle")
-	    			.style("opacity", function(o) 
+	    			.style("opacity", function(o)
 					{
 						return isConnected(d, o) ? 1 : opacity;
 					})
 			node.select(".circle_id")
-	    			.style("opacity", function(o) 
+	    			.style("opacity", function(o)
 					{
 						return isConnected(d, o) ? 1 : opacity;
 					})
 			node.select(".text_id")
-					.style("opacity", function(o) 
+					.style("opacity", function(o)
 					{
 						return isConnected(d, o) ? 1 : opacity;
 					})
 			node.select(".label")
-					.style("opacity", function(o) 
+					.style("opacity", function(o)
 					{
 						return isConnected(d, o) ? 1 : opacity;
 					})
@@ -615,14 +616,14 @@
 	function init_graph(default_domain)
 	{
 		var domain_created;
-		
+
 		domain_created = sparql_add_domain_to_triplestore(default_domain);
 		if (!domain_created)
 		{
 			message("erreur de création du domaine","alert");
 			return false;
 		}
-		
+
 		//On initialise le compteur de noeud à 0 pour ce domaine
 		sparql_increment_node_id(-1);
 		var first_node_iri = sparql_get_new_node_iri();
@@ -630,18 +631,18 @@
 		sparql_init_kernel_graph(first_node_iri, null);
 	}
 
-	function tick() 
+	function tick()
 	{
 		link.attr("x1", function(d) { return d.source.x; })
 		      .attr("y1", function(d) { return d.source.y; })
 		      .attr("x2", function(d) { return d.target.x; })
 		      .attr("y2", function(d) { return d.target.y; });
-		
+
 		node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 	}
-	
+
 	function click_image_type(d, i)
-	{ 
+	{
 //		if (d3.event.defaultPrevented) return;
         var el = d3.select(this);
         var g_el = d3.select(this.parentNode);
@@ -688,24 +689,24 @@
 		}
 	}
 
-	function getTextSize(object,r) 
+	function getTextSize(object,r)
 	{
 		var textlength = object.getComputedTextLength();
 		var fontsize = Math.min(2 * r, (2 * r - 10) / textlength * 24) + "px";
-		return fontsize ; 
+		return fontsize ;
 	}
 
 	// rescale g
 	function rescale() {
 	  trans=d3.event.translate;
 	  scale=d3.event.scale;
-	
+
 	  svg.attr("transform",
 	      "translate(" + trans + ")"
 	      + " scale(" + scale + ")");
 	}
-	
-	function mousedown() 
+
+	function mousedown()
 	{
 	  if (!mousedown_node && !mousedown_link) {
 	    // allow panning if nothing is selected
@@ -713,11 +714,11 @@
 	    return;
 	  }
 	}
-	
-	function mousemove() 
+
+	function mousemove()
 	{
 	  if (!mousedown_node) return;
-	
+
 	  // update drag line
 	  drag_line
 	      .attr("x1", mousedown_node.x)
@@ -725,16 +726,16 @@
 	      .attr("x2", d3.svg.mouse(this)[0])
 	      .attr("y2", d3.svg.mouse(this)[1]);
 	}
-	
-	function mouseup() 
+
+	function mouseup()
 	{
-	  if (mousedown_node) 
+	  if (mousedown_node)
 	  {
 	    // hide drag line
 	    drag_line
 	      .attr("class", "drag_line_hidden")
-	
-	    if (!mouseup_node) 
+
+	    if (!mouseup_node)
 	    {
 	    	// add node
 	    	if (online)
@@ -742,43 +743,43 @@
 	    		// Récupération du nouvel iri_id via la fonction "fluidlog" get_new_iri()
 	    		sparql_increment_node_id();
 	    		var new_node_iri_id = parseInt(sparql_get_new_node_iri().split("/").pop(), 10);
-	      
+
 	    		var point = d3.mouse(this);
-	    		var node = {iri_id : new_node_iri_id, 
-	    	  		label : "Node", 
+	    		var node = {iri_id : new_node_iri_id,
+	    	  		label : "Node",
 	    	  		type : "without",
-	    	  		x: point[0], 
+	    	  		x: point[0],
 	    	  		y: point[1]};
-	    	  	
+
 	    		nodes.push(node);
-	
+
 	    	  	// new node not selected
 	    	  	selected_node = null;
 	    	  	selected_link = null;
-	      
+
 	    	  	// add link to mousedown node
 	    	  	links.push({source: mousedown_node, target: node});
-	      
+
 	    	  	//fonction "fluidlog" permettant d'ajouter un noeud et un lien (depuis le noeud source vers le nouveau noeud) dans le triplestore
 	    	  	sparql_add_node(mousedown_node.iri_id, new_node_iri_id);
 	    	}
 	    	else
 	    		message (message_offline,"warning");
 	    }
-	
+
 	    redraw();
 	  }
 	  // clear mouse event vars
 	  resetMouseVars();
 	}
-	
-	function resetMouseVars() 
+
+	function resetMouseVars()
 	{
 	  mousedown_node = null;
 	  mouseup_node = null;
 	  mousedown_link = null;
 	}
-	
+
 	function dragstart(d, i) {
 		d3.event.sourceEvent.stopPropagation();
 		force.stop();
@@ -788,7 +789,7 @@
 		d.px += d3.event.dx;
 		d.py += d3.event.dy;
 		d.x += d3.event.dx;
-		d.y += d3.event.dy; 
+		d.y += d3.event.dy;
 		tick(); // this is the key to make it work together with updating both px,py,x,y on d !
 	}
 
@@ -848,44 +849,44 @@
                                 e.preventDefault();
                             }
                         });
-		
+
         // Remplace l'image d'édition par une image de sauvegarde
         el.attr("xlink:href","../../img/save.png")
         	.on("click", change_label);
 	}
-	
+
 	function change_label(d)
 	{
 	    console.log("save_label", arguments);
-	    
+
         // Select element that call the save_label function
         var el = d3.select(this);
         var p_el = d3.select(this.parentNode);
         var fo_el = p_el.select(".edit");
         var txt_el = p_el.select(".label");
         var input_el = fo_el.select(".input");
-       
+
         var txt = input_el.node().value;
         if (txt == "")
         	txt = "New...";
- 
+
         d.label = txt;
         //Met à jour le champ text dans le noeud
         txt_el.text(d.label);
 
         //Enregistrement du nouveau label dans le TS
-        sparql_change_label(d.iri_id, d.label)        	
-        
+        sparql_change_label(d.iri_id, d.label)
+
         // Note to self: frm.remove() will remove the entire <g> group! Remember the D3 selection logic!
         fo_el.remove();
         // Remplace l'image de sauvegarde par une image d'édition
         el.attr("xlink:href","../../img/edit_64.png")
     			.on("click", make_editable);
 	}
-	
+
 	function spliceLinksForNode(node) {
 		  toSplice = links.filter(
-		    function(l) { 
+		    function(l) {
 		      return (l.source === node) || (l.target === node); });
 		  toSplice.map(
 		    function(l) {
