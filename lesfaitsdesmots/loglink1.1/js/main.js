@@ -1,52 +1,11 @@
-function init_graph(default_domain)
-{
-	var domain_created;
-	
-	domain_created = add_domain_to_triplestore(default_domain);
-	if (!domain_created)
-	{
-		message("erreur de création du domaine","alert");
-		return false;
-	}
-	//On initialise le compteur de noeud à 0 pour ce domaine
-//	increment_node_id(-1);
-	//On charge le noyeau d'amorçage
-//	var first_node_iri = "http://www.fluidlog.com/loglink/domain/loglink11/node/0";
-//	var second_node_iri = "http://www.fluidlog.com/loglink/domain/loglink11/node/1";
-	increment_node_id(-1);
-	var first_node_iri = get_new_node_iri();
-	increment_node_id();
-	var second_node_iri = get_new_node_iri();
-	//Le compteur de noeud doit être à 1
-	init_kernel_graph(first_node_iri, second_node_iri);
-}
+// Code de départ : http://bl.ocks.org/benzguo/4370043
 
-	//Vérification de l'existance du domaine "loglink11" dans le triplestore
 	var default_domain = "loglink11";
 	var dataset;
-	var new_domain = false;
-	
-	// =========================================================
-	// S'il n'y a pas de domaine mémorisé dans le localstorage, 
-	// - On l'ajoute dans le LS
-	// - Et s'il n'existe pas dans le triplestore, on le créer
-	// Ainsi, on ne fait pas le test de l'existance dans le TS à chaque fois car c'est trop long...
-	// =========================================================
-	domain_in_localstorage=localStorage.getItem(default_domain+".domain");
-	if (domain_in_localstorage == null)
-	{
-		localStorage.setItem(default_domain+".domain",default_domain);
-		var test_domain = exist_domain(default_domain);
-		if (test_domain == false)
-		{
-			init_graph(default_domain);
-		}
-	}
 
 	$('#initKernelGraph').bind('click', function()
 			{
-				delete_all_into_triplestore();
-				localStorage.removeItem(default_domain+".domain");
+				sparql_delete_all_into_triplestore();
 				init_graph(default_domain);
 				location.reload()
 			}
@@ -68,18 +27,17 @@ function init_graph(default_domain)
 	 		function(){$('.help').css({'zoom' : 1});}
 	 	);
 
-//Permet de tester la partie JS sans faire appel au triplestore
-//	dataset = {
-//	nodes:[
-//	       {id:0, label: "Node" },
-//           {id:1, label: "Node" },
-//	      ],
-//	edges:[
-//	       {source:0, target:1},
-//	      ],
-//};
-
-	dataset = get_dataset();
+	//local or distant ?
+	var online = navigator.onLine;
+	
+	if (online)
+	{
+		dataset = sparql_get_dataset();
+	}
+	else
+	{
+		message (message_offline,"warning");
+	}
 
 	//mouse event vars
 	var selected_node = null,
@@ -88,10 +46,14 @@ function init_graph(default_domain)
 	    mousedown_node = null,
 	    mouseup_node = null;
 	
-	var width = 800,
-	    height = 600,
+	var width = 1200,
+	    height = 700,
 	    fill = d3.scale.category20();
 	
+	var n = 100;
+	var message_offline = "Connectez-vous à internet pour pouvoir continuer";
+	var debug = false;
+
 	// init svg
 	var outer = d3.select("#chart")
 	  .append("svg:svg")
@@ -118,9 +80,12 @@ function init_graph(default_domain)
 	    .size([width, height])
 	    .nodes(dataset.nodes)
 	    .links(dataset.edges)
-	    .linkDistance(50)
-	    .charge(-200)
-	    .on("tick", tick)
+	    .linkDistance(80)
+	    .charge(-500)
+	    
+	force.start();
+	for (var i = n * n; i > 0; --i) force.tick();
+	force.stop();
 	
 	// line displayed when dragging new nodes
 	var drag_line = svg.append("line")
@@ -130,36 +95,73 @@ function init_graph(default_domain)
 	    .attr("x2", 0)
 	    .attr("y2", 0);
 	
-	var links = svg.selectAll(".link");
-	var nodes = svg.selectAll(".node");
+	var nodes = force.nodes(),
+	    links = force.links(),
+	    node = svg.selectAll(".node"),
+	    link = svg.selectAll(".link");
 	
+	// add keyboard callback
+	if (online)
+	{
+		d3.select(window)
+		    .on("keydown", keydown);
+	}
+	else 
+		message (message_offline,"warning");
+
 	redraw();
 	
 	// redraw force layout
 	function redraw() 
 	{
-		links = links.data(dataset.edges);
-		links.enter()
-	  		.insert("line", ".node")
-	  		.attr("class", "link")
+		  link = link.data(links, function(d) { return d.source.iri_id + "-" + d.target.iri_id; });
+		  link.enter()
+		  		.insert("line", ".node")
+		      .attr("class", "link")
+				  .attr("x1", function(d) { return d.source.x; })
+				  .attr("y1", function(d) { return d.source.y; })
+				  .attr("x2", function(d) { return d.target.x; })
+				  .attr("y2", function(d) { return d.target.y; })
+		      .on("mousedown", 
+		        function(d) { 
+		          mousedown_link = d; 
+		          if (mousedown_link == selected_link) selected_link = null;
+		          else selected_link = mousedown_link; 
+		          selected_node = null; 
+		          redraw(); 
+		        })
+
+		  link.exit().remove();
 	
-	  	links.exit().remove();
-	
-		nodes = nodes.data(dataset.nodes);
-		nodes_enter_g = nodes.enter()
+		link.classed("link_selected", function(d) 
+				{ 
+					return d === selected_link; 
+				});
+
+		//On valorise ici le paramètre "key" de la fonction data
+		//pour ne pas décaler les id des noeuds lors de la suppression
+		node = node.data(nodes, function(d) { return d.iri_id;});
+		node_enter_g = node.enter()
 				.append("g")
-	        	.attr("class", "node")
+	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : "node";})
+				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 		
-		nodes_enter_g.append("circle")
-		  		.attr("r", 6.5)
+		node_enter_g.append("circle")
+	        	.attr("class", "node_circle")
+		  		.attr("r", 10)
 	
-		nodes_enter_g.append("text")
+		node_enter_g.append("text")
 				.attr("x", 12)
 				.text(function(d, i) { 
-				  return d.label+" "+dataset.nodes[i].id; 
+				  return d.label+" "+nodes[i].iri_id; 
 				  })	  		
 	
-	    nodes.on("mousedown", 
+		node.select(".node_circle").classed("node_selected", function(d) 
+				  { 
+			  		return d === selected_node; 
+				  });
+
+	    node.on("mousedown", 
 	        function(d) { 
 	          // disable zoom
 	          svg.call(d3.behavior.zoom().on("zoom"), null);
@@ -184,21 +186,22 @@ function init_graph(default_domain)
 	          // redraw();
 	        })
 	      .on("mouseup", 
-	        function(d) { //lorsqu'on lache la souris au dessus d'un noeud
+	        function(d) { 
+	          //lorsqu'on lache la souris au dessus d'un noeud
 	          if (mousedown_node) {
 	            mouseup_node = d; 
 	            if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
 	
 	            // add link
 	            var link = {source: mousedown_node, target: mouseup_node};
-	            dataset.edges.push(link);
+	            links.push(link);
 	
 	            // select new link
 	            selected_link = link;
 	            selected_node = null;
 	            
 	            //Ajoute le lien dans le triplestore via la fonction "fluidlog" Addlink
-	            add_link(mousedown_node.id, mouseup_node.id);
+	            sparql_add_link(mousedown_node.iri_id, mouseup_node.iri_id);
 	
 	            // enable zoom
 	            svg.call(d3.behavior.zoom().on("zoom"), rescale);
@@ -206,7 +209,9 @@ function init_graph(default_domain)
 	          } 
 	        })
 	
-		nodes.exit().remove(); // Supprime le <g> en trop par rapport au contenu du dataset
+		  node.exit().transition()
+		      .attr("r", 0)
+		    .remove();
 	
 		  if (d3.event) 
 		  {
@@ -214,20 +219,40 @@ function init_graph(default_domain)
 		    d3.event.preventDefault();
 		  }
 	
-		  force.start();
-	
+			//lancement du tick
+			d3.select("#waiting").style("display", "none");
+			force.on("tick", tick);
+			
+			//On supprime tous les noeuds "deleted"
+			d3.selectAll(".deleted").remove();
 	}
 	
+
+	function init_graph(default_domain)
+	{
+		var domain_created;
+		
+		domain_created = sparql_add_domain_to_triplestore(default_domain);
+		if (!domain_created)
+		{
+			message("erreur de création du domaine","alert");
+			return false;
+		}
+		//On initialise le compteur de noeud à 0 pour ce domaine
+		sparql_increment_node_id(-1);
+		var first_node_iri = sparql_get_new_node_iri();
+		//Le compteur de noeud doit être à 1
+		sparql_init_kernel_graph(first_node_iri, null);
+	}
+
 	function tick() 
 	{
-		links.attr("x1", function(d) { return d.source.x; })
+		link.attr("x1", function(d) { return d.source.x; })
 		      .attr("y1", function(d) { return d.source.y; })
 		      .attr("x2", function(d) { return d.target.x; })
 		      .attr("y2", function(d) { return d.target.y; });
 		
-		nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-		nodes.attr("cx", function(d) { return d.x; })
-		     .attr("cy", function(d) { return d.y; });
+		node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 	}
 	
 	// rescale g
@@ -263,36 +288,41 @@ function init_graph(default_domain)
 	
 	function mouseup() 
 	{
-	  if (mousedown_node) 
-	  {
-	    // hide drag line
-	    drag_line
-	      .attr("class", "drag_line_hidden")
+		if (mousedown_node) 
+		{
+		    // hide drag line
+		    drag_line
+		      .attr("class", "drag_line_hidden")
 	
-	    if (!mouseup_node) 
-	    {
-	      // add node
-	      // Récupération du nouvel id via la fonction "fluidlog" get_new_iri()
-	      increment_node_id();
-	      var new_node_id = parseInt(get_new_node_iri().split("/").pop(), 10);
-	      var inc_new_node_id = new_node_id + 1;
-	      
-	      var point = d3.mouse(this),
-	        node = {id : new_node_id, label : "Node", x: point[0], y: point[1]},
-	        n = dataset.nodes.push(node);
+		    if (!mouseup_node) 
+		    {
+		        // add node
+		    	if (online)
+		    	{
+				      // Récupération du nouvel id via la fonction "fluidlog" get_new_iri()
+				      sparql_increment_node_id();
+				      var new_node_iri_id = parseInt(sparql_get_new_node_iri().split("/").pop(), 10);
+				      
+				      var 	point = d3.mouse(this),
+				        	node = {iri_id : new_node_iri_id, label : "Node", x: point[0], y: point[1]};
+				      
+				      nodes.push(node);
+				
+				      // select new node
+				      selected_node = node;
+				      selected_link = null;
+				      
+				      // add link to mousedown node
+				      links.push({source: mousedown_node, target: node});
+				      
+				      //fonction "fluidlog" permettant d'ajouter un noeud et un lien (depuis le noeud source vers le nouveau noeud) dans le triplestore
+				      sparql_add_node(mousedown_node.iri_id, new_node_iri_id);
+		    	}
+		    	else
+		    		message (message_offline,"warning");
+			}
 	
-	      // select new node
-	      selected_node = node;
-	      selected_link = null;
-	      
-	      // add link to mousedown node
-	      dataset.edges.push({source: mousedown_node, target: node});
-	      
-	      //fonction "fluidlog" permettant d'ajouter un noeud et un lien (depuis le noeud source vers le nouveau noeud) dans le triplestore
-	      add_node(mousedown_node.id, new_node_id);
-	    }
-	
-	    redraw();
+		    redraw();
 	  }
 	  // clear mouse event vars
 	  resetMouseVars();
@@ -303,4 +333,35 @@ function init_graph(default_domain)
 	  mousedown_node = null;
 	  mouseup_node = null;
 	  mousedown_link = null;
+	}
+
+	function spliceLinksForNode(node) {
+		  toSplice = links.filter(
+		    function(l) { 
+		      return (l.source === node) || (l.target === node); });
+		  toSplice.map(
+		    function(l) {
+		      links.splice(links.indexOf(l), 1); });
+		}
+
+	function keydown() {
+	  if (!selected_node && !selected_link) return;
+	  switch (d3.event.keyCode) {
+	    case 8: // backspace
+	    case 46: { // delete
+	      if (selected_node) {
+	        nodes.splice(nodes.indexOf(selected_node), 1);
+	        spliceLinksForNode(selected_node);
+	        sparql_delete_node(selected_node.iri_id)
+	      }
+	      else if (selected_link) {
+	        links.splice(links.indexOf(selected_link), 1);
+	        sparql_delete_link(selected_link.source.iri_id, selected_link.target.iri_id)
+	      }
+	      selected_link = null;
+	      selected_node = null;
+	      redraw();
+	      break;
+	    }
+	  }
 	}

@@ -202,7 +202,11 @@ function sparql_get_dataset()
 					 		 		//Ne pas oublier d'ordonner les noeuds, car l'indice correspond à celui des liens !
 			 						nodes = nodes.sort(function (a,b) {return a.iri_id - b.iri_id});
 
-				 		 			for (inc=0; inc<nodes.length; inc++)
+			 						//On récupère le nombre de noeuds et on complète par rapport à l'iri_id max
+			 						var t_length = nodes.length;
+			 						//Vu que le tableau est ordonné, l'iri_id_max est le dernier iri_id du tableau
+			 						var node_id_max = nodes[t_length-1].iri_id;
+			 						for (inc=0; inc<node_id_max; inc++)
 				 		 			{
 				 		 				if (nodes[inc].iri_id != inc)
 				 		 					{

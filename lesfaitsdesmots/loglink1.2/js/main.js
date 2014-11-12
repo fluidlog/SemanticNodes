@@ -27,11 +27,12 @@
 	 		function(){$('.debug').css({'zoom' : 1});}
 	 	);
 
- 	$('#help').hover(
-	 		function(){$('.help').css({'z-index' : 1,'zoom' : 1.7});},
-	 		function(){$('.help').css({'zoom' : 1});}
+ 	$('#help_configuration_header').click(
+	 		function(){
+					$('.help').toggleClass('hidden_help_configuration');
+ 					$('.configuration').toggleClass('hidden_help_configuration');
+	 		}
 	 	);
-
 
 //	var color_type = {"project" : "#62E84D", "actor" : "#FC5460", "idea" : "#FFF655", "ressource" : "#9451D4", "without" : "white"};
 	var color_type = {"project" : "#89A5E5", "actor" : "#F285B9", "idea" : "#FFD98D", "ressource" : "#CDF989", "without" : "white"};
@@ -41,13 +42,16 @@
 	var message_offline = "Connectez-vous à internet pour pouvoir continuer";
 	var debug = false;
 
+	$('.help').toggleClass('hidden_help_configuration');
+	$('.configuration').toggleClass('hidden_help_configuration');
+
 	//local ou distant ?
 	var online = navigator.onLine;
 	
 	if (online)
 	{
 		if (debug)
-			dataset = debug_get_dataset("1");
+			dataset = debug_get_dataset("4");
 		else
 			dataset = sparql_get_dataset();
 	}
@@ -64,9 +68,8 @@
 	    mousedown_node = null,
 	    mouseup_node = null;
 	
-	var width = 1200,
-	    height = 800,
-	    fill = d3.scale.category20();
+	var width = window.innerWidth - 20,
+	    height = window.innerHeight - 20;
 	
 	// init svg
 	var outer = d3.select("#chart")
@@ -89,9 +92,11 @@
 					.on("dragend", dragend);
 
 	svg.append('svg:rect')
-	    .attr('width', width)
-	    .attr('height', height)
-	    .attr('fill', 'white')
+	    .attr('x', -width)
+	    .attr('y', -height)
+	    .attr('width', width*3)
+	    .attr('height', height*3)
+	    .attr('fill', '#EEE')
 	
 	// init force layout
 	var force = d3.layout.force()
@@ -159,13 +164,19 @@
 		node = node.data(nodes, function(d) { return d.iri_id;});
 		node_enter_g = node.enter()
 				.append("g")
-	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : "node";})
+	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : d.type;})
 				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 		
 		/* Cercle qui apparait sur le hover */
 		node_enter_g.append("circle")
 			.attr("r", 0)
 		    .attr("class", "circle_options")
+		    .on("click", function ()
+		    		{
+	            var d3event = d3.event;
+	            d3event.stopPropagation();		    	
+		    		})
+
 
 		/* Cercle principal du noeud, sur lequel se trouve le texte */
 		node_enter_g.append("circle")
@@ -321,6 +332,7 @@
 				.attr("dy", ".25em")
 				.style("font-size", "20px")
 				.style("pointer-events", "none")
+				.style("pointer-events", "none")
 				.style("font-family", FontFamily)
 				.text(function(d, i) { return d.label; })
 				.style("font-size", function(d) { return getTextSize(this, d.rayon) })
@@ -330,7 +342,7 @@
     	else
     		message (message_offline,"warning");
 
-		node.on("mousedown", 
+		node.select(".node_circle").on("mousedown", 
 	        function(d) { 
 	          // disable zoom
 	          svg.call(d3.behavior.zoom().on("zoom"), null);
@@ -359,9 +371,34 @@
 	    	  //lorsqu'on lache la souris au dessus d'un noeud
 	          if (mousedown_node) {
 	            mouseup_node = d; 
-	            if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
+	            
+	            //Si on lache la souris au dessus du noeud sur lequel on vient de clicker
+	            //On le sélectionne et on réinitialise les variables de gestion d'evenements de souris
+	            if (mouseup_node == mousedown_node) 
+	            {
+	            	//On met toutes les partie du noeud intérieur en surbrillance
+	        		node.select(".node_circle").classed("node_selected", function(d) 
+	        				{ 
+	        					return d === selected_node; 
+	        				})
+	        		node.select(".circle_id").classed("circle_id_selected", function(d) 
+	        				{ 
+	        					return d === selected_node; 
+	        				})
+	        		node.select(".text_id").classed("text_id_selected", function(d) 
+	        				{ 
+	        					return d === selected_node; 
+	        				})
+	        		node.select(".circle_type").classed("circle_type_selected", function(d) 
+	        				{ 
+	        					return d === selected_node; 
+	        				})
+	        		
+	            	resetMouseVars(); 
+	            	return; 
+	            }
 	
-	            // add link
+	            // Sinon, on créer un lien entre le noeud source et celui sur lequel on est
 	            var link = {source: mousedown_node, target: mouseup_node};
 	            links.push(link);
 	
@@ -391,8 +428,8 @@
 	
 		node_enter_g.on("mouseover",function(d)
 		{
-//						d3.select(this).select('.node_circle')
-//										.style("opacity", fade(.2,"#DDD"))
+						d3.select(this).select('.node_circle')
+										.style("opacity", fade(.2,"#DDD"))
 						
 						d3.select(this).select('.circle_options')
 										.transition()
@@ -432,8 +469,8 @@
 					 
 		node_enter_g.on("mouseout", function(d)
 		{
-//						d3.select(this).select('.node_circle')
-//										.style("opacity", fade(1,"#DDD"))
+						d3.select(this).select('.node_circle')
+										.style("opacity", fade(1,"#DDD"))
 
 						d3.select(this).select('.circle_options')
 										.transition()
@@ -471,31 +508,109 @@
 										.attr("r", 0)
 		});
 
-		node.select(".node_circle").classed("node_selected", function(d) 
-				{ 
-					return d === selected_node; 
-				})
-		node.select(".circle_id").classed("circle_id_selected", function(d) 
-				{ 
-					return d === selected_node; 
-				})
-		node.select(".text_id").classed("text_id_selected", function(d) 
-				{ 
-					return d === selected_node; 
-				})
-		node.select(".circle_type").classed("circle_type_selected", function(d) 
-				{ 
-					return d === selected_node; 
-				})
-		
 		//lancement du tick
 		d3.select("#waiting").style("display", "none");
 		force.on("tick", tick);
 	
 		//On supprime tous les noeuds "deleted"
 		d3.selectAll(".deleted").remove();
+
 	}
 	
+ 	$('#filter_project').click(
+	 		function(){
+	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
+	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
+	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 		}
+	 	);
+
+ 	$('#filter_actor').click(
+	 		function(){
+	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
+	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
+	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 		}
+	 	);
+
+ 	$('#filter_idea').click(
+	 		function(){
+	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
+	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
+	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 		}
+	 	);
+
+ 	$('#filter_ressource').click(
+	 		function(){
+	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
+	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
+	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 		}
+	 	);
+
+ 	$('#filter_without').click(
+	 		function(){
+	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
+	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
+	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
+	 		}
+	 	);
+
+ 	var linkedByIndex = {};
+	dataset.edges.forEach(function(d) {
+	    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+	});
+
+	function isConnected(a, b) {
+	    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+	}
+
+	function fade(opacity,color) 
+	{
+	    return function(d) 
+	    {
+	    	node.select(".node_circle")
+	    			.style("opacity", function(o) 
+					{
+						return isConnected(d, o) ? 1 : opacity;
+					})
+			node.select(".circle_id")
+	    			.style("opacity", function(o) 
+					{
+						return isConnected(d, o) ? 1 : opacity;
+					})
+			node.select(".text_id")
+					.style("opacity", function(o) 
+					{
+						return isConnected(d, o) ? 1 : opacity;
+					})
+			node.select(".label")
+					.style("opacity", function(o) 
+					{
+						return isConnected(d, o) ? 1 : opacity;
+					})
+
+			link.style("stroke-opacity", function(o) {
+	            return o.source === d || o.target === d ? 1 : opacity;
+	        })
+	    }
+	}
 
 	function init_graph(default_domain)
 	{
@@ -637,8 +752,8 @@
 	    	  	
 	    		nodes.push(node);
 	
-	    	  	// select new node
-	    	  	selected_node = node;
+	    	  	// new node not selected
+	    	  	selected_node = null;
 	    	  	selected_link = null;
 	      
 	    	  	// add link to mousedown node
@@ -682,39 +797,6 @@
 						.select(".node_circle").style("stroke", "#999");
 		tick();
 		force.resume();
-	}
-
-	var linkedByIndex = {};
-	dataset.edges.forEach(function(d) {
-	    linkedByIndex[d.source.index + "," + d.target.index] = 1;
-	});
-
-	function isConnected(a, b) {
-	    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
-	}
-
-	function fade(opacity,color) 
-	{
-	    return function(d) 
-	    {
-	    	nodes.select(".node_circle").style("opacity", function(o) 
-					{
-						return isConnected(d, o) ? 1 : opacity;
-					})
-			
-			.style("stroke", function(o) 
-					{
-						return isConnected(d, o) ? color : "#DDD";
-					});
-
-			link.style("stroke-opacity", function(o) {
-	            return o.source === d || o.target === d ? 1 : opacity;
-	        })
-	        
-	        .style("stroke", function(o) {
-	            return o.source === d || o.target === d ? color : color ;
-	        });
-	    }
 	}
 
 	function make_editable(d)
@@ -770,7 +852,6 @@
         // Remplace l'image d'édition par une image de sauvegarde
         el.attr("xlink:href","../../img/save.png")
         	.on("click", change_label);
-
 	}
 	
 	function change_label(d)
@@ -815,6 +896,7 @@
 	  if (!selected_node && !selected_link) return;
 	  switch (d3.event.keyCode) {
 	    case 8: // backspace
+	    	break;
 	    case 46: { // delete
 	      if (selected_node) {
 	        nodes.splice(nodes.indexOf(selected_node), 1);

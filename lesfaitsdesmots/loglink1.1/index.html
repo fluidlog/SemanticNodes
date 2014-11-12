@@ -14,8 +14,9 @@
 	<script src="../../js/d3.v2.min.js"></script>
 </head>
 <body>
+	<div id="waiting" class="waiting"><img alt="waiting icon" src="../../img/waiting.gif"/></div>
 	<div class="return" id="return">
-		<div style="color : #00A; left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../index.html">Retour</a></div>
+		<div style="color : #00A; left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
 	</div>
 	<div class="menu" id="menu">
 		<div style="color : #df2a21; font-size:14px;font-weight:bold;display:inline;">Semantic Nodes</div>
@@ -28,7 +29,7 @@
 	<div class="help" id="help">
 	ABOUT : loglink1.1 (Beta)<br>
 	HELP :<br>
-	To add new node, pull existing node<br>
+	To add new node, drag existing node<br>
 	You can add a link between two nodes<br>
 	You can initialize the graph with two nodes [0]<br>
 	You can refresh the graph [!]<br>
@@ -36,6 +37,7 @@
 	</div>
 </body>
 	<script src="js/functions.js"></script>
+	<script src="js/sparql_functions.js"></script>
 	<script src="js/main.js"></script>
 <footer>
 <p>

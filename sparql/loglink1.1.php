@@ -23,9 +23,9 @@ function InitKernelGraph($first_node_iri, $second_node_iri)
 	$domain_selected_iri=$iri_loglink_domain."loglink11";
 
 	$first_node_label = "Node";
-	$second_node_label = "Node";
+	$first_node_type = "without";
 	
-	//on insère le nouveau triplet "$iri_loglink loglink:term $term_iri"
+	//on insère le premier triplet
 	$sparql ='
 		PREFIX loglink: <'.$prefix_loglink.'>
     	PREFIX rdf: <'.$prefix_rdf.'>
@@ -35,14 +35,11 @@ function InitKernelGraph($first_node_iri, $second_node_iri)
 			graph <'.$MyGraph.'>
 			{
 				<'.$domain_selected_iri.'> loglink:node <'.$first_node_iri.'> .
-				<'.$domain_selected_iri.'> loglink:node <'.$second_node_iri.'> .
 				<'.$first_node_iri.'> rdfs:label "'.$first_node_label.'" .
-				<'.$second_node_iri.'> rdfs:label "'.$second_node_label.'" .
-				<'.$first_node_iri.'> loglink:linkedto <'.$second_node_iri.'>
+				<'.$first_node_iri.'> rdfs:type "'.$first_node_type.'" .
 			}
 		}
 	';
-
 	$res = $MyEndPointSparql->queryUpdate($sparql);
 	//afficheText("InitKernelGraph 1: first_node_iri : ".$first_node_iri." requete : ".$sparql,400);
 	
@@ -55,33 +52,23 @@ function InitKernelGraph($first_node_iri, $second_node_iri)
 
 	$parts = explode('/', rtrim($first_node_iri, '/'));
 	$first_node_iri_id = array_pop($parts);
-	$parts = explode('/', rtrim($second_node_iri, '/'));
-	$second_node_iri_id = array_pop($parts);
 	
 	$nodes = array(
 				1 => array(
 					"node_iri_id" => $first_node_iri_id,
 					"node_label" => $first_node_label,
+					"node_type" => "project",
 				),
-				2 => array(
-					"node_iri_id" => $second_node_iri_id,
-					"node_label" => $second_node_label,
-				)
 			);
 	
 	$edges = array(
-				1 => array(
-					"source" => $first_node_iri_id,
-					"target" => $second_node_iri_id,
-				),
+				1 => array(),
 			);
 			
 	$dataset = array(
 				"nodes" => $nodes,
-				"edges" => $edges,
+ 				"edges" => $edges,
 				);
-
-//	echo "dataset: ".var_dump($dataset);
 
 	$rich_result[0] = "InitKernelGraph";
 	$rich_result[1] = $sparql;
@@ -108,13 +95,14 @@ function getDataset()
 		PREFIX loglink: <'.$prefix_loglink.'>
     	PREFIX rdf: <'.$prefix_rdf.'>
     	PREFIX rdfs: <'.$prefix_rdfs.'>
-		SELECT ?node_iri ?node_label
+		SELECT ?node_iri ?node_label ?node_type
 		WHERE
 		{
 			graph <'.$MyGraph.'>
 			{
 			    <'.$domain_selected_iri.'> 	loglink:node ?node_iri .
-			    		?node_iri 	rdfs:label ?node_label
+			    		?node_iri 	rdfs:label ?node_label .
+			    		?node_iri 	rdfs:type ?node_type .
 			}
 		}
 		LIMIT 100
@@ -141,6 +129,7 @@ function getDataset()
 		$nodes[] = array(
 				"node_iri_id" => $node_iri_id,
 				"node_label" => $row['node_label'],
+				"node_type" => $row['node_type'],
 		);
 
 		//Initialisation de $result2, sinon, il conserve la même valeur...
@@ -333,7 +322,7 @@ function getNewNodeIri()
 	$new_iri = $iri_loglink_node.intval($id);
 	//afficheText("getNewNodeIri : ".$new_iri,520);
 	
-	$rich_result[0] = "getNewNodeIri (new id=".$inc_id.")";
+	$rich_result[0] = "getNewNodeIri (new id=".$id.")";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = $new_iri;
 	return $rich_result;
@@ -356,6 +345,7 @@ function addNode($source_node_id,$target_node_id)
 	$target_node_iri=$iri_loglink_node.$target_node_id;
 	
 	$target_node_label = "Node";
+	$target_node_type = "without";
 	
 	$sparql ='
 		PREFIX loglink: <'.$prefix_loglink.'>
@@ -367,6 +357,7 @@ function addNode($source_node_id,$target_node_id)
 			{
 				<'.$domain_selected_iri.'> loglink:node <'.$target_node_iri.'> .
 				<'.$target_node_iri.'> rdfs:label "'.$target_node_label.'" .
+				<'.$target_node_iri.'> rdfs:type "'.$target_node_type.'" .
 				<'.$source_node_iri.'> loglink:linkedto <'.$target_node_iri.'>
 			}
 		}
@@ -395,7 +386,9 @@ function addLink($source_node_id,$target_node_id)
 	global $MyGraph;
 	global $prefix_loglink;
 	global $iri_loglink_node;
-
+	global $prefix_rdf;
+	global $prefix_rdfs;
+	
 	//On se connecte
 	$MyEndPointSparql = connectMaBase();
 
@@ -430,6 +423,248 @@ function addLink($source_node_id,$target_node_id)
 				"source" => $source_node_id,
 				"target" => $target_node_id,
 				);
+	return $rich_result;
+}
+
+function changeType($node_id, $old_type, $new_type)
+{
+	global $MyGraph;
+	global $prefix_loglink;
+	global $iri_loglink_domain;
+	global $iri_loglink_node;
+	global $prefix_rdf;
+	global $prefix_rdfs;
+
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+	$domain_selected_iri=$iri_loglink_domain."loglink11";
+	$node_iri=$iri_loglink_node.$node_id;
+	
+	//on supprime l'ancien type
+	$sparql ='
+		PREFIX loglink: <'.$prefix_loglink.'>
+		DELETE WHERE
+		{
+			graph <'.$MyGraph.'>
+			{
+				<'.$node_iri.'> rdfs:type "'.$old_type.'"
+			}
+		}
+	';
+	
+	//afficheText("changeType (delete old) : ".$sparql,500);
+	$res = $MyEndPointSparql->query($sparql);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+	
+	//On ajoute un triplet pour le nouveau type
+	$sparql ='
+		PREFIX loglink: <'.$prefix_loglink.'>
+    	PREFIX rdf: <'.$prefix_rdf.'>
+    	PREFIX rdfs: <'.$prefix_rdfs.'>
+		INSERT DATA
+		{
+			graph <'.$MyGraph.'>
+			{
+				<'.$domain_selected_iri.'> loglink:node <'.$node_iri.'> .
+				<'.$node_iri.'> rdfs:type "'.$new_type.'" .
+			}
+		}
+	';
+
+	$res = $MyEndPointSparql->queryUpdate($sparql);
+	//safficheText("chanType: type : ".$type." nodeId : ".$nodeId,400);
+
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+
+	$rich_result[0] = "changeType";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = array(
+			"node_id" => $node_id,
+			"old_type" => $old_type,
+			"new_type" => $new_type,
+	);
+	return $rich_result;
+}
+
+function changeLabel($node_id, $label)
+{
+	global $MyGraph;
+	global $prefix_loglink;
+	global $iri_loglink_domain;
+	global $iri_loglink_node;
+	global $prefix_rdf;
+	global $prefix_rdfs;
+
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+	$domain_selected_iri=$iri_loglink_domain."loglink11";
+	$node_iri=$iri_loglink_node.$node_id;
+	
+	//on supprime l'ancien label
+	$sparql ='
+		PREFIX loglink: <'.$prefix_loglink.'>
+		DELETE WHERE
+		{
+			graph <'.$MyGraph.'>
+			{
+				<'.$node_iri.'> rdfs:label ?l .
+			}
+		}
+	';
+	
+	//afficheText("changeType (delete old) : ".$sparql,500);
+	$res = $MyEndPointSparql->query($sparql);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+	
+	//On ajoute un triplet pour le nouveau label
+	$sparql ='
+		PREFIX loglink: <'.$prefix_loglink.'>
+    	PREFIX rdf: <'.$prefix_rdf.'>
+    	PREFIX rdfs: <'.$prefix_rdfs.'>
+		INSERT DATA
+		{
+			graph <'.$MyGraph.'>
+			{
+				<'.$domain_selected_iri.'> loglink:node <'.$node_iri.'> .
+				<'.$node_iri.'> rdfs:label "'.$label.'" .
+			}
+		}
+	';
+
+	$res = $MyEndPointSparql->queryUpdate($sparql);
+	//safficheText("chanType: type : ".$type." nodeId : ".$nodeId,400);
+
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+
+	$rich_result[0] = "changeLabel";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = array(
+			"node_id" => $node_id,
+			"label" => $label,
+	);
+	return $rich_result;
+}
+
+function deleteLink($source_iri_id, $target_iri_id)
+{
+	global $MyGraph;
+	global $prefix_loglink;
+	global $iri_loglink_domain;
+	global $iri_loglink_node;
+	global $prefix_rdf;
+	global $prefix_rdfs;
+
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+	$domain_selected_iri=$iri_loglink_domain."loglink11";
+	$source_iri=$iri_loglink_node.$source_iri_id;
+	$target_iri=$iri_loglink_node.$target_iri_id;
+	
+	//on supprime le lien entre deux noeud
+	//Le problème est qu'on ne sait pas dans quel sens le lien s'est fait
+	//Il faut donc faire les 2 sens
+	
+	// De source vers target et de target vers source
+	$sparql ='
+		PREFIX loglink: <'.$prefix_loglink.'>
+		WITH <'.$MyGraph.'>
+		DELETE WHERE
+			{
+				<'.$source_iri.'> loglink:linkedto <'.$target_iri.'> .
+			}
+		;
+		DELETE WHERE				
+			{
+				<'.$target_iri.'> loglink:linkedto <'.$source_iri.'> .
+			}
+	';
+	
+	//afficheText("deleteLink (delete old) : ".$sparql,500);
+	$res = $MyEndPointSparql->query($sparql);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+		
+	$rich_result[0] = "deleteLink";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = array(
+			"source_iri_id" => $source_iri_id,
+			"target_iri_id" => $target_iri_id,
+	);
+	return $rich_result;
+}
+
+function deleteNode($node_iri_id)
+{
+	global $MyGraph;
+	global $prefix_loglink;
+	global $iri_loglink_domain;
+	global $iri_loglink_node;
+	global $prefix_rdf;
+	global $prefix_rdfs;
+
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+	$domain_selected_iri=$iri_loglink_domain."loglink11";
+	$node_iri=$iri_loglink_node.$node_iri_id;
+	
+	//on supprime le noeud souhaité et les liens qui sont liés à ce noeud
+	
+	// Les liens ayant le noeud en tant que domaine
+	$sparql ='
+		WITH <'.$MyGraph.'>
+		DELETE WHERE
+			{
+				<'.$node_iri.'> ?p ?o .
+			}
+		;
+		DELETE WHERE				
+			{
+				?s ?p <'.$node_iri.'> .
+			}
+	';
+	
+	//afficheText("deleteNode : ".$sparql,500);
+	$res = $MyEndPointSparql->query($sparql);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+
+	$rich_result[0] = "deleteNode";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = $node_iri_id;
 	return $rich_result;
 }
 

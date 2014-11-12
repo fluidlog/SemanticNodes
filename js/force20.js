@@ -57,6 +57,13 @@ var data = {
 			"url" : "fluidlog.com/lesfaitsdesmots/loglink4.2/index.html",
 		},
 		{
+			"name": "PAIR Party",
+			"description": "Cartographie des PAIR réalisée lors de la PAIR party à l'expo WAVE 2014",
+			"rayon" : 30,
+			"level" : 3,
+			"url" : "fluidlog.com/lesfaitsdesmots/loglink1.2/index.html",
+		},
+		{
 			"name": "PAIR (CF)",
 			"description": "Projets, Acteurs, Idées, Ressources (Context+focus)",
 			"rayon" : 30,

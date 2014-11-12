@@ -16,10 +16,19 @@ $modeDebug = false;
 //Put here the URL of your endpoint
 CONST  ENDPOINTSPARQL = "http://io.bordercloud.com/sparql-auth/";
 
-//Test graph
-$MyGraph = "http://test.fluidlog.com";
-//Prod graph
-//$MyGraph = "http://prod.fluidlog.com";
+if (
+	$_SERVER['HTTP_HOST'] === 'fluidlog.com' ||
+	$_SERVER['HTTP_HOST'] === 'www.fluidlog.com' ||
+	$_SERVER['HTTP_HOST'] === 'assemblee-virtuelle.org' ||
+	$_SERVER['HTTP_HOST'] === 'www.assemblee-virtuelle.org'
+) {
+	//Prod graph
+	$MyGraph = "http://prod.fluidlog.com";	
+} else {
+	//Test graph
+	$MyGraph = "http://test.fluidlog.com";
+}
+
 
 //Test code security
 $MyLogin = "fluidlog";
@@ -98,14 +107,15 @@ function getTriplesFromTriplestore($domain)
 		die (print_r($err,true));
 	}
 	
+//	var_dump($rows["result"]["rows"][0]);
+	
 	$result = array();
-	foreach($rows as $row)
+	foreach($rows["result"]["rows"] as $row)
 	{
-		//var_dump($rows);
 		$result[] = array(
-				"sujet" => $row['s'], 
-				"predicat" => $row['p'], 
-				"objet" => $row['o']
+				"sujet" => $row["s"], 
+				"predicat" => $row["p"], 
+				"objet" => $row["o"]
 		);
 	}
 	
@@ -187,6 +197,44 @@ function deleteAll()
 	$rich_result[0] = "deleteAll";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = "ok";
+	return $rich_result;
+}
+
+//Export du contenu du triplestore
+function exportGraph()
+{
+	global $MyGraph;
+	global $iri_loglink;
+	global $prefix_loglink;
+	
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+ 	//on supprime tous les triplets contenant des predicats de l'ontologie loglink
+ 	$sparql ='
+		CONSTRUCT { ?s ?p ?o }
+		WHERE
+		{
+			GRAPH <'.$MyGraph.'>
+			{ 
+				?s ?p ?o
+			} .
+		}
+ 	';
+
+	$res = $MyEndPointSparql->query($sparql);
+	//afficheText("deleteAll : ".$sparql,520);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+	
+	$rich_result[0] = "exportGraph";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = $res;
 	return $rich_result;
 }
 ?>

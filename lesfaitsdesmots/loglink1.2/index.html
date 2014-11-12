@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 	<meta charset="utf-8">
-	<title>PAIR à PAIR party !</title>
-	<link rel="stylesheet" type="text/css" href="css/loglink1.1.css" />
+	<title>Carto PAIR à PAIR</title>
+	<link rel="stylesheet" type="text/css" href="css/loglink1.2.css" />
 
 	<!--[if lt IE 9]>
 	Votre navigateur est obselète.
@@ -15,33 +15,40 @@
 </head>
 <body>
 	<div id="waiting" class="waiting"><img alt="waiting icon" src="../../img/waiting.gif"/></div>
-	<div class="return" id="return">
-		<div style="color : #00A; left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
+<!-- 	<div class="return" id="return">
+		<div style="left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
 	</div>
-	<div class="menu" id="menu">
-		<div style="color : #df2a21; font-size:14px;font-weight:bold;display:inline;">PAIR à PAIR</div>
+ -->	<div class="menu" id="menu">
+		<div style="display:inline;">EGPC / Positiva</div>
 		<button id="initKernelGraph" title="Initialization">0</button>
 		 <button id="refreshGraph" title="Refresh">!</button>
 	</div>
 	<div id="chart"></div>
-	<div class="message" id="message" style="display:none;"></div>
+<!-- 	<div class="message" id="message" style="display:none;"></div>
 	<div class="debug" id="debug"></div>
-	<div class="help" id="help">
-	<b>?----- Aide -----?</b><br>
-	<br>
-	Pour ajouter un noeud, "tirer" un noeud existant<br>
-	Vous pouvez lier deux noeuds entre eux<br>
-	Pour initialiser le graphe, clickez sur [0]<br>
-	Pour rafraichir le graphe, clickez sur [!]<br>
-	Vous pouvez zoomer et déplacer la carto panoramiquement<br>
-	<br>
-	Légende :
-	<ul>
-	<li style="color:#9451D4">Project</li>
-	<li style="color:#FC5460">Actor</li>
-	<li style="color:#FFF655">Idea</li>
-	<li style="color:#62E84D">Ressource</li>
-	</ul>
+ -->	
+ 	<div class="help_configuration" id="help_configuration">
+		<div class="help_configuration_header" id="help_configuration_header">
+		Aide / configuration
+		</div>
+		<div class="help">
+		<b>Aide :</b><br>
+		Pour ajouter un noeud, "tirer" un noeud existant<br>
+		Vous pouvez lier deux noeuds entre eux<br>
+		Pour initialiser le graphe, clickez sur [0]<br>
+		Pour rafraichir le graphe, clickez sur [!]<br>
+		Vous pouvez zoomer et déplacer la carto panoramiquement<br>
+		Pour supprimer un noeud, sélectionnez le et clickez sur la touche "suppr"<br>
+		Pour supprimer un lien, sélectionnez le et clickez sur la touche "suppr"<br>
+		</div>
+		<div class="configuration">
+		<b>Configuration (Clicker pour filtrer)</b><br>
+		<div class="filter_project" id="filter_project" style="background:#89A5E5">Project</div>
+		<div class="filter_actor" id="filter_actor" style="background:#F285B9">Actor</div>
+		<div class="filter_idea" id="filter_idea" style="background:#FFD98D">Idea</div>
+		<div class="filter_ressource" id="filter_ressource" style="background:#CDF989">Ressource</div>
+		<div class="filter_without" id="filter_without" style="background:#FFF">Vide</div>
+		</div>
 	</div>
 </body>
 	<script src="js/functions.js"></script>

@@ -4,7 +4,6 @@
 include('functions.php');
 include('user.php');
 include('domain.php');
-include('term.php');
 include('loglink1.1.php');
 
 //==================================================
@@ -40,11 +39,30 @@ if ($ajax)
 			break;
 		case "addNode" :
 			echo json_encode($_REQUEST['fn'](	$_REQUEST['source_node_id'],
-			$_REQUEST['target_node_id']));
+												$_REQUEST['target_node_id']));
 			break;
 		case "addLink" :
 			echo json_encode($_REQUEST['fn'](	$_REQUEST['source_node_id'],
-			$_REQUEST['target_node_id']));
+												$_REQUEST['target_node_id']));
+			break;
+		case "changeType" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['node_id'],
+											$_REQUEST['old_type'],
+											$_REQUEST['new_type']));
+			break;
+		case "changeLabel" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['node_id'],
+												$_REQUEST['label']));
+			break;
+		case "deleteLink" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['source_iri_id'],
+												$_REQUEST['target_iri_id']));
+			break;
+		case "deleteNode" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['node_iri_id']));
+			break;
+		case "exportGraph" :
+			echo json_encode($_REQUEST['fn']());
 			break;
 					
 		//Fonctions liées à l'utilisateur
@@ -240,11 +258,19 @@ else
 	echo ("<br> - Sauvegarder les coordonnees d'un utilisateur ");
 	echo ("<br><a href='main.php?fn=saveUserToTriplestore&user_iri_id=1&x=300&y=34'>main.php?fn=saveUserToTriplestore&user_iri_id=1&x=300&y=34</a>");
 	echo ("<br> - Afficher tout les triples !");
-	echo ("<br><a href='main.php?fn=getTriplesFromTriplestore&domain_name=loglink01'>main.php?fn=getTriplesFromTriplestore&domain_name=loglink01</a>");
+	echo ("<br><a href='main.php?fn=getTriplesFromTriplestore&domain_name=loglink11'>main.php?fn=getTriplesFromTriplestore&domain_name=loglink11</a>");
 	echo ("<br> - getNewNodeIri ");
 	echo ("<br><a href='main.php?fn=getNewNodeIri'>main.php?fn=getNewNodeIri</a>");
 	echo ("<br> - getDataset ");
 	echo ("<br><a href='main.php?fn=getDataset'>main.php?fn=getDataset</a>");
+	echo ("<br> - changeType ");
+	echo ("<br><a href='main.php?fn=changeType&node_id=1&old_type=actor&new_type=idea'>main.php?fn=changeType&node_id=1&old_type=actor&new_type=idea</a>");
+	echo ("<br> - deleteLink ");
+	echo ("<br><a href='main.php?fn=deleteLink&source_iri_id=1&target_iri_id=2'>main.php?fn=deleteLink&source_iri_id=1&target_iri_id=2</a>");
+	echo ("<br> - deleteNode ");
+	echo ("<br><a href='main.php?fn=deleteNode&node_iri_id=3'>main.php?fn=deleteNode&node_iri_id=3</a>");
+	echo ("<br> - exportGraph ");
+	echo ("<br><a href='main.php?fn=exportGraph'>main.php?fn=exportGraph</a>");
 	
 	echo ("<br> - Supprimer tout le contenu du Triplestore (Attention !) ");
 	echo ("<br><a href='main.php?fn=deleteAll'>main.php?fn=deleteAll</a>");
@@ -263,16 +289,35 @@ else
 			echo var_dump($_REQUEST['fn']());
 			break;
 		case "initKernelGraph" :
-			echo var_dump($_REQUEST['fn']($_REQUEST['first_node_iri'], 
-												$_REQUEST['second_node_iri']));
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['first_node_iri'], 
+											$_REQUEST['second_node_iri']));
 			break;
 		case "addNode" :
-			echo var_dump($_REQUEST['fn']($_REQUEST['source_node_id'],
-			$_REQUEST['target_node_id']));
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['source_node_id'],
+											$_REQUEST['target_node_id']));
 			break;
 		case "addLink" :
-			echo var_dump($_REQUEST['fn']($_REQUEST['source_node_id'],
-			$_REQUEST['target_node_id']));
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['source_node_id'],
+											$_REQUEST['target_node_id']));
+			break;
+		case "changeType" :
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['node_id'],
+											$_REQUEST['old_type'],
+											$_REQUEST['new_type']));
+			break;
+		case "changeLabel" :
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['node_id'],
+												$_REQUEST['label']));
+			break;
+		case "deleteLink" :
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['source_iri_id'],
+												$_REQUEST['target_iri_id']));
+			break;
+		case "deleteNode" :
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['node_iri_id']));
+			break;
+		case "exportGraph" :
+			echo json_encode($_REQUEST['fn']());
 			break;
 					
 		//Fonctions liées à l'utilisateur
