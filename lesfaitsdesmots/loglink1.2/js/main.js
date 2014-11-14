@@ -528,6 +528,11 @@
       "selector": ".idea",
       "filter": "#filter_idea"
     },
+    "none": {
+      "key": "none",
+      "selector": ".none",
+      "filter": "#filter_none"
+    },
     "project": {
       "key": "project",
       "selector": ".project",
@@ -547,15 +552,19 @@
 
   var toggleFilter = function (target) {
     d3.selectAll(target.selector).style("opacity", function () {
-      return this.classList.remove("node_opacity")}
+      this.classList.remove("node_opacity")}
     );
 
     var filterName;
     for (filterName in filters) {
       if (filterName !== target.key) {
         d3.selectAll(filters[filterName].selector).style("opacity", function () {
-          return this.classList.add("node_opacity")}
-        )
+          if (target.key == 'none') {
+            this.classList.remove("node_opacity");
+          } else {
+            this.classList.add("node_opacity");
+          }
+        });
       }
     }
   };
