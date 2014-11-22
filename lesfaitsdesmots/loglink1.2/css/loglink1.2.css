@@ -123,6 +123,8 @@ a
 .filter_ressource {padding: 5px;	cursor:pointer;}
 .filter_without {padding: 5px;	cursor:pointer;}
 
+#filter_none {background-color: #eee;}
+
 .message {
     position: fixed;
     left: 0;
