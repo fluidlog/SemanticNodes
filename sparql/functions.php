@@ -29,7 +29,6 @@ if (
 	$MyGraph = "http://test.fluidlog.com";
 }
 
-
 //Test code security
 $MyLogin = "fluidlog";
 $MyPassword = "password";

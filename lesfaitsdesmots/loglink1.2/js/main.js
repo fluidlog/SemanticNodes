@@ -3,16 +3,19 @@
 
 	var default_domain = "loglink11";
 	var dataset;
-	var new_domain = false;
+	var new_domain = true;
 	
 	$('#initKernelGraph').bind('click', function()
 			{
-				if (online)
+				if (confirm("Etes-vous sûr de vouloir réinitialiser le graphe ?"))
 				{
-					sparql_delete_all_into_triplestore();
-					init_graph(default_domain);
+					if (online)
+					{
+						sparql_delete_all_into_triplestore();
+						init_graph(default_domain);
+					}
+					location.reload()
 				}
-				location.reload()
 			}
 	);
 	
@@ -73,7 +76,7 @@
 	
 	// init svg
 	var outer = d3.select("#chart")
-	  .append("svg:svg")
+	  	.append("svg:svg")
 	    .attr("width", width)
 	    .attr("height", height)
 	
@@ -92,10 +95,10 @@
 					.on("dragend", dragend);
 
 	svg.append('svg:rect')
-	    .attr('x', -width)
-	    .attr('y', -height)
-	    .attr('width', width*3)
-	    .attr('height', height*3)
+	    .attr('x', -width*3)
+	    .attr('y', -height*3)
+	    .attr('width', width*7)
+	    .attr('height', height*7)
 	    .attr('fill', '#EEE')
 	
 	// init force layout
@@ -123,15 +126,9 @@
 	    node = svg.selectAll(".node"),
 	    link = svg.selectAll(".link");
 	
-	// add keyboard callback
-	if (online)
-	{
-		d3.select(window)
+	d3.select(window)
 		    .on("keydown", keydown);
-	}
-	else 
-		message (message_offline,"warning");
-	
+
 	redraw();
 	
 	// redraw force layout
@@ -225,7 +222,7 @@
 					.call(node_drag)
 					.append("title").text("Drag & drop")
 
-		if (online)
+		if (online || debug == true)
 		{
 			/* Option d'édition */
 			node_enter_g.append("circle")
@@ -509,68 +506,14 @@
 		});
 
 		//lancement du tick
-		d3.select("#waiting").style("display", "none");
 		force.on("tick", tick);
+		d3.select("#waiting").style("display", "none");
 	
 		//On supprime tous les noeuds "deleted"
 		d3.selectAll(".deleted").remove();
 
 	}
 	
- 	$('#filter_project').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
-
- 	$('#filter_actor').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
-
- 	$('#filter_idea').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
-
- 	$('#filter_ressource').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".without").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
-
- 	$('#filter_without').click(
-	 		function(){
-	 			// Aide : http://bl.ocks.org/zanarmstrong/c9bb2842647140265d57
-	 			// ET : google "d3 selectAll toggle classList" + https://github.com/mbostock/d3/wiki/Selections
-	 			d3.selectAll(".project").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".actor").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".idea").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 			d3.selectAll(".ressource").style("opacity", function (){ return this.classList.toggle("node_opacity")})
-	 		}
-	 	);
 
  	var linkedByIndex = {};
 	dataset.edges.forEach(function(d) {

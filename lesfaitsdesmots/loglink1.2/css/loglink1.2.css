@@ -45,8 +45,8 @@ a
     display:inline;
     margin: 10px;
 	padding: 5px;
-    width: 200px;
-	text-align: right;
+    width: 350px;
+	text-align: center;
 	z-index:10;
 
     -moz-border-radius:    5px;
@@ -112,6 +112,10 @@ a
 	cursor:default;
 }
 
+.configuration .filter {
+width: 200px;
+}
+
 .node_opacity
 {
 	opacity:.2;
@@ -122,6 +126,11 @@ a
 .filter_idea {padding: 5px;	cursor:pointer;}
 .filter_ressource {padding: 5px;	cursor:pointer;}
 .filter_without {padding: 5px;	cursor:pointer;}
+
+.filter_select {    
+}
+
+#filter_none {background-color: #eee;}
 
 .message {
     position: fixed;

@@ -2,7 +2,6 @@
 //ini_set("display_errors","1");
 
 include('functions.php');
-include('user.php');
 include('domain.php');
 include('loglink1.1.php');
 
@@ -20,7 +19,8 @@ $ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_W
 if ($ajax)
 {
 	header('Content-type: application/json');
-
+	header("Cache-Control: max-age=1"); // Annule le cache du serveur pour ne plus avoir de persistances dans les requêtes SPARQL
+	
 	switch ($_REQUEST['fn'])
 	{
 		//Fonctions spécifiques utilisées pour l'application loglink1.1

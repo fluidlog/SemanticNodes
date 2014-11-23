@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>Carto PAIR à PAIR</title>
 	<link rel="stylesheet" type="text/css" href="css/loglink1.2.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/semantic.min.css" />
 
 	<!--[if lt IE 9]>
 	Votre navigateur est obselète.
@@ -12,6 +13,7 @@
 
 	<script src="../../js/jquery-1.8.2.js"></script>
 	<script src="../../js/d3.v2.min.js"></script>
+	
 </head>
 <body>
 	<div id="waiting" class="waiting"><img alt="waiting icon" src="../../img/waiting.gif"/></div>
@@ -19,37 +21,42 @@
 		<div style="left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
 	</div>
  -->	<div class="menu" id="menu">
-		<div style="display:inline;">EGPC / Positiva</div>
-		<button id="initKernelGraph" title="Initialization">0</button>
+		<div style="display:inline;">Carto PAIR à PAIR</div>
+ 		<button id="initKernelGraph" title="Initialization">0</button>
 		 <button id="refreshGraph" title="Refresh">!</button>
+		 <button id="exportAsImage" title="Export as image">^</button>
 	</div>
 	<div id="chart"></div>
 <!-- 	<div class="message" id="message" style="display:none;"></div>
 	<div class="debug" id="debug"></div>
  -->	
- 	<div class="help_configuration" id="help_configuration">
-		<div class="help_configuration_header" id="help_configuration_header">
+ <div class="help_configuration" id="help_configuration">
+	<div class="help_configuration_header" id="help_configuration_header">
 		Aide / configuration
-		</div>
-		<div class="help">
-		<b>Aide :</b><br>
-		Pour ajouter un noeud, "tirer" un noeud existant<br>
-		Vous pouvez lier deux noeuds entre eux<br>
-		Pour initialiser le graphe, clickez sur [0]<br>
-		Pour rafraichir le graphe, clickez sur [!]<br>
-		Vous pouvez zoomer et déplacer la carto panoramiquement<br>
-		Pour supprimer un noeud, sélectionnez le et clickez sur la touche "suppr"<br>
-		Pour supprimer un lien, sélectionnez le et clickez sur la touche "suppr"<br>
-		</div>
-		<div class="configuration">
-		<b>Configuration (Clicker pour filtrer)</b><br>
-		<div class="filter_project" id="filter_project" style="background:#89A5E5">Project</div>
-		<div class="filter_actor" id="filter_actor" style="background:#F285B9">Actor</div>
-		<div class="filter_idea" id="filter_idea" style="background:#FFD98D">Idea</div>
-		<div class="filter_ressource" id="filter_ressource" style="background:#CDF989">Ressource</div>
-		<div class="filter_without" id="filter_without" style="background:#FFF">Vide</div>
-		</div>
 	</div>
+
+	<div class="help">
+		<b>Aide :</b><br>
+		Pour ajouter un noeud:<br><i>"Tirer" un noeud existant</i><br>
+		Pour lier deux noeuds entre eux:<br><i>"Tirer" un lien depuis un noeud existant<br>jusqu'au noeud cible</i><br>
+		Pour initialiser le graphe:<br><i>Cliquer sur [0]</i><br>
+		Pour rafraichir le graphe:<br><i>Cliquer sur [!]</i><br>
+		Pour zoomer:<br><i>Utilisez la molette de la souris</i><br>
+		Pour déplacer la carto panoramiquement:<br><i>Cliquer sur le fond, déplacer, relâcher</i><br>
+		Pour supprimer un noeud:<br><i>Sélectionnez le et cliquez sur la touche "suppr"</i><br>
+		Pour supprimer un lien:<br><i>sélectionnez le et cliquez sur la touche "suppr"</i><br>
+	</div>
+
+	<div class="configuration">
+		<b>Configuration (Clicker pour filtrer)</b><br><br>
+		<div class="filter_project ui toggle button filter" id="filter_project" style="background:#89A5E5">Project</div><br>
+		<div class="filter_actor ui toggle button filter" id="filter_actor" style="background:#F285B9">Actor</div><br>
+		<div class="filter_idea ui toggle button filter" id="filter_idea" style="background:#FFD98D">Idea</div><br>
+		<div class="filter_ressource ui toggle button filter" id="filter_ressource" style="background:#CDF989">Ressource</div><br>
+		<div class="filter_without ui toggle button filter" id="filter_without" style="background:#FFF">Vide</div><br>
+		<div class="filter_none ui toggle button filter" id="filter_none">Aucun filtre</div>
+	</div>
+</div>
 </body>
 	<script src="js/functions.js"></script>
 	<script src="js/debug_functions.js"></script>
