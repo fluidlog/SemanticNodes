@@ -127,9 +127,12 @@ width: 200px;
 .filter_ressource {padding: 5px;	cursor:pointer;}
 .filter_without {padding: 5px;	cursor:pointer;}
 
+<<<<<<< HEAD
 .filter_select {    
 }
 
+=======
+>>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
 #filter_none {background-color: #eee;}
 
 .message {
