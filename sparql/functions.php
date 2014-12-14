@@ -209,7 +209,7 @@ function exportGraph()
 	//On se connecte
 	$MyEndPointSparql = connectMaBase();
 
- 	//on supprime tous les triplets contenant des predicats de l'ontologie loglink
+ 	//exorte le graph avec une requete CONSTRUCT
  	$sparql ='
 		CONSTRUCT { ?s ?p ?o }
 		WHERE
@@ -222,7 +222,7 @@ function exportGraph()
  	';
 
 	$res = $MyEndPointSparql->query($sparql);
-	//afficheText("deleteAll : ".$sparql,520);
+	//afficheText("exportGraph : ".$sparql,520);
 	
 	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
 	$err = $MyEndPointSparql->getErrors();

@@ -3,18 +3,9 @@
 
 	var default_domain = "loglink11";
 	var dataset;
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	var new_domain = true;
 	
-=======
-	var new_domain = false;
-
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
-=======
-	var new_domain = false;
-
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
 	$('#initKernelGraph').bind('click', function()
 			{
 				if (confirm("Etes-vous sûr de vouloir réinitialiser le graphe ?"))
@@ -135,15 +126,7 @@
 	    links = force.links(),
 	    node = svg.selectAll(".node"),
 	    link = svg.selectAll(".link");
-<<<<<<< HEAD
-<<<<<<< HEAD
 	
-	d3.select(window)
-		    .on("keydown", keydown);
-=======
-=======
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
-
 	// add keyboard callback
 	if (online)
 	{
@@ -152,10 +135,6 @@
 	}
 	else
 		message (message_offline,"warning");
-<<<<<<< HEAD
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
-=======
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
 
 	redraw();
 
@@ -535,26 +514,12 @@
 
 		//lancement du tick
 		force.on("tick", tick);
-<<<<<<< HEAD
-<<<<<<< HEAD
 		d3.select("#waiting").style("display", "none");
 	
-=======
-
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
-=======
-
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
 		//On supprime tous les noeuds "deleted"
 		d3.selectAll(".deleted").remove();
 
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-=======
-=======
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
 
   var filters = {
     "actor": {
@@ -620,10 +585,7 @@
       toggleFilter(filters[filterKey]);
     });
   }
-<<<<<<< HEAD
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
-=======
->>>>>>> 7f4e3b52e0e149226c24f628874911a54a11182c
+
 
  	var linkedByIndex = {};
 	dataset.edges.forEach(function(d) {
