@@ -79,8 +79,9 @@ function trace_sparql($text)
 {
 	$fp = fopen('trace_sparql.txt','a+'); // ouvrir le fichier ou le créer
 	fseek($fp,SEEK_END); // poser le point de lecture à la fin du fichier
-//	echo "rich_result[2]:".$rich_result[2];
-	$err= date('Y-m-d H:i:s') ." ". $text . " ($_SERVER[REMOTE_ADDR])\r\n";
+// 	echo "=================\r\n";
+// 	var_dump($text);
+	$err= date('Y-m-d H:i:s ') . $text . " ($_SERVER[REMOTE_ADDR])\r\n";
 	fputs($fp,$err); // ecrire ce texte
 	fclose($fp); //fermer le fichier
 }

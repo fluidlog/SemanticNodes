@@ -1,6 +1,6 @@
 <?php
 
-ini_set("display_errors", "1");
+ini_set("display_errors", "0");
 
 include('functions.php');
 include('domain.php');
@@ -17,10 +17,13 @@ include('loglink1.1.php');
 $bouchon = "false";
 $ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 
+$function_name = $_REQUEST['fn'];
+
 if ($ajax)
-{
+{	
 	header('Content-type: application/json');
 	header("Cache-Control: max-age=1"); // Annule le cache du serveur pour ne plus avoir de persistances dans les requêtes SPARQL
+	
 	
 	switch ($_REQUEST['fn'])
 	{
@@ -281,8 +284,7 @@ else
 	{
 		//Fonctions spécifiques utilisées pour l'application loglink4.2
 		case "getDataset" :
-			echo var_dump($rich_result=$_REQUEST['fn']());
-			trace_sparql($rich_result);
+			echo var_dump($_REQUEST['fn']());
 			break;
 		case "incrementNodeId" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['node_iri_id']));
@@ -472,5 +474,5 @@ else
 	}
 }
 // On trace quelle fonction a été appelée
-trace_sparql($_REQUEST['fn']);
+trace_sparql($function_name);
 ?>
