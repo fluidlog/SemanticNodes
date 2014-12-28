@@ -1,6 +1,6 @@
 <?php
 
-ini_set("display_errors", "0");
+ini_set("display_errors", "1");
 
 include('functions.php');
 include('domain.php');
@@ -281,7 +281,8 @@ else
 	{
 		//Fonctions spécifiques utilisées pour l'application loglink4.2
 		case "getDataset" :
-			echo var_dump($_REQUEST['fn']());
+			echo var_dump($rich_result=$_REQUEST['fn']());
+			trace_sparql($rich_result);
 			break;
 		case "incrementNodeId" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['node_iri_id']));
@@ -468,8 +469,8 @@ else
 		case "deleteTripleIntoTriplestore" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['sujet'], $_REQUEST['predicat'], $_REQUEST['objet']));
 		break;
-		
-		
 	}
 }
+// On trace quelle fonction a été appelée
+trace_sparql($_REQUEST['fn']);
 ?>
