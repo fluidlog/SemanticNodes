@@ -168,7 +168,7 @@
 		node = node.data(nodes, function(d) { return d.iri_id;});
 		node_enter_g = node.enter()
 				.append("g")
-	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : d.type;})
+	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : "node "+d.type;})
 				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 
 		/* Cercle qui apparait sur le hover */
