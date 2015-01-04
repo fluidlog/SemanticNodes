@@ -463,3 +463,38 @@ function sparql_delete_all_into_triplestore()
 		);
 }
 
+function sparql_export_from_triplestore()
+{
+	var exportedGraph;
+	//Appelle main.php de manière synchrone. C'est à dire, attend la réponse avant de continuer
+	$.ajax(
+			{
+			    type: 'GET',
+			    url: '../../sparql/main.php',
+			    dataType: 'json',
+			    success: function(t_data) 
+						    { 
+					 			if (t_data[2] != null)
+			 					{
+									// t_data[0] -> nom fonction php, t_data[1] -> sparql, t_data[2] -> iri,
+				    				affiche_debug(t_data[0], t_data[1]);
+				    				exportedGraph = t_data[2];
+				    				message ("sparql_export_from_triplestore OK","succed");
+			 					}
+								else
+								{
+									message ("Erreur t_data Null","alert");
+								}
+						    },
+			    error: function(t_data) 
+						    { 
+			    				message ("Erreur Ajax : Message="+t_data.responseText+" (Fonction sparql_export_from_triplestore()) !","alert");
+			    				return false;
+						    },
+			    data: { fn : "exportGraph" },
+			    async: false
+			}
+		);
+	return exportedGraph;
+}
+

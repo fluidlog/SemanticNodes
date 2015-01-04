@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<title>Fluidlog > Les faits des mots</title>
+<!--[if lt IE 9]>
+Votre navigateur est obselète.
+Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
+<![endif]-->
+<script src="../js/d3.min.js"></script>
+</head>
+<body>
+<script>
+var data = {"nodes":[
+						{"id":0, "name":"# Statiques", "full_name":"technos, acteurs, projets", "url": "", "ext":"no", "type":"quoi"},
+						{"id":1, "name":"# Dynamiques", "full_name":"Add your terms on a surface", "url": "", "ext":"no", "type":"quoi"},
+						{"id":2, "name":"< fluidlog", "full_name":"Retour à l'acceuil", "url": "fluidlog.com", "ext":"no", "type":"nav"},											
+						{"id":3, "name":"# Les faits des mots", "full_name":"Espace de démonstration...", "url": "", "ext":"no", "type":"quoi"},
+						{"id":4, "name":"^ Cartographie sémantique", "full_name":"Loglink4.1 (4 relations)", "url": "fluidlog.com/lesfaitsdesmots/loglink4.1/index.html", "ext":"no", "type":"ou"},
+						{"id":5, "name":"^ Semantic taskboard", "full_name":"Loglink0.1 (0 relation)", "url": "fluidlog.com/lesfaitsdesmots/demo/loglink0.1/index.html", "ext":"no", "type":"ou"},
+						{"id":6, "name":"^ Open Thésaurus", "full_name":"Loglink5.1 (5 relations)", "url": "fluidlog.com/lesfaitsdesmots/loglink5.1/index.php", "ext":"no", "type":"ou"},
+						{"id":7, "name":"^ Semantic Nodes", "full_name":"Loglink1.1 (1 relation)", "url": "fluidlog.com/lesfaitsdesmots/loglink1.1/index.html", "ext":"no", "type":"ou"},
+					], 
+			"links":[
+						{"source":3,"target":1},
+						{"source":3,"target":0},
+						{"source":1,"target":5},
+						{"source":0,"target":4},
+						{"source":1,"target":6},
+						{"source":1,"target":7},
+					]
+			   }    
+</script>
+
+<script src="../js/fluidd3.js"></script>
+</body>
+</html>

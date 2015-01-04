@@ -20,6 +20,16 @@
 			}
 	);
 
+	$('#exportGraph').bind('click', function()
+			{
+				var exportGraph = sparql_export_from_triplestore();
+				var blob = new Blob([exportGraph], {type: "text/plain;charset=utf-8"});
+				var d = new Date();
+				var date_now = d.getDate()+"-"+d.getMonth()+1+"-"+d.getFullYear()+"-"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+				saveAs(blob, "svg-"+date_now+".ttl");
+			}
+	);
+
 	$('#refreshGraph').bind('click', function()
 			{
 				location.reload()

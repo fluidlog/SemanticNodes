@@ -232,7 +232,7 @@ function exportGraph()
 		}
  	';
 
-	$res = $MyEndPointSparql->query($sparql);
+	$res = $MyEndPointSparql->queryRead($sparql,"text/turtle");
 	//afficheText("exportGraph : ".$sparql,520);
 	
 	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs

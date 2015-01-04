@@ -637,8 +637,6 @@ function deleteNode($node_iri_id)
 	$node_iri=$iri_loglink_node.$node_iri_id;
 	
 	//on supprime le noeud souhaité et les liens qui sont liés à ce noeud
-	
-	// Les liens ayant le noeud en tant que domaine
 	$sparql ='
 		WITH <'.$MyGraph.'>
 		DELETE WHERE
