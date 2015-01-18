@@ -6,6 +6,9 @@ include('functions.php');
 include('domain.php');
 include('loglink1.1.php');
 
+// $toto = get_magic_quotes_gpc();
+// echo "magic_quote=".$toto;
+
 //==================================================
 //
 //Ce script est appelé :
@@ -65,8 +68,11 @@ if ($ajax)
 		case "deleteNode" :
 			echo json_encode($_REQUEST['fn'](	$_REQUEST['node_iri_id']));
 			break;
-		case "exportGraph" :
+		case "exportFromTriplestore" :
 			echo json_encode($_REQUEST['fn']());
+			break;
+		case "importIntoTriplestore" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['imported_graph']));
 			break;
 					
 		//Fonctions liées à l'utilisateur

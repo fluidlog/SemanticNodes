@@ -29,9 +29,11 @@ if (
 	$MyGraph = "http://test.fluidlog.com";
 }
 
+$MyGraph = "http://prod.av.org";
+
 //Test code security
-$MyLogin = "fluidlog";
-$MyPassword = "password";
+$MyLogin = "AV";
+$MyPassword = "fluid";
 
 //IRI sur laquelle tout les autres IRI se base pour le projet loglink
 $iri_loglink = "http://www.fluidlog.com/loglink";
@@ -52,8 +54,8 @@ function connectMaBase()
 	$Endpoint = new Endpoint(ENDPOINTSPARQL,$modeDebug);
 	$Endpoint->setEndpointUpdate(ENDPOINTSPARQL);
 	$Endpoint->setEndpointQuery(ENDPOINTSPARQL);
-	$Endpoint->setLogin("fluidlog");
-	$Endpoint->setPassword("password");
+	$Endpoint->setLogin($MyLogin);
+	$Endpoint->setPassword($MyPassword);
 	return $Endpoint;
 }
 
@@ -211,7 +213,7 @@ function deleteAll()
 }
 
 //Export du contenu du triplestore
-function exportGraph()
+function exportFromTriplestore()
 {
 	global $MyGraph;
 	global $iri_loglink;
@@ -232,7 +234,7 @@ function exportGraph()
 		}
  	';
 
-	$res = $MyEndPointSparql->queryRead($sparql,"text/turtle");
+	$res = $MyEndPointSparql->queryRead($sparql,"text/plain");
 	//afficheText("exportGraph : ".$sparql,520);
 	
 	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
@@ -242,7 +244,64 @@ function exportGraph()
 		die (print_r($err,true));
 	}
 	
-	$rich_result[0] = "exportGraph";
+	$rich_result[0] = "exportFromTriplestore";
+	$rich_result[1] = $sparql;
+	$rich_result[2] = $res;
+	return $rich_result;
+}
+
+//Export du contenu du triplestore
+function importIntoTriplestore($imported_graph)
+{
+	global $MyGraph;
+	global $iri_loglink;
+	global $prefix_loglink;
+	
+	//On se connecte
+	$MyEndPointSparql = connectMaBase();
+
+ 	//on supprime tous les triplets contenant des predicats de l'ontologie loglink
+ 	$sparql ='
+ 		DELETE 
+ 		WHERE
+ 		{
+ 			graph <'.$MyGraph.'>
+			{
+			    ?s ?p ?o .
+			}
+		}
+ 	';
+
+	$res = $MyEndPointSparql->query($sparql);
+	//afficheText("deleteAll : ".$sparql,520);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+	
+	$imported_graph = stripslashes($imported_graph);
+	//Importe le graph avec une requete LOAD
+ 	$sparql = '
+ 			INSERT INTO GRAPH <'.$MyGraph.'>
+ 			{
+ 					'.$imported_graph.'
+			} 
+ 	';
+
+	$res = $MyEndPointSparql->query($sparql);
+	//afficheText("exportGraph : ".$sparql,520);
+	
+	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$err = $MyEndPointSparql->getErrors();
+	if ($err)
+	{
+		die (print_r($err,true));
+	}
+	
+	$rich_result[0] = "importIntoTriplestore";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = $res;
 	return $rich_result;
