@@ -29,11 +29,9 @@ if (
 	$MyGraph = "http://test.fluidlog.com";
 }
 
-$MyGraph = "http://prod.av.org";
-
 //Test code security
-$MyLogin = "AV";
-$MyPassword = "fluid";
+$MyLogin = "fluidlog";
+$MyPassword = "password";
 
 //IRI sur laquelle tout les autres IRI se base pour le projet loglink
 $iri_loglink = "http://www.fluidlog.com/loglink";
