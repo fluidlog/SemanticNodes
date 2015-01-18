@@ -491,10 +491,42 @@ function sparql_export_from_triplestore()
 			    				message ("Erreur Ajax : Message="+t_data.responseText+" (Fonction sparql_export_from_triplestore()) !","alert");
 			    				return false;
 						    },
-			    data: { fn : "exportGraph" },
+			    data: { fn : "exportFromTriplestore" },
 			    async: false
 			}
 		);
 	return exportedGraph;
+}
+
+function sparql_import_into_triplestore(imported_graph)
+{
+	//Appelle main.php de manière synchrone. C'est à dire, attend la réponse avant de continuer
+	$.ajax(
+			{
+			    type: 'GET',
+			    url: '../../sparql/main.php',
+			    dataType: 'json',
+			    success: function(t_data) 
+						    { 
+					 			if (t_data[2] != null)
+			 					{
+									// t_data[0] -> nom fonction php, t_data[1] -> sparql, t_data[2] -> iri,
+				    				affiche_debug(t_data[0], t_data[1]);
+				    				message ("sparql_import_into_triplestore OK","succed");
+			 					}
+								else
+								{
+									message ("Erreur t_data Null","alert");
+								}
+						    },
+			    error: function(t_data) 
+						    { 
+			    				message ("Erreur Ajax : Message="+t_data.responseText+" (Fonction sparql_import_into_triplestore()) !","alert");
+			    				return false;
+						    },
+			    data: { fn : "importIntoTriplestore", imported_graph : imported_graph },
+			    async: false
+			}
+		);
 }
 

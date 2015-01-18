@@ -12,24 +12,24 @@
         Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
         <![endif]-->
 
-        <script src="../../js/jquery.min.js"></script>
+        <script src="js/jquery.min.js"></script>
 
-        <script src="../../js/d3.v2.min.js"></script>
+        <script src="js/d3.v2.min.js"></script>
 
-        <script src="../../js/semantic.js"></script>
+        <script src="js/semantic.min.js"></script>
 
-        <script src="../../js/FileSaver.min.js"></script>
+        <script src="js/FileSaver.min.js"></script>
 
-        <link rel="stylesheet" href="../../css/semantic.min.css">
+        <link rel="stylesheet" href="css/semantic.min.css">
 
-        <link rel="stylesheet" href="../../css/layout.css">
+        <link rel="stylesheet" href="css/layout.css">
 
     </head>
 
     <body>
 
         <div id="waiting" class="waiting">
-            <img alt="waiting icon" src="../../img/waiting.gif"/>
+            <img alt="waiting icon" src="img/waiting.gif"/>
         </div>
 
         <!-- 	<div class="return" id="return">
@@ -39,15 +39,14 @@
 
         <div class="menu" id="menu">
             <div style="display:inline;">Carto PAIR</div>
-<!--             <button id="initKernelGraph" title="Initialization">Init</button>
- -->            <button id="refreshGraph" title="Refresh">Refresh</button>
-            <button id="exportGraph" title="Save">Save</button>
+			<button id="initKernelGraph" title="Initialization">Init</button>
+			<button id="refreshGraph" title="Refresh">Refresh</button>
         </div>
 
         <div id="chart"></div>
-        <!-- 	<div class="message" id="message" style="display:none;"></div>
+<!--         <div class="message" id="message" style="display:none;"></div>
             <div class="debug" id="debug"></div>
-         -->
+ -->
         <div class="help_configuration" id="help_configuration">
 
             <div class="help_configuration_header" id="help_configuration_header">
@@ -74,10 +73,14 @@
                 <div class="filter_without ui toggle button filter" id="filter_without" style="background:#FFF">Vide</div>
                 <div class="filter_none ui toggle button filter" id="filter_none">Aucun filtre</div>
             </div>
-            <div class="import">
-            	<imput type="file" name="importGraph.ttl">
-            </div>
 
+            <div class="import">
+                <b>Exporter (Save) / Importer (uploader) un graphe</b><br>
+				<img src="img/save.png" id="exportGraph" title="Export graph" width=30px height=30px style="cursor:pointer" />
+				<img src="img/upload_64.png" id="importGraphbutton" title="Import graph" width=30px height=30px style="cursor:pointer" />
+            	<input type="file" id="importGraph" style="display:none" accept="text/turtle">
+            </div>
+            
         </div>
 
 

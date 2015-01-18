@@ -29,7 +29,29 @@
 				saveAs(blob, "svg-"+date_now+".ttl");
 			}
 	);
+	
+	document.getElementById('importGraph').addEventListener('change', readSingleFile, false);
+	
+	function readSingleFile(evt) 
+	{
+			    //Retrieve the first (and only!) File from the FileList object
+			    var f = evt.target.files[0]; 
 
+			    if (f) {
+			      var r = new FileReader();
+			      r.onload = function(e) 
+			      { 
+				      var contents = e.target.result;
+				      sparql_import_into_triplestore(contents);
+				      alert( "Import réussi ! ;-)");  
+				      location.reload()
+			      }
+			      r.readAsText(f);
+			    } else { 
+			      alert("Failed to load file");
+			    }
+	}
+	
 	$('#refreshGraph').bind('click', function()
 			{
 				location.reload()
@@ -45,10 +67,10 @@
 	 		function(){
 					$('.help').toggleClass('hidden_help_configuration');
  					$('.configuration').toggleClass('hidden_help_configuration');
+ 					$('.import').toggleClass('hidden_help_configuration');
 	 		}
 	 	);
 
-//	var color_type = {"project" : "#62E84D", "actor" : "#FC5460", "idea" : "#FFF655", "ressource" : "#9451D4", "without" : "white"};
 	var color_type = {"project" : "#89A5E5", "actor" : "#F285B9", "idea" : "#FFD98D", "ressource" : "#CDF989", "without" : "white"};
 	var FontFamily = "Helvetica Neue, Helvetica, Arial, sans-serif;";
 	var rayon = 30;
@@ -58,7 +80,12 @@
 
 	$('.help').toggleClass('hidden_help_configuration');
 	$('.configuration').toggleClass('hidden_help_configuration');
+	$('.import').toggleClass('hidden_help_configuration');
 
+	$("#importGraphbutton").click(function () {
+	    $("#importGraph").trigger('click');
+	});
+	
 	//local ou distant ?
 	var online = navigator.onLine;
 
@@ -234,7 +261,7 @@
 					.attr('width', 20)
 					.attr('height', 20)
 					.style("visibility", "hidden")
-					.attr("xlink:href","../../img/move_64.png")
+					.attr("xlink:href","img/move_64.png")
 					.style("cursor", "move")
 					.call(node_drag)
 					.append("title").text("Drag & drop")
@@ -260,7 +287,7 @@
 						.attr('height', 20)
 						.style("cursor", "pointer")
 						.style("visibility", "hidden")
-						.attr("xlink:href","../../img/edit_64.png")
+						.attr("xlink:href","img/edit_64.png")
 						.on("click", make_editable)
 						.append("title").text("Click to edit label")
 
@@ -283,19 +310,19 @@
 							switch (d.type)
 							{
 								case "project" :
-									return "../../img/project.png";
+									return "img/project.png";
 									break;
 								case "actor" :
-									return "../../img/actor.png";
+									return "img/actor.png";
 									break;
 								case "idea" :
-									return "../../img/idea.png";
+									return "img/idea.png";
 									break;
 								case "ressource" :
-									return "../../img/ressource.png";
+									return "img/ressource.png";
 									break;
 								case "without" :
-									return "../../img/without.png";
+									return "img/without.png";
 									break;
 							}
 
@@ -321,19 +348,19 @@
 							switch (d.type)
 							{
 								case "project" :
-									return "../../img/project.png";
+									return "img/project.png";
 									break;
 								case "actor" :
-									return "../../img/actor.png";
+									return "img/actor.png";
 									break;
 								case "idea" :
-									return "../../img/idea.png";
+									return "img/idea.png";
 									break;
 								case "ressource" :
-									return "../../img/ressource.png";
+									return "img/ressource.png";
 									break;
 								case "without" :
-									return "../../img/without.png";
+									return "img/without.png";
 									break;
 							}
 
@@ -676,36 +703,36 @@
         switch (d.type)
 		{
 			case "project" :
-				el.attr("xlink:href","../../img/actor.png");
-				type_el.attr("xlink:href","../../img/actor.png");
+				el.attr("xlink:href","img/actor.png");
+				type_el.attr("xlink:href","img/actor.png");
 				d.type = "actor";
 				node_el.style("fill", function(d) { return color_type[d.type] } );
 				sparql_change_type(i, "project", "actor");
 				break;
 			case "actor" :
-				el.attr("xlink:href","../../img/idea.png");
-				type_el.attr("xlink:href","../../img/idea.png");
+				el.attr("xlink:href","img/idea.png");
+				type_el.attr("xlink:href","img/idea.png");
 				d.type = "idea";
 				node_el.style("fill", function(d) { return color_type[d.type] } );
 				sparql_change_type(i, "actor", "idea");
 				break;
 			case "idea" :
-				el.attr("xlink:href","../../img/ressource.png");
-				type_el.attr("xlink:href","../../img/ressource.png");
+				el.attr("xlink:href","img/ressource.png");
+				type_el.attr("xlink:href","img/ressource.png");
 				d.type = "ressource";
 				node_el.style("fill", function(d) { return color_type[d.type] } );
 				sparql_change_type(i, "idea", "ressource");
 				break;
 			case "ressource" :
-				el.attr("xlink:href","../../img/project.png");
-				type_el.attr("xlink:href","../../img/project.png");
+				el.attr("xlink:href","img/project.png");
+				type_el.attr("xlink:href","img/project.png");
 				d.type = "project";
 				node_el.style("fill", function(d) { return color_type[d.type] } );
 				sparql_change_type(i, "ressource", "project");
 				break;
 			case "without" :
-				el.attr("xlink:href","../../img/project.png");
-				type_el.attr("xlink:href","../../img/project.png");
+				el.attr("xlink:href","img/project.png");
+				type_el.attr("xlink:href","img/project.png");
 				d.type = "project";
 				node_el.style("fill", function(d) { return color_type[d.type] } );
 				sparql_change_type(i, "without", "project");
@@ -875,7 +902,7 @@
                         });
 
         // Remplace l'image d'édition par une image de sauvegarde
-        el.attr("xlink:href","../../img/save.png")
+        el.attr("xlink:href","img/save.png")
         	.on("click", change_label);
 	}
 
@@ -904,7 +931,7 @@
         // Note to self: frm.remove() will remove the entire <g> group! Remember the D3 selection logic!
         fo_el.remove();
         // Remplace l'image de sauvegarde par une image d'édition
-        el.attr("xlink:href","../../img/edit_64.png")
+        el.attr("xlink:href","img/edit_64.png")
     			.on("click", make_editable);
 	}
 
