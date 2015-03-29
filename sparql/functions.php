@@ -248,19 +248,19 @@ function exportFromTriplestore()
 	return $rich_result;
 }
 
+
 //Export du contenu du triplestore
 function importIntoTriplestore($imported_graph)
 {
 	global $MyGraph;
 	global $iri_loglink;
 	global $prefix_loglink;
-	
+
 	//On se connecte
 	$MyEndPointSparql = connectMaBase();
-
  	//on supprime tous les triplets contenant des predicats de l'ontologie loglink
  	$sparql ='
- 		DELETE 
+ 		DELETE
  		WHERE
  		{
  			graph <'.$MyGraph.'>
@@ -269,39 +269,59 @@ function importIntoTriplestore($imported_graph)
 			}
 		}
  	';
-
-	$res = $MyEndPointSparql->query($sparql);
-	//afficheText("deleteAll : ".$sparql,520);
-	
-	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
+	$MyEndPointSparql->query($sparql);
 	$err = $MyEndPointSparql->getErrors();
-	if ($err)
-	{
-		die (print_r($err,true));
+	if ($err) {
+		throw new \Exception($err);
 	}
-	
-	$imported_graph = stripslashes($imported_graph);
-	//Importe le graph avec une requete LOAD
- 	$sparql = '
- 			INSERT INTO GRAPH <'.$MyGraph.'>
- 			{
- 					'.$imported_graph.'
-			} 
- 	';
 
-	$res = $MyEndPointSparql->query($sparql);
-	//afficheText("exportGraph : ".$sparql,520);
-	
-	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
-	$err = $MyEndPointSparql->getErrors();
-	if ($err)
-	{
-		die (print_r($err,true));
+	$stripedGraph = stripslashes($imported_graph);
+	$maxCharacters = 9000;
+	if (strlen($stripedGraph) > $maxCharacters) {
+		$index = 0;
+		$characters = 0;
+		$graphs = [];
+		$nextGraphLines = [];
+		$stripedGraph = str_replace("\rn", "\n", $stripedGraph);
+		$graph = str_replace("\r", "\n", $stripedGraph);
+		$lines = explode("\n", $graph);
+		while ($index < count($lines)) {
+			$nextGraphLines[] = $lines[$index];
+			$index++;
+			if (array_key_exists($index, $lines)) {
+				$characters = $characters + strlen($lines[$index]);
+				if ($characters >= $maxCharacters) {
+					$characters = 0;
+					$graphs[] = $nextGraphLines;
+					$nextGraphLines = [];
+				}
+			}
+		}
+		foreach ($graphs as $index => $lines) {
+			$graphs[$index] = implode("\n", $lines);
+		}
+	} else {
+		$graphs = [$stripedGraph];
 	}
-	
-	$rich_result[0] = "importIntoTriplestore";
-	$rich_result[1] = $sparql;
-	$rich_result[2] = $res;
-	return $rich_result;
+	foreach ($graphs as $index => $graph) {
+		// Importe le graph avec une requête de type `LOAD`
+		$sparql = <<<"SPARQL"
+INSERT INTO GRAPH <$MyGraph>
+{
+	$graph
 }
-?>
+SPARQL;
+		$res = $MyEndPointSparql->query($sparql);
+		$err = $MyEndPointSparql->getErrors();
+		if ($err) {
+			throw new \Exception($err);
+		}
+		$rich_result[0] = "importIntoTriplestore";
+		$rich_result[1] = $sparql;
+		$rich_result[2] = $res;
+		if ($index + 1 === count($graphs)) {
+			trace_sparql(sprintf('Imported a graph from %d chunks',  count($graphs)));
+			return $rich_result;
+		}
+	}
+}
