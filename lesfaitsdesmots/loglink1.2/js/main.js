@@ -1,76 +1,16 @@
 // Code de départ : http://bl.ocks.org/benzguo/4370043
 
-
+/* =========================================
+ *  
+ *  Initialisation des variables
+ *  
+ *  ======================================== */
+ 
 	var default_domain = "loglink11";
 	var dataset;
 
 	var new_domain = true;
 	
-	$('#initKernelGraph').bind('click', function()
-			{
-				if (confirm("Etes-vous sûr de vouloir réinitialiser le graphe ?"))
-				{
-					if (online)
-					{
-						sparql_delete_all_into_triplestore();
-						init_graph(default_domain);
-					}
-					location.reload()
-				}
-			}
-	);
-
-	$('#exportGraph').bind('click', function()
-			{
-				var exportGraph = sparql_export_from_triplestore();
-				var blob = new Blob([exportGraph], {type: "text/plain;charset=utf-8"});
-				var d = new Date();
-				var date_now = d.getDate()+"-"+d.getMonth()+1+"-"+d.getFullYear()+"-"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-				saveAs(blob, "svg-"+date_now+".ttl");
-			}
-	);
-	
-	document.getElementById('importGraph').addEventListener('change', readSingleFile, false);
-	
-	function readSingleFile(evt) 
-	{
-			    //Retrieve the first (and only!) File from the FileList object
-			    var f = evt.target.files[0]; 
-
-			    if (f) {
-			      var r = new FileReader();
-			      r.onload = function(e) 
-			      { 
-				      var contents = e.target.result;
-				      sparql_import_into_triplestore(contents);
-				      alert( "Import réussi ! ;-)");  
-				      location.reload()
-			      }
-			      r.readAsText(f);
-			    } else { 
-			      alert("Failed to load file");
-			    }
-	}
-	
-	$('#refreshGraph').bind('click', function()
-			{
-				location.reload()
-			}
-	);
-
- 	$('#debug').hover(
-	 		function(){$('.debug').css({'z-index' : 1,'zoom' : 1.7});},
-	 		function(){$('.debug').css({'zoom' : 1});}
-	 	);
-
- 	$('#help_configuration_header').click(
-	 		function(){
-					$('.help').toggleClass('hidden_help_configuration');
- 					$('.configuration').toggleClass('hidden_help_configuration');
- 					$('.import').toggleClass('hidden_help_configuration');
-	 		}
-	 	);
-
 	var color_type = {"project" : "#89A5E5", "actor" : "#F285B9", "idea" : "#FFD98D", "ressource" : "#CDF989", "without" : "white"};
 	var FontFamily = "Helvetica Neue, Helvetica, Arial, sans-serif;";
 	var rayon = 30;
@@ -78,29 +18,248 @@
 	var message_offline = "Connectez-vous à internet pour pouvoir continuer";
 	var debug = false;
 
-	$('.help').toggleClass('hidden_help_configuration');
-	$('.configuration').toggleClass('hidden_help_configuration');
-	$('.import').toggleClass('hidden_help_configuration');
-
-	$("#importGraphbutton").click(function () {
-	    $("#importGraph").trigger('click');
-	});
-	
 	//local ou distant ?
 	var online = navigator.onLine;
+
+	//Contenu du moteur de recherche (reflet du dataset)
+	var contentSearch = [];
+
+	/* =========================================
+	 *  
+	 *  Actions on menus and slidebar
+	 *  
+	 *  ======================================== */
+	
+	$('#home')
+			.popup({
+			    inline   : true,
+			    hoverable: true,
+			    position : 'bottom left',
+			    delay: {
+			      show: 300,
+			      hide: 500
+			    }
+			});
+
+	$('#initializeGraph')
+			.click(function()
+			{
+				$('#initializeGraphModal')
+				  .modal({
+						    onApprove : function()
+									{
+										if (online)
+										{
+											sparql_delete_all_into_triplestore();
+											init_graph(default_domain);
+										}
+										location.reload()
+									}
+				  		  })
+				  .modal('show');
+			})
+			.popup({
+			    inline   : true,
+			    hoverable: true,
+			    position : 'bottom left',
+			    delay: {
+			      show: 300,
+			      hide: 500
+			    }
+			});
+			
+
+	$('#refreshGraph')
+			.click(function()
+			{
+				location.reload()
+			})
+			.popup({
+			    inline   : true,
+			    hoverable: true,
+			    position : 'bottom left',
+			    delay: {
+			      show: 300,
+			      hide: 500
+			    }
+			});
+	
+	$('#filterButtonMenu').dropdown()
+
+	$('#sidebarButton').click(function(){
+			$('.right.sidebar').sidebar('toggle');
+	});
+
+	$('#sidebarMenuHelpItem').click(function () {
+		$('#helpModal')
+		  .modal('show');
+	});
+
+	$('#debugSettingsCheckbox').checkbox({
+		onChecked : function()
+		{
+				$("#debugPanel").show();
+		}
+	});
+
+	$('#messageSettingsCheckbox').checkbox({
+		onChecked : function()
+		{
+				$("#messagePanel").show();
+		}
+	});
+
+	$('#sidebarMenuSettingsItem').click(function () {
+		$('#settingsModal')
+		  .modal('show');
+	});
+	
+	$('#debug').hover(
+	 		function(){$('.debug').css({'z-index' : 1,'zoom' : 1.7});},
+	 		function(){$('.debug').css({'zoom' : 1});}
+	 	);
+
+	$('#sidebarMenuDownloadItem').click(function () {
+		$('#downloadModal')
+		  .modal({
+				    onApprove : function()
+							{
+								var exportGraph = sparql_export_from_triplestore();
+								var blob = new Blob([exportGraph], {type: "text/plain;charset=utf-8"});
+								var d = new Date();
+								var date_now = d.getDate()+"-"+d.getMonth()+1+"-"+d.getFullYear()+"-"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+								saveAs(blob, "svg-"+date_now+".ttl");
+							}
+		  		  })
+		  .modal('show');
+	});
+	
+	$("#sidebarMenuUploadItem").click(function () {
+		$('#uploadModal')
+		  .modal({
+				    onApprove : function()
+							{
+							    var input = $('#uploadInput');
+				    			//Retrieve the first (and only!) File from the FileList object
+							    var f = input[0].files[0]; 
+		
+							    if (f) {
+							      var r = new FileReader();
+							      r.onload = function(e) 
+							      { 
+								      var contents = e.target.result;
+								      sparql_import_into_triplestore(contents);
+//								      alert( "Import réussi ! ;-)");  
+								      location.reload()
+							      }
+							      r.readAsText(f);
+							    } else { 
+							      alert("Failed to load file");
+							    }
+							}
+		  		  })
+		  .modal('show');
+	});
+
+
+	/* =========================================
+	 *  
+	 *  Chargement du dataset et du content pour le moteur de recherche
+	 *  
+	 *  ======================================== */
 
 	if (online)
 	{
 		if (debug)
 			dataset = debug_get_dataset("4");
 		else
+		{
 			dataset = sparql_get_dataset();
+			contentSearch = loadSearchContent();
+		}
 	}
 	else
 	{
 		dataset = debug_get_dataset("1");
 		message (message_offline,"warning");
 	}
+
+	function loadSearchContent (force)
+	{
+		if (force)
+			dataset = sparql_get_dataset();
+
+		//Associe le label et le type des champs "nodes" au contenu du moteur de recherche
+		for (i=0; i<dataset.nodes.length; i++) 
+		{
+			contentSearch[i] = {"title" : dataset.nodes[i].label, "description" : dataset.nodes[i].type, "id" : dataset.nodes[i].iri_id}
+		}
+		return contentSearch;
+	}
+	
+
+	$('#inputSearch').focus(function(){
+		//On recharge le contenu avant de rechercher (trouver une autre méthodes plus tard...)
+		contentSearch = loadSearchContent(true);
+	})
+	
+	$('#search').search({
+ 	   type : "standard",
+ 	   source : contentSearch,
+	   searchFields : ['title'],
+ 	   onSelect: function(result, response) {
+ 		  highlight_result(result);
+ 		  console.log("ui onSelect : "+result.title)
+ 	   },
+ 	   onResults: function(response) {
+ 		  highlight_response(response.results);
+		    console.log("ui onResults : "+response.results)
+ 	   },
+ 	   minCharacters: 1,
+ 	   debug : false,
+ 	   cache: false,
+ 	});        
+
+	function highlight_result (result)
+	{
+		d3.selectAll(".circle_highlight2").remove();
+		d3.selectAll(".node").each( function(d, i)
+				{
+			  		if(d.iri_id == result.id)
+			  		{
+			  			d3.select(this).insert("circle", ".circle_options")
+			  					.attr("class", "circle_highlight2")
+			  					.attr("r", rayon+10);
+			  		}
+				})
+	}
+
+	function highlight_response (response)
+	{
+		var searched_id = [];
+		for (i=0; i<response.length; i++)
+			searched_id[i] = response[i].id;
+		
+		d3.selectAll(".circle_highlight1").remove();
+		for (inc=0; inc<searched_id.length; inc++)
+		{
+			d3.selectAll(".node").each( function(d, i)
+					{
+				  		if(d.iri_id == searched_id[inc])
+				  		{
+				  			d3.select(this).insert("circle", ".circle_options")
+				  					.attr("class", "circle_highlight1")
+				  					.attr("r", rayon+10);
+				  		}
+					})
+		}
+	}
+	
+	/* =========================================
+	 *  
+	 *  Initialisation et chargement du graph D3js
+	 *  
+	 *  ======================================== */
 
 	//mouse event vars
 	var selected_node = null,
@@ -109,8 +268,8 @@
 	    mousedown_node = null,
 	    mouseup_node = null;
 
-	var width = window.innerWidth - 20,
-	    height = window.innerHeight - 20;
+	var width = window.innerWidth - 10,
+	    height = window.innerHeight - 80;
 
 	// init svg
 	var outer = d3.select("#chart")
@@ -137,7 +296,6 @@
 	    .attr('y', -height*3)
 	    .attr('width', width*7)
 	    .attr('height', height*7)
-	    .attr('fill', '#EEE')
 
 	// init force layout
 	var force = d3.layout.force()
@@ -206,6 +364,7 @@
 		node_enter_g = node.enter()
 				.append("g")
 	        	.attr("class", function(d) { return d.type == "deleted" ? "deleted" : "node "+d.type;})
+	        	.attr("iri_id", function(d) { return d.iri_id;})
 				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
 
 		/* Cercle qui apparait sur le hover */
@@ -853,7 +1012,7 @@
 
 	function make_editable(d)
 	{
-        console.log(this, arguments);
+//        console.log(this, arguments);
 
         // Select element that call the make_editable function
         var el = d3.select(this);
@@ -884,7 +1043,7 @@
                         })
                         .attr("style", 200)
                         .on("keypress", function() {
-                            console.log("keypress", this, arguments);
+                            //console.log("keypress", this, arguments);
 
                             // IE fix
                             if (!d3.event)
@@ -908,7 +1067,7 @@
 
 	function change_label(d)
 	{
-	    console.log("save_label", arguments);
+	    //console.log("save_label", arguments);
 
         // Select element that call the save_label function
         var el = d3.select(this);

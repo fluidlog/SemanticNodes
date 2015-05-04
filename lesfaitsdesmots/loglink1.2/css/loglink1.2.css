@@ -1,119 +1,11 @@
 @CHARSET "UTF-8";
 
 body {
-  font: 13px sans-serif;
   position: relative;
-  background: #AAA;
 }
 
-a 
-{ 
-	outline: 0; 
-	color: #05C; 
-	margin: 0;
-	padding: 0;
-	text-decoration:none;
-}
-
-.return {
-    position: fixed;
-    left: 0;
-	padding: 5px;
-	margin-left: 10px;
-    background: #AAA;
-    width: 50px;
-	text-align: right;
-	color: gray;
-	z-index:10;
-	display:inline;
-
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
-}
-
-.menu {
-    position: fixed;
-    left: 10px;
-    background: #AAA;
-    font-size:14px;
-    font-weight:bold;
-    display:inline;
-    margin: 10px;
-	padding: 5px;
-    width: 350px;
-	text-align: center;
-	z-index:10;
-
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
-}
-
-.help_configuration {
-    position: fixed;
-    right: 15px;
-    top: 10px; 
-    background: #AAA;
-	font-size:12px;
-    margin: 10px;
-    padding: 5px;
-	z-index:10;
-	font-family:"Helvetica Neue, Helvetica, Arial, sans-serif;"; 
-	text-align:center;
-	
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
-}
-
-.help_configuration_header
-{
-  	cursor:pointer;
-	font-weight:bold;
-    background: #EEE;
-    padding: 5px;
-
-    -moz-border-radius:    5px;
-    -webkit-border-radius: 5px;
-    border-radius:         5px;
-
-    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
-    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
-    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
-}
-
-.hidden_help_configuration
-{
-	display: none;
-}
-
-.help
-{
-	padding: 5px;
-	cursor:default;
-}
-
-.configuration
-{
-	padding: 5px;
-	cursor:default;
-}
-
-.configuration .filter {
-width: 200px;
+rect{
+	fill : #F7F7F7;
 }
 
 .node_opacity
@@ -121,18 +13,32 @@ width: 200px;
 	opacity:.2;
 }
 
-.filter_project {padding: 5px;	cursor:pointer;}
-.filter_actor {padding: 5px;	cursor:pointer;}
-.filter_idea {padding: 5px;	cursor:pointer;}
-.filter_ressource {padding: 5px;	cursor:pointer;}
-.filter_without {padding: 5px;	cursor:pointer;}
+.circle_highlight1
+{
+  	stroke-width: 2px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.circle_highlight2
+{
+  	stroke-width: 5px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.filter_project {cursor:pointer;}
+.filter_actor {cursor:pointer;}
+.filter_idea {cursor:pointer;}
+.filter_ressource {cursor:pointer;}
+.filter_without {cursor:pointer;}
 
 .filter_select {    
 }
 
 #filter_none {background-color: #eee;}
 
-.message {
+.messagePanel {
     position: fixed;
     left: 0;
     bottom : 0;
@@ -155,7 +61,7 @@ width: 200px;
     box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
 }
 
-.debug {
+.debugPanel {
     position: fixed;
     right: 0;
     bottom: 0; 

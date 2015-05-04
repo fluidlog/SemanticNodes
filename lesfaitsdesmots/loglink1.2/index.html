@@ -12,78 +12,426 @@
         Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
         <![endif]-->
 
-        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-2.1.3.js"></script>
 
         <script src="js/d3.v2.min.js"></script>
 
-        <script src="js/semantic.min.js"></script>
-
         <script src="js/FileSaver.min.js"></script>
 
-        <link rel="stylesheet" href="css/semantic.min.css">
-
-        <link rel="stylesheet" href="css/layout.css">
-
-    </head>
-
-    <body>
-
-        <div id="waiting" class="waiting">
-            <img alt="waiting icon" src="img/waiting.gif"/>
-        </div>
-
-        <!-- 	<div class="return" id="return">
-                <div style="left: 0;font-size:14px;font-weight:bold;display:inline;"><a href="../../index.html">Retour</a></div>
-            </div>
-         -->
-
-        <div class="menu" id="menu">
-            <div style="display:inline;">Carto PAIR</div>
-			<button id="initKernelGraph" title="Initialization">Init</button>
-			<button id="refreshGraph" title="Refresh">Refresh</button>
-        </div>
-
-        <div id="chart"></div>
-<!--         <div class="message" id="message" style="display:none;"></div>
-            <div class="debug" id="debug"></div>
+<!-- 		<link rel="stylesheet" href="https://rawgit.com/Semantic-Org/Semantic-UI/next/dist/semantic.css"/>
+		<script src="https://rawgit.com/Semantic-Org/Semantic-UI/next/dist/semantic.js"></script>
  -->
-        <div class="help_configuration" id="help_configuration">
+        <script src="js/semantic1.12.1.js"></script>
+ 		<link rel="stylesheet" href="css/semantic1.12.1.css"/>
+   </head>
 
-            <div class="help_configuration_header" id="help_configuration_header">
-                Aide / configuration
-            </div>
+<body>
+<div class="ui right vertical labeled icon sidebar menu">
+  <a class="item" id="sidebarMenuHelpItem" data-content="Help">
+    <i class="help circle icon"></i>
+    Help
+  </a>
+  <a class="item" id="sidebarMenuSettingsItem">
+    <i class="settings icon"></i>
+    Settings
+  </a>
+  <a class="item" id="sidebarMenuDownloadItem">
+    <i class="download icon"></i>
+    Download
+  </a>
+  <a class="item" id="sidebarMenuUploadItem">
+    <i class="upload icon"></i>
+    Upload
+  </a>  
+</div>
 
-            <div class="help">
-                <b>Aide :</b><br>
-                Pour ajouter un noeud, "tirer" un noeud existant<br>
-                Vous pouvez lier deux noeuds entre eux<br>
-                Pour initialiser le graphe, cliquez sur [0] (Peut-être caché)<br>
-                Pour rafraichir le graphe, cliquez sur [Refresh]<br>
-                Vous pouvez zoomer et déplacer la carto panoramiquement<br>
-                Pour supprimer un noeud, sélectionnez le et cliquez sur la touche "suppr"<br>
-                Pour supprimer un lien, sélectionnez le et cliquez sur la touche "suppr"<br>
-            </div>
+<div class="pusher">
 
-            <div class="configuration">
-                <b>Configuration (Clicker pour filtrer)</b><br>
-                <div class="filter_project ui toggle button filter" id="filter_project" style="background:#89A5E5">Project</div>
-                <div class="filter_actor ui toggle button filter" id="filter_actor" style="background:#F285B9">Actor</div>
-                <div class="filter_idea ui toggle button filter" id="filter_idea" style="background:#FFD98D">Idea</div>
-                <div class="filter_ressource ui toggle button filter" id="filter_ressource" style="background:#CDF989">Ressource</div>
-                <div class="filter_without ui toggle button filter" id="filter_without" style="background:#FFF">Vide</div>
-                <div class="filter_none ui toggle button filter" id="filter_none">Aucun filtre</div>
-            </div>
+	<div class="ui secondary menu" style="margin:0">
+		<a class="item" id="home" data-content="Project / Actor / Idea / Ressource">Carto PAIR</a>
+		<a class="item" id="refreshGraph" data-content="Refresh the graph"><i class="refresh large icon" ></i></a>
 
-            <div class="import">
-                <b>Exporter (Save) / Importer (uploader) un graphe</b><br>
-				<img src="img/save.png" id="exportGraph" title="Export graph" width=30px height=30px style="cursor:pointer" />
-				<img src="img/upload_64.png" id="importGraphbutton" title="Import graph" width=30px height=30px style="cursor:pointer" />
-            	<input type="file" id="importGraph" style="display:none" accept="text/turtle">
-            </div>
-            
-        </div>
+		<div class="right menu">
+			<div class="item" style="padding:0">
+				<div class="ui dropdown" id="filterButtonMenu">
+				    <i class="filter icon"></i>
+				    <div class="text">
+				    	<div class="ui icon button" style="background:#FFF">
+				    	<i class="ban icon"></i>
+				    	</div>
+				    </div>
+				    <div class="menu" id="filterMenu">
+				      <div class="header">
+				        <i class="tags icon"></i>
+				        By type
+				      </div>
+				      <div class="item">
+					     	<div class="filter_project ui icon toggle button filter" id="filter_project" style="background:#89A5E5"><i class="small lab icon"></i></div>
+				      </div>
+				      <div class="item">
+			              	<div class="filter_actor ui icon toggle button filter" id="filter_actor" style="background:#F285B9"><i class="small user icon"></i></div>
+				      </div>
+				      <div class="item">
+			              	<div class="filter_idea ui icon toggle button filter" id="filter_idea" style="background:#FFD98D"><i class="small idea icon"></i></div>
+				      </div>
+				      <div class="item">
+			              	<div class="filter_ressource ui icon toggle button filter" id="filter_ressource" style="background:#CDF989"><i class="small tree icon"></i></div>
+				      </div>
+				      <div class="item">
+			              	<div class="filter_without ui icon toggle button filter" id="filter_without" style="background:#DDD"><i class="small circle thin icon"></i></div>
+				      </div>
+				      <div class="item">
+			              	<div class="filter_none ui icon toggle button filter" id="filter_none" style="background:#FFF"><i class="small ban icon"></i></div>
+					  </div>
+				    </div>
+			  	</div>
+			</div>
+  
+		    <div class="item" style="padding:0">
+				<div class="ui search" id="search">
+				    <div class="ui icon input">
+				      <input id="inputSearch" class="prompt" placeholder="Search PAIR..." type="text">
+				      <i class="search icon"></i>
+				    </div>
+				    <div class="results"></div>
+		  		</div>		
+		  	</div>		
+			<a class="item" id="sidebarButton">
+				<i class="sidebar large icon"></i>
+			</a>
+		</div>
+  	</div>
+ 
 
+				<!--  #################################
+				 
+							Modal box
+							
+				      ################################# --> 
+				 
+		<div class="ui modal" id="helpModal">
+			<i class="close icon"></i>
+			<div class="header">
+		    	Help
+			</div>
+			<div class="content">
+			    <div class="image">
+			      <i class="help circle icon"></i>
+			    </div>
+			    <div class="description" >
+					<div class="ui segment">
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="woman icon"></i>
+										To Add a node
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									          Pull the node
+											</div>
+										   <div class="item">
+									          Drop it on the background surface
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="linkify icon"></i>
+										To make a link between two nodes
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									          Pull the first node
+											</div>
+										   <div class="item">
+									          Drop it on the second node
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="power icon"></i>
+										To initialize the graph
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Click on the menu icon (<i class="sidebar small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the settings (<i class="settings small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the initialization button (<i class="power small icon"></i>)
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="refresh icon"></i>
+										To refresh the graph
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Click on the refresh icon (<i class="refresh small icon"></i>)
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="download icon"></i>
+										To download (save) the graph
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Click on the menu icon (<i class="sidebar small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the settings (<i class="settings small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the download button (<i class="download small icon"></i>)
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="upload icon"></i>
+										To upload an existing graph
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Click on the menu icon (<i class="sidebar small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the settings (<i class="settings small icon"></i>)
+											</div>
+										    <div class="item">
+									            Click on the upload button (<i class="upload small icon"></i>)
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="move icon"></i>
+										To pan
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            click on the background surface, stay clicked, move, and pull to stop 
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="zoom icon"></i>
+										To zoom
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Use your mouse wheel to zoom
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ui vertical segment">
+							<div class="ui two column grid">
+								<div class="column">
+									<div class="ui horizontal blue middle aligned segment">
+										<i class="trash icon"></i>
+										To delete a node or a link
+									</div>
+								</div>
+								<div class="column">
+									<div class="ui horizontal segment">
+										<div class="ui ordered animated list">
+										   <div class="item">
+									            Select object (node or link)
+											</div>
+										   <div class="item">
+									            click on "delete" key
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>		                
+		  	</div>
+		  	<div class="actions">
+		    	<div class="ui button">OK</div>
+		  	</div>
+		</div>
+		
+		<div class="ui modal" id="settingsModal">
+			<i class="close icon"></i>
+			<div class="header">
+		    	Settings
+			</div>
+			<div class="content">
+			    <div class="image">
+			      <i class="settings icon"></i>
+			    </div>
+			    <div class="description" >
+					<div class="ui segment">
+						<div class="ui vertical segment">
+						    <div class="ui toggle checkbox" id="debugSettingsCheckbox">
+						      <input type="checkbox">
+						      <label>Display debug pannel</label>
+						    </div>
+						  </div>
+						<div class="ui vertical segment">
+						    <div class="ui toggle checkbox" id="messageSettingsCheckbox">
+						      <input type="checkbox">
+						      <label>Display messages pannel</label>
+						    </div>
+						</div>
+						<div class="ui vertical segment">
+				 			To initialize the graph, click : 
+				 			<a class="ui icon toggle button" id="initializeGraph"> <i class="power icon"></i></a>
+							<div class="ui warning message">
+								<div class="header">
+								    Warning !
+								</div>
+							  	If you initialize the graph, you will loose all data stored for everyone ! Save (download) before ! (see help)			 			
+						    </div>
+					 	</div>
+			 		</div>
+			    </div>
+		  	</div>
+		  	<div class="actions">
+		    	<div class="ui button">OK</div>
+		  	</div>
+		</div>
+		
+		<div class="ui small modal" id="downloadModal">
+		  <i class="close icon"></i>
+		  <div class="header">
+		    Welcome to the download assistant
+		  </div>
+		  <div class="content">
+		    <div class="image">
+		      <i class="download icon"></i>
+		    </div>
+		    <div class="description" >
+			      <p>Click 'OK' and the graph will be downloaded in your navigator.</p>
+		    </div>
+		  </div>
+		  <div class="actions">
+		    <div class="ui button deny">Cancel</div>
+		    <div class="ui button approve">OK</div>
+		  </div>
+		</div>
+		
+		<div class="ui small modal" id="uploadModal">
+		  <i class="close icon"></i>
+		  <div class="header">
+		    Welcome to the upload assistant
+		  </div>
+		  <div class="content">
+		    <div class="image">
+		      <i class="upload icon"></i>
+		    </div>
+		    <div class="description" >
+			      <p>Select the file on your computer and press 'OK'.</p>
+		    	  <div class="ui input" >
+			      	<input type="file" id="uploadInput" accept="text/turtle">
+			      </div>
+		    </div>
+		  </div>
+		  <div class="actions">
+		    <div class="ui button deny">Cancel</div>
+		    <div class="ui button approve">OK</div>
+		  </div>
+		</div>
+		
+		<div class="ui small modal" id="initializeGraphModal">
+		  <i class="close icon"></i>
+		  <div class="header">
+		    Initialization of the graph...
+		  </div>
+		  <div class="content">
+		    <div class="image">
+		      <i class="power icon"></i>
+		    </div>
+		    <div class="description" >
+			      <p>If you are you sure you want to initialize the graph (You will loose all the data) ? Click 'OK' to initialize the graph</p>
+		    </div>
+		  </div>
+		  <div class="actions">
+		    <div class="ui button deny">Cancel</div>
+		    <div class="ui button approve">OK</div>
+		  </div>
+		</div>
+		
+        <div id="chart"></div>
 
+        <div class="messagePanel" id="messagePanel" style="display:none;"></div>
+        <div class="debugPanel" id="debugPanel" style="display:none;"></div>
+             
         <footer>
 
             <p>
@@ -102,6 +450,7 @@
         <script src="js/sparql_functions.js"></script>
 
         <script src="js/main.js"></script>
+        </div>
     </body>
 
 </html>

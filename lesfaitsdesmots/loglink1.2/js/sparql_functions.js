@@ -503,7 +503,7 @@ function sparql_import_into_triplestore(imported_graph)
 	//Appelle main.php de manière synchrone. C'est à dire, attend la réponse avant de continuer
 	$.ajax(
 			{
-			    type: 'GET',
+			    type: 'POST',
 			    url: '../../sparql/main.php',
 			    dataType: 'json',
 			    success: function(t_data) 
