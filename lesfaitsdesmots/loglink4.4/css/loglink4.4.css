@@ -1,0 +1,226 @@
+@charset "UTF-8";
+
+rect{
+	fill : #F7F7F7;
+}
+
+.fo_xhtml_content_closed_flud{
+   	/* background-color: rgba(255,0,0,.3); */
+
+	width: 200px;
+	height: 200px;
+    padding-top: 80px;
+    margin: 0px;
+}
+
+.fo_xhtml_content_opened_flud{
+   	/* background-color: rgba(255,0,0,.3); */
+
+	width: 200px;
+	height: 200px;
+    padding: 20px;
+    margin: 0px;
+}
+
+.label_closed_flud{
+/*    	    background-color: rgba(255,0,0,.3);
+ */	
+    border: 2px solid rgba(255,0,0,.3);
+	padding: 2px;
+    text-align: center;
+
+    -moz-border-radius:    20px;
+    -webkit-border-radius: 20px;
+    border-radius:         20px;
+}
+
+.label_closed_flud_hidden{
+	visibility:hidden;
+}
+
+.fo_div_image{
+/*    	    background-color: rgba(255,0,0,.3);
+ */   	    
+    text-align: center;
+}
+
+.fo_div_centered p{
+/*    	    background-color: rgba(255,0,0,.3);
+ */	
+	margin: 0;
+    text-align: center;
+
+    -moz-border-radius:    10px;
+    -webkit-border-radius: 10px;
+    border-radius:         10px;
+}
+
+.node_opacity
+{
+	opacity:.2;
+}
+
+.circle_highlight1
+{
+  	stroke-width: 2px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.circle_highlight2
+{
+  	stroke-width: 5px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.filter_project {cursor:pointer;}
+.filter_actor {cursor:pointer;}
+.filter_idea {cursor:pointer;}
+.filter_ressource {cursor:pointer;}
+.filter_without {cursor:pointer;}
+
+.filter_select {    
+}
+
+#filter_none {background-color: #eee;}
+
+.messagePanel {
+    position: fixed;
+    left: 0;
+    bottom : 0;
+	background: gray;
+    width: 300px;
+    padding: 5px;
+	margin: 20px;
+	text-align: center;
+	font-family:arial, helvetica; 
+	font-size:16px; 
+	color: black;
+	z-index:12;
+
+    -moz-border-radius:    5px;
+    -webkit-border-radius: 5px;
+    border-radius:         5px;
+
+    -moz-box-shadow:    3px 3px 5px rgba(0,0,0,.2); /* -- repeating rgba shadow color 3 times        */
+    -webkit-box-shadow: 3px 3px 5px rgba(0,0,0,.2); /*    is not very nice when you count every byte */
+    box-shadow:         3px 3px 5px rgba(0,0,0,.2); /*    so this is shortest value possible ;)      */
+}
+
+.debugPanel {
+    position: fixed;
+    right: 0;
+    bottom: 0; 
+    border: 2px solid #DDD;
+    background: #FFF;
+	font-family: "courrier new"; 
+	font-size:8px;
+    padding: 5px;
+    margin-bottom: 30px;
+	z-index:12;
+}
+
+.circle_options {
+  fill: transparent;
+  stroke: #aaa;
+  stroke-width: 15px;
+  stroke-opacity: .5;
+/*   stroke-dasharray: 10,5;
+ */}
+
+.circle_id {
+  pointer-events: none;
+  stroke-width:2px;
+  cursor:pointer;
+}
+
+.circle_id_selected {
+  stroke: #999;
+  fill: #999;
+}
+
+.text_id {
+  font-size: 12px;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: "Helvetica Neue, Helvetica, Arial, sans-serif;";
+}
+
+.text_id_selected {
+  stroke: #EEE;
+  fill: #EEE;
+}
+
+.circle_type {
+  pointer-events: none;
+  cursor:pointer;
+  stroke-opacity: .5;
+  fill: transparent;
+  stroke: #DDD;
+  stroke-width:3px;
+}
+
+.circle_type_selected {
+  stroke: #999;
+}
+
+.circle_change_type {
+  stroke: #DDD;
+  fill: white;
+  pointer-events: none;
+  stroke-width:2px;
+  cursor:pointer;
+}
+.node_circle
+{
+	stroke: #DDD;
+}
+
+.node_selected {
+	stroke: #888;
+}
+
+.drag_line {
+  stroke: #999;
+  stroke-width: 5;
+  pointer-events: none;
+}
+
+.drag_line_hidden {
+  stroke: #999;
+  stroke-width: 0;
+  pointer-events: none;
+}
+
+.link {
+  stroke: #DDD;
+  stroke-width: 7;
+  cursor: pointer;
+}
+
+.link_selected {
+  stroke: #999;
+}
+
+.waiting {
+    position: fixed;
+    left: 500px;
+    top: 10px; 
+}
+
+/*
+ * Footer
+ * ========
+ */
+
+footer {
+    position: fixed;
+    bottom: 0; right: 0;
+    padding: 5px;
+    font-size: .7em;
+    opacity: .6;
+	z-index:5;
+}
+
+footer:hover { opacity: 1 }
