@@ -5,7 +5,7 @@
 
         <title>Carto PAIR sur LDP</title>
 
-        <link rel="stylesheet" type="text/css" href="css/loglink4.4.css"/>
+        <link rel="stylesheet" type="text/css" href="css/loglink4.5.css"/>
 
         <!--[if lt IE 11]>
         Votre navigateur est obsolète.
@@ -49,26 +49,27 @@
     </div>
 
 
-    <div id="grid" class="ui two column middle aligned grid">
-      <div class="column">
+    <div id="grid" class="ui two column grid">
+      <div class="center aligned column">
         <div id="div-people">
         </div>
         <div id="form-people" class"ui form segment">
           <input type="text" id="name" class="ui input" name="name" placeholder="Nom ?" />
           <input type="text" id="description" name="description" placeholder="Description ?" />
-          <button onclick="javascript:addNewPeople();">Valider</button>
+          <button onclick="javascript:addNewPeople();">Ajouter</button>
         </div>
         <div id="div-todo">
         </div>
         <div id="form-todo">
           <input type="text" id="assignee" name="assignee" placeholder="Assigné ?" />
           <input type="text" id="label" name="label" placeholder="Libellé ?" />
-          <button onclick="javascript:addNewTodo();">Valider</button>
+          <button onclick="javascript:addNewTodo();">Ajouter</button>
         </div>
       </div>
       <div class="ui vertical divider"></div>
-      <div class="column">
-        <div id="chart"></div>
+      <div class="middle aligned column">
+        <div id="chart">
+        </div>
       </div>
     </div>
 

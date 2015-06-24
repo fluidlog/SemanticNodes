@@ -22,6 +22,9 @@ Code lié au formulaire de gauche
 */
 
 $(function(){
+  //Prepare the SVG + G + G + rect
+  addSvgSocle("#chart",500,500)
+
     window.storepeople = new MyStore({
         container: "https://localhost:8443/2013/people/",
         context: "http://ld.hackers4peace.net/contexts/plp.jsonld",
@@ -31,10 +34,8 @@ $(function(){
 
   storepeople.render("#div-people")
 
-  buildGraph(storepeople,"about");
-});
+  buildGraph(storepeople,"about",500,500);
 
-$(function(){
     window.storetodo = new MyStore({
         container: "https://localhost:8443/2013/todos/",
         context: "http://owl.openinitiative.com/oitodo.jsonld",
@@ -43,24 +44,126 @@ $(function(){
     });
     storetodo.render("#div-todo");
 
-    buildGraph(storetodo,"todos");
+    buildGraph(storetodo,"todos",500,500);
 });
 
-function buildGraph(store,ontologie)
+function buildGraph(store,ontologie,w,h)
 {
-  var dataset = [];
+  var dataldp = [];
+  var tab_id = [];
   var ontologie = ontologie;
   store.list(store.container).then(function(list) {
     var inc = 0;
     list.forEach(function(id) {
       this.get(id,store.context).then(function(object) {
         inc++;
-        dataset.push(object[ontologie]);
+        dataldp.push(object[ontologie]);
+        tab_id.push(object.id);
         if (inc == list.length)
-          displayGraph(dataset);
+        {
+          //fusion des deux tableaux pour ajouter l'id
+            var i=0;
+            tab_id.forEach(function(id){
+              dataldp[i].uri = id;
+              delete dataldp[i]["id"];
+              i++;
+            });
+
+            displayGraph(dataldp);
+        }
       }.bind(store));
     }.bind(store));
   });
+}
+
+function addSvgSocle(div,width,height)
+{
+  var outer = d3.select(div)
+	  	.append("svg:svg")
+	    .attr("width", width)
+	    .attr("height", height)
+
+  var svg = outer
+    .append('g')
+    .call(d3.behavior.zoom().on("zoom", rescale))
+    .on("dblclick.zoom", addnode)
+    .append('g')
+    .attr('id', 'socle')
+
+  svg.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', width)
+        .attr('height', height)
+        .attr('fill', "#ddd")
+}
+
+/*
+Code lié à la carto à droite
+*/
+function displayGraph(dataldp) {
+  console.log(dataldp);
+
+  var n=100;
+
+  var dataset = {
+    nodes: dataldp,
+    edges: []
+  }
+
+  var force = d3.layout.force()
+                       .nodes(dataset.nodes)
+                       .links(dataset.edges)
+                       .size([500, 500])
+                       .linkDistance([100])
+                       .charge([-500])
+
+  force.start();
+   	for (var i = n * n; i > 0; --i) force.tick();
+  force.stop();
+
+  var colors = d3.scale.category10();
+
+var socle = d3.select("#socle");
+
+  var nodes = socle.selectAll("circle")
+          .data(dataset.nodes)
+          .enter()
+          .append("g")
+          .attr("id", "node")
+          .attr("iri_id", "iri_id")
+          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+
+  nodes.append("circle")
+          .attr("r", 10)
+          .style("fill", "red")
+
+  nodes.append("text")
+    .text(function(d){return d.name || d.label;})
+    .attr("font-size","16")
+    .attr("x", 0)
+    .attr("y", -10)
+  nodes.append("text")
+    .text(function(d){return "("+d.uri.split("/").pop()+")" })
+    .attr("font-size","10")
+    .attr("x", 10)
+    .attr("y", 5)
+}
+
+function rescale()
+{
+  trans=d3.event.translate;
+  scale=d3.event.scale;
+
+  d3.select("#socle")
+    .attr("transform",
+      "translate(" + trans + ")"
+      + " scale(" + scale + ")");
+}
+
+function addnode()
+{
+  console.log("addnode");
 }
 
 //Create a new element in the store and refresh the list
@@ -80,75 +183,3 @@ function addNewTodo() {
     window.storetodo.save(data);
     window.storetodo.render("#div-todo");
 };
-
-/*
-Code lié à la carto à droite
-*/
-function displayGraph(dataset) {
-  console.log(dataset);
-
-  var dataset = {
-    nodes: dataset,
-    edges: []
-  }
-
-  var w = 500,
-      h = 300
-
-  var svg = d3.select("#chart")
-  			.append("svg")
-  			.attr("width", w)
-  			.attr("height", h);
-
-  var force = d3.layout.force()
-                       .nodes(dataset.nodes)
-                       .links(dataset.edges)
-                       .size([w, h])
-                       .linkDistance([100])
-                       .charge([-500])
-                       .start();
-
-  var colors = d3.scale.category10();
-
-  var nodes = svg.selectAll("circle")
-          .data(dataset.nodes)
-          .enter()
-          .append("circle")
-          .attr("r", 10)
-          .style("fill", function(d, i) {
-                  return colors(i);
-          })
-          .call(force.drag);
-
-  var labels = svg.selectAll("text")
-  				.data(dataset.nodes)
-  				.enter()
-  				.append("text")
-  				.attr({"x":function(d){return d.x;},"y":function(d){return d.y;}})
-  				.text(function(d){return d.name || d.label;})
-  				.call(force.drag);
-
-
-  force.on("tick", function() {
-
-  nodes.attr("cx", function(d) { return d.x; })
-       .attr("cy", function(d) { return d.y; });
-
-  labels.attr("x", function(d) { return d.x; })
-  		.attr("y", function(d) { return d.y; });
-  });
-
-}
-
-
-// var edges = svg.selectAll("line")
-//         .data(dataset.edges)
-//         .enter()
-//         .append("line")
-//         .style("stroke", "#ccc")
-//         .style("stroke-width", 1);
-
-// edges.attr("x1", function(d) { return d.source.x; })
-//      .attr("y1", function(d) { return d.source.y; })
-//      .attr("x2", function(d) { return d.target.x; })
-//      .attr("y2", function(d) { return d.target.y; });
