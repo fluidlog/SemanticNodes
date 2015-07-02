@@ -39,6 +39,17 @@
               {{#each objects}} {{> profiletodo }}{{/each}}
           </div>
       </script>
+
+      <script id="select-template" type="text/x-handlebars-template">
+        <select name="Assignee">
+        {{#each objects}} {{> assignee}}{{/each}}
+        </select>
+      </script>
+
+      <script id="assignee-template" type="text/x-handlebars-template">
+        <option name="assignee-name">{{about.name}} </option>
+      </script>
+
    </head>
 
 <body>
@@ -51,20 +62,23 @@
 
     <div id="grid" class="ui two column grid">
       <div class="center aligned column">
-        <div id="div-people">
-        </div>
+        <b>Liste des people</b>
+        <ul id="div-people">
+        </ul>
         <div id="form-people" class"ui form segment">
           <input type="text" id="name" class="ui input" name="name" placeholder="Nom ?" />
           <input type="text" id="description" name="description" placeholder="Description ?" />
           <button onclick="javascript:addNewPeople();">Ajouter</button>
         </div>
-        <div id="div-todo">
-        </div>
-        <div id="form-todo">
-          <input type="text" id="assignee" name="assignee" placeholder="Assigné ?" />
-          <input type="text" id="label" name="label" placeholder="Libellé ?" />
-          <button onclick="javascript:addNewTodo();">Ajouter</button>
-        </div>
+        <div class="ui horizontal divider"></div>
+        <b>Liste des todos</b>
+        <ul id="div-todo">
+        </ul>
+      <div id="form-todo">
+        <select id="assigneeselect"></select>
+        <input type="text" id="label" name="label" placeholder="Libellé ?" />
+        <button onclick="javascript:addNewTodo();">Ajouter</button>
+      </div>
       </div>
       <div class="ui vertical divider"></div>
       <div class="middle aligned column">
