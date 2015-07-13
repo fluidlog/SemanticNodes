@@ -19,11 +19,11 @@ $(document).ready()
 
   var myGraph = new myGraph("#chart",d3data)
 
-  myGraph.addSvg();
+  myGraph.addSvg("bgElement");
 
-  myGraph.bgElement = d3.select('#bgElement');
+  myGraph.bgElement = d3.select("#bgElement")
 
-  // graphObject.activeForce();
+  myGraph.activeForce();
   myGraph.drawGraph();
-
-}(window.d3)
+  
+}
