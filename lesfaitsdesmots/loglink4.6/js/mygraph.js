@@ -1,5 +1,5 @@
 // define graph object
-var myGraph = function (firstBgElement,d3data)
+var FluidGraph = function (firstBgElement,d3data)
 {
 
   /*
@@ -16,25 +16,22 @@ var myGraph = function (firstBgElement,d3data)
     type : "N",
     xNewNode : 100,
     yNewNode : 100,
-    bgElementType : "bg",
-    forceTick : "Off",
+    bgElementType : "simple",
+    forceTick : "On",
     uriBase : "http://fluidlog.com/",
     linkDistance : 100,
     charge : -1000,
-  }
+  };
 
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
   thisGraph.bgElement = null,
-  thisGraph.nodes_enter = thisGraph.d3data.nodes || [];
-  thisGraph.links_enter = thisGraph.d3data.links || [];
-  thisGraph.width = window.innerWidth - 30;
+  thisGraph.nodes = null,
+  thisGraph.links = null,
+  thisGraph.nodesEnter = thisGraph.d3data.nodes || [],
+  thisGraph.linksEnter = thisGraph.d3data.links || [],
+  thisGraph.width = window.innerWidth - 30,
   thisGraph.height = window.innerHeight - 30;
-
-  thisGraph.node_drag = d3.behavior.drag()
-  					.on("dragstart", thisGraph.dragstart)
-  					.on("drag", thisGraph.dragmove)
-  					.on("dragend", thisGraph.dragend);
 
   thisGraph.force = d3.layout.force()
                         .nodes(thisGraph.d3data.nodes)
@@ -51,7 +48,7 @@ var myGraph = function (firstBgElement,d3data)
 ****************************/
 
 //rescale g
-myGraph.prototype.rescale = function()
+FluidGraph.prototype.rescale = function()
 {
   // console.log("rescale start");
 
@@ -65,7 +62,7 @@ myGraph.prototype.rescale = function()
   // console.log("rescale end");
 }
 
-myGraph.prototype.addSvg = function(bgElementId)
+FluidGraph.prototype.addSvg = function(bgElementId)
 {
   // console.log("addSvg start");
 
@@ -108,7 +105,7 @@ myGraph.prototype.addSvg = function(bgElementId)
   // console.log("addSvg end");
 }
 
-myGraph.prototype.activeForce = function()
+FluidGraph.prototype.activeForce = function()
 {
   // console.log("activeForce start");
 
@@ -129,16 +126,17 @@ myGraph.prototype.activeForce = function()
   console.log("activeForce end");
 }
 
-myGraph.prototype.drawGraph = function()
+FluidGraph.prototype.drawGraph = function()
 {
   console.log("drawGraph start");
 
   var thisGraph = this;
   if (typeof thisGraph.d3data.links != "undefined")
   {
-    thisGraph.links_enter = thisGraph.bgElement.selectAll("#link")
+    thisGraph.links = thisGraph.bgElement.selectAll("#link")
                 			.data(thisGraph.d3data.links)
-                			.enter()
+
+    thisGraph.linksEnter = thisGraph.links.enter()
                 			.append("line")
                 		  .attr("x1", function(d) { return d.source.x; })
                 		  .attr("y1", function(d) { return d.source.y; })
@@ -151,15 +149,23 @@ myGraph.prototype.drawGraph = function()
 
   if (typeof thisGraph.d3data.nodes != "undefined")
   {
-    thisGraph.nodes_enter = thisGraph.bgElement.selectAll("#node")
-    				.data(thisGraph.d3data.nodes)
-    				.enter()
-    				.append("g")
-    				.attr("id", "node")
-    				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-            .call(thisGraph.node_drag)
+    thisGraph.nodes = thisGraph.bgElement.selectAll("#node")
+    				              .data(thisGraph.d3data.nodes)
 
-    var circle = thisGraph.nodes_enter.append("circle")
+    thisGraph.nodesEnter = thisGraph.nodes
+                                .enter()
+                        				.append("g")
+                        				.attr("id", "node")
+                        				.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+                                .on("click",thisGraph.click)
+                                .call(d3.behavior.drag()
+                                					.on("dragstart", thisGraph.dragstart)
+                                					.on("drag", thisGraph.dragmove)
+                                					.on("dragend", thisGraph.dragend)
+                                      )
+                                // .call(thisGraph.node_drag)
+
+    var circle = thisGraph.nodesEnter.append("circle")
           .attr("id", "nodecircle")
           .style("fill", function (d){
             	switch (d.type)
@@ -175,18 +181,20 @@ myGraph.prototype.drawGraph = function()
           .style("stroke", "#DDD")
           .style("stroke-width", "7")
           .style("cursor", "pointer")
-          .on("click",thisGraph.click)
           .attr("r", 0)
 				  .transition()
 				  .duration(300)
           .attr("r", function(d) { return d.size ; })
 
-    var text = thisGraph.nodes_enter.append("text")
+    var text = thisGraph.nodesEnter.append("text")
     			.attr("text-anchor", "middle")
     			.attr("dy", ".25em")
     			.text(function(d) { return d.name+d.index })
     			.style("font-size", 14)
   }
+
+  //delete node if there's less object in nodes array than in DOM
+  thisGraph.nodes.exit().remove();
 
   if (thisGraph.config.forceTick == "On")
   {
@@ -196,12 +204,37 @@ myGraph.prototype.drawGraph = function()
   console.log("drawGraph end");
 }
 
-myGraph.prototype.addNode = function(newnode)
+FluidGraph.prototype.movexy = function()
+{
+  // console.log("movexy start");
+
+  if (typeof this.tick != "undefined")
+  {
+    //Here, "this" is the tick
+    thisGraph = window.myGraph;
+  }
+  else
+  {
+    //Here, "this" is the <g.node> where mouse drag
+    thisGraph = this;
+  }
+
+  thisGraph.links.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+  thisGraph.nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  // console.log("movexy end");
+}
+
+FluidGraph.prototype.addNode = function(newnode)
 {
   console.log("addnode start");
 
   //Here, "this" is the <g> where mouse double-clic
-  thisGraph = window.myGraph;
+  thisGraph = myGraph;
 
   var xy = [];
 
@@ -245,32 +278,7 @@ myGraph.prototype.addNode = function(newnode)
   console.log("addnode end");
 }
 
-myGraph.prototype.movexy = function()
-{
-  // console.log("movexy start");
-
-  if (typeof this.tick != "undefined")
-  {
-    //Here, "this" is the tick
-    thisGraph = window.myGraph;
-  }
-  else
-  {
-    //Here, "this" is the <g.node> where mouse drag
-    thisGraph = this;
-  }
-
-  thisGraph.links_enter.attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
-
-  thisGraph.nodes_enter.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-  // console.log("movexy end");
-}
-
-myGraph.prototype.click = function(d, i)
+FluidGraph.prototype.click = function(d, i)
 {
   // console.log("click start");
 
@@ -278,7 +286,7 @@ myGraph.prototype.click = function(d, i)
 
   //Toggle Class="fixed", fix d force and change circle stroke
   var circle_stroke;
-	d3.select(this).classed("fixed", function(d)
+	d3.select(this).select("#nodecircle").classed("fixed", function(d)
       {
         if (d.fixed == true)
         {
@@ -297,11 +305,11 @@ myGraph.prototype.click = function(d, i)
   // console.log("click end");
 }
 
-myGraph.prototype.dragstart = function(d, i) {
+FluidGraph.prototype.dragstart = function(d, i) {
   // console.log("dragstart start");
 
   //Here, "this" is the <g.node> where mouse drag
-  thisGraph = window.myGraph;
+  thisGraph = myGraph;
 
   d3.event.sourceEvent.stopPropagation();
   thisGraph.force.stop();
@@ -309,11 +317,11 @@ myGraph.prototype.dragstart = function(d, i) {
   // console.log("dragstart end");
 }
 
-myGraph.prototype.dragmove = function(d, i) {
+FluidGraph.prototype.dragmove = function(d, i) {
   // console.log("dragmove start");
 
   //Here, "this" is the <g.node> where mouse drag
-  thisGraph = window.myGraph;
+  thisGraph = myGraph;
 
 	d.px += d3.event.dx;
 	d.py += d3.event.dy;
@@ -324,11 +332,11 @@ myGraph.prototype.dragmove = function(d, i) {
   // console.log("dragmove end");
 }
 
-myGraph.prototype.dragend = function(d, i) {
+FluidGraph.prototype.dragend = function(d, i) {
   // console.log("dragend start");
 
   //Here, "this" is the <g.node> where mouse drag
-  thisGraph = window.myGraph;
+  thisGraph = myGraph;
 
   if (thisGraph.config.forceTick == "On")
   {
@@ -337,4 +345,32 @@ myGraph.prototype.dragend = function(d, i) {
   }
 
   // console.log("dragend end");
+}
+
+FluidGraph.prototype.deleteNode = function(nodeid) {
+  // console.log("deleteNode start");
+
+  function arrayObjectIndexOf(myArray, searchTerm)
+  {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i].uri === searchTerm) return i;
+    }
+    return -1;
+  }
+
+  //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
+  thisGraph = this;
+
+  if (thisGraph.d3data.nodes.length > 0)
+  {
+    var uri = nodeid || thisGraph.d3data.nodes[0].uri;
+    index = arrayObjectIndexOf(thisGraph.d3data.nodes, uri);
+
+    thisGraph.d3data.nodes.splice(thisGraph.d3data.nodes.indexOf(index), 1);
+    thisGraph.drawGraph();
+  }
+  else {
+    console.log("No node to delete !");
+  }
+  // console.log("deleteNode end");
 }
