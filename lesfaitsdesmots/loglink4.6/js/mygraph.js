@@ -16,8 +16,8 @@ var FluidGraph = function (firstBgElement,d3data)
     type : "N",
     xNewNode : 100,
     yNewNode : 100,
-    bgElementType : "simple",
-    forceTick : "On",
+    bgElementType : "bg",
+    forceTick : "Off",
     uriBase : "http://fluidlog.com/",
     linkDistance : 100,
     charge : -1000,
@@ -26,10 +26,10 @@ var FluidGraph = function (firstBgElement,d3data)
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
   thisGraph.bgElement = null,
-  thisGraph.nodes = null,
-  thisGraph.links = null,
-  thisGraph.nodesEnter = thisGraph.d3data.nodes || [],
-  thisGraph.linksEnter = thisGraph.d3data.links || [],
+  thisGraph.svgNodes = [],
+  thisGraph.svgLinks = [],
+  thisGraph.svgNodesEnter = thisGraph.d3data.nodes || [],
+  thisGraph.svgLinksEnter = thisGraph.d3data.links || [],
   thisGraph.width = window.innerWidth - 30,
   thisGraph.height = window.innerHeight - 30;
 
@@ -133,10 +133,10 @@ FluidGraph.prototype.drawGraph = function()
   var thisGraph = this;
   if (typeof thisGraph.d3data.links != "undefined")
   {
-    thisGraph.links = thisGraph.bgElement.selectAll("#link")
+    thisGraph.svgLinks = thisGraph.bgElement.selectAll("#link")
                 			.data(thisGraph.d3data.links)
 
-    thisGraph.linksEnter = thisGraph.links.enter()
+    thisGraph.svgLinksEnter = thisGraph.svgLinks.enter()
                 			.append("line")
                 		  .attr("x1", function(d) { return d.source.x; })
                 		  .attr("y1", function(d) { return d.source.y; })
@@ -149,10 +149,10 @@ FluidGraph.prototype.drawGraph = function()
 
   if (typeof thisGraph.d3data.nodes != "undefined")
   {
-    thisGraph.nodes = thisGraph.bgElement.selectAll("#node")
+    thisGraph.svgNodes = thisGraph.bgElement.selectAll("#node")
     				              .data(thisGraph.d3data.nodes)
 
-    thisGraph.nodesEnter = thisGraph.nodes
+    thisGraph.svgNodesEnter = thisGraph.svgNodes
                                 .enter()
                         				.append("g")
                         				.attr("id", "node")
@@ -165,7 +165,7 @@ FluidGraph.prototype.drawGraph = function()
                                       )
                                 // .call(thisGraph.node_drag)
 
-    var circle = thisGraph.nodesEnter.append("circle")
+    var circle = thisGraph.svgNodesEnter.append("circle")
           .attr("id", "nodecircle")
           .style("fill", function (d){
             	switch (d.type)
@@ -186,15 +186,15 @@ FluidGraph.prototype.drawGraph = function()
 				  .duration(300)
           .attr("r", function(d) { return d.size ; })
 
-    var text = thisGraph.nodesEnter.append("text")
+    var text = thisGraph.svgNodesEnter.append("text")
     			.attr("text-anchor", "middle")
     			.attr("dy", ".25em")
     			.text(function(d) { return d.name+d.index })
     			.style("font-size", 14)
   }
 
-  //delete node if there's less object in nodes array than in DOM
-  thisGraph.nodes.exit().remove();
+  //delete node if there's less object in svgNodes array than in DOM
+  thisGraph.svgNodes.exit().remove();
 
   if (thisGraph.config.forceTick == "On")
   {
@@ -219,12 +219,12 @@ FluidGraph.prototype.movexy = function()
     thisGraph = this;
   }
 
-  thisGraph.links.attr("x1", function(d) { return d.source.x; })
+  thisGraph.svgLinks.attr("x1", function(d) { return d.source.x; })
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
 
-  thisGraph.nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  thisGraph.svgNodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
   // console.log("movexy end");
 }
@@ -262,15 +262,18 @@ FluidGraph.prototype.addNode = function(newnode)
   if (typeof newnode.index == "undefined")
     newnode.index = d3data.nodes.length;
 
+  if (typeof newnode.px == "undefined")
+    newnode.px = xy[0];
+  if (typeof newnode.py == "undefined")
+    newnode.py = xy[1];
   if (typeof newnode.x == "undefined")
     newnode.x = xy[0];
   if (typeof newnode.y == "undefined")
     newnode.y = xy[1];
+  // if (typeof newnode.weight == "undefined")
+  //   newnode.weight = 1;
 
   thisGraph.d3data.nodes.push(newnode)
-
-  //If we don't put that, when you add a new node, then if you move it -> error (0,0)
-  //activeForce()
 
   thisGraph.drawGraph();
 
