@@ -34,7 +34,9 @@ $(document).ready()
 
   myGraph.bgElement = d3.select("#bgElement")
 
-  myGraph.activeForce();
+  if (myGraph.config.activeForce == "On")
+    myGraph.activeForce();
+
   myGraph.drawGraph();
 
 }
