@@ -30,12 +30,76 @@ $(document).ready()
 
   var myGraph = new FluidGraph("#chart",d3data)
 
-  myGraph.addSvg("bgElement");
+  myGraph.initSgvContainer("bgElement");
 
-  myGraph.bgElement = d3.select("#bgElement")
+  $('#initGraph')
+      .click(function()
+      {
+        location.reload(true)
+      })
+      .popup({
+          inline   : true,
+          hoverable: true,
+          position : 'bottom left',
+          delay: {
+            show: 300,
+            hide: 500
+          }
+      });
 
-  if (myGraph.config.activeForce == "On")
-    myGraph.activeForce();
+  if (myGraph.config.force == 'On')
+    $('#activeForceCheckbox').checkbox('check');
+  else
+    $('#activeForceCheckbox').checkbox('uncheck');
+
+  if (myGraph.config.elastic == 'On')
+    $('#activeElasticCheckbox').checkbox('check');
+  else
+    $('#activeElasticCheckbox').checkbox('uncheck');
+
+  $('#activeForceCheckbox').checkbox({
+    onChecked : function()
+  	{
+      myGraph.config.force = "On";
+      myGraph.config.elastic = "On";
+      $('#activeElasticCheckbox').checkbox('check');
+      $('#activeElasticCheckbox').removeClass('disabled');
+      myGraph.refreshGraph();
+  	},
+    onUnchecked : function()
+  	{
+      if (typeof myGraph.force != "undefined")
+        myGraph.force.stop();
+      myGraph.config.force = "Off";
+      myGraph.config.elastic = "Off";
+      $('#activeElasticCheckbox').checkbox('uncheck');
+      $('#activeElasticCheckbox').addClass('disabled');
+      myGraph.refreshGraph();
+  	}
+  });
+
+  $('#activeElasticCheckbox').checkbox({
+    onChecked : function()
+  	{
+      myGraph.config.elastic = "On";
+      myGraph.refreshGraph();
+  	},
+    onUnchecked : function()
+  	{
+      if (typeof myGraph.force != "undefined")
+        myGraph.force.stop();
+      myGraph.config.elastic = "Off";
+      myGraph.refreshGraph();
+  	}
+  });
+
+  if (myGraph.config.force == "On")
+  {
+    myGraph.activateForce();
+  }
+  else {
+    $('#activeElasticCheckbox').addClass('disabled');
+  }
 
   myGraph.drawGraph();
 
