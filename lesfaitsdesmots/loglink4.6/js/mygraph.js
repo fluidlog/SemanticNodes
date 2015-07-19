@@ -422,18 +422,22 @@ FluidGraph.prototype.nodeOnMouseUp = function(d)
 {
   thisGraph = myGraph;
 
-  thisGraph.mouseUpNode = d;
-  // if we clicked on the same node, reset vars
-  if (thisGraph.mouseUpNode.nodeid == thisGraph.mouseDownNode.nodeid)
-  {
-    thisGraph.resetMouseVars();
-    return;
-  }
-
-  // if we clicked on the origin node
+  // if we clicked on an origin node
   if (thisGraph.mouseDownNode)
   {
+    thisGraph.mouseUpNode = d;
+    // if we clicked on the same node, reset vars
+    if (thisGraph.mouseUpNode.nodeid == thisGraph.mouseDownNode.nodeid)
+    {
+      thisGraph.resetMouseVars();
+      return;
+    }
+
+    var d3svgMouseDownNode = d3.select(thisGraph.svgMouseDownNode);
+    thisGraph.drag_line.attr("visibility", "hidden");
+    thisGraph.fixUnfixNode(d3svgMouseDownNode);
     thisGraph.addLink(thisGraph.mouseDownNode.nodeid,thisGraph.mouseUpNode.nodeid);
+    thisGraph.resetMouseVars();
   }
 }
 
