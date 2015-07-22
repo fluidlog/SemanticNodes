@@ -33,29 +33,71 @@ $(document).ready()
   myGraph.initSgvContainer("bgElement");
 
   $('#initGraph')
-      .click(function()
-      {
-        location.reload(true)
-      })
-      .popup({
-          inline   : true,
-          hoverable: true,
-          position : 'bottom left',
-          delay: {
-            show: 300,
-            hide: 500
-          }
-      });
+    .click(function()
+    {
+      location.reload(true)
+    })
+    .popup({
+        inline   : true,
+        hoverable: true,
+        position : 'bottom left',
+        delay: {
+          show: 100,
+          hide: 500
+        }
+    });
 
-  if (myGraph.config.force == 'On')
-    $('#activeForceCheckbox').checkbox('check');
-  else
-    $('#activeForceCheckbox').checkbox('uncheck');
+  $('#deleteGraph')
+    .click(function()
+    {
+      myGraph.deleteGraph(false);
+    })
+    .popup({
+        inline   : true,
+        hoverable: true,
+        position : 'bottom left',
+        delay: {
+          show: 100,
+          hide: 500
+        }
+    });
 
-  if (myGraph.config.elastic == 'On')
-    $('#activeElasticCheckbox').checkbox('check');
-  else
-    $('#activeElasticCheckbox').checkbox('uncheck');
+  $('#uploadGraph')
+    .click(function()
+    {
+      $("#hiddenFileUpload").click();
+    })
+    .popup({
+        inline   : true,
+        hoverable: true,
+        position : 'bottom left',
+        delay: {
+          show: 100,
+          hide: 500
+        }
+    });
+
+  $('#hiddenFileUpload')
+      .on("change", myGraph.uploadGraph)
+
+  $('#downloadGraph')
+    .click(function()
+    {
+      myGraph.downloadGraph(myGraph);
+    })
+    .popup({
+        inline   : true,
+        hoverable: true,
+        position : 'bottom left',
+        delay: {
+          show: 100,
+          hide: 500
+        }
+    });
+
+  var checkboxIsInitialized = false;
+
+  checkboxInitialisation();
 
   $('#activeForceCheckbox').checkbox({
     onChecked : function()
@@ -64,7 +106,8 @@ $(document).ready()
       myGraph.config.elastic = "On";
       $('#activeElasticCheckbox').checkbox('check');
       $('#activeElasticCheckbox').removeClass('disabled');
-      myGraph.refreshGraph();
+      if (checkboxIsInitialized)
+        myGraph.refreshGraph();
   	},
     onUnchecked : function()
   	{
@@ -74,22 +117,25 @@ $(document).ready()
       myGraph.config.elastic = "Off";
       $('#activeElasticCheckbox').checkbox('uncheck');
       $('#activeElasticCheckbox').addClass('disabled');
-      myGraph.refreshGraph();
-  	}
+      if (checkboxIsInitialized)
+        myGraph.refreshGraph();
+  	},
   });
 
   $('#activeElasticCheckbox').checkbox({
     onChecked : function()
   	{
       myGraph.config.elastic = "On";
-      myGraph.refreshGraph();
+      if (checkboxIsInitialized)
+        myGraph.refreshGraph();
   	},
     onUnchecked : function()
   	{
       if (typeof myGraph.force != "undefined")
         myGraph.force.stop();
       myGraph.config.elastic = "Off";
-      myGraph.refreshGraph();
+      if (checkboxIsInitialized)
+        myGraph.refreshGraph();
   	}
   });
 
@@ -101,6 +147,7 @@ $(document).ready()
     $('#activeElasticCheckbox').addClass('disabled');
   }
 
+  checkboxIsInitialized = true;
   myGraph.drawGraph();
 
 }
