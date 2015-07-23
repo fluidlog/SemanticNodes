@@ -97,7 +97,7 @@ $(document).ready()
 
   var checkboxIsInitialized = false;
 
-  checkboxInitialisation();
+  checkboxInitialisation(myGraph);
 
   $('#activeForceCheckbox').checkbox({
     onChecked : function()

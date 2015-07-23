@@ -20,7 +20,20 @@ var FluidGraph = function (firstBgElement,d3data){
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
+    debug : true,
   };
+
+  thisGraph.customNodes = {
+    strokeWidth : 7,
+    strokeColor: "#DDD",
+    strokeSelectedColor: "#999",
+  }
+
+  thisGraph.customEdges = {
+    strokeWidth: 7,
+    strokeColor: "#DDD",
+    strokeSelectedColor: "#999",
+  }
 
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
@@ -32,16 +45,29 @@ var FluidGraph = function (firstBgElement,d3data){
   thisGraph.nodeidct = null,
 
   //mouse event vars
-  thisGraph.selected_node = null,
-  thisGraph.selected_link = null,
-  thisGraph.mouseDownNode = null,
-  thisGraph.svgMouseDownNode = null,
-  thisGraph.mouseUpNode = null,
-  thisGraph.mouseDownLink = null;
-
+  thisGraph.state = {
+    selectedNode : null,
+    selectedEdge : null,
+    mouseDownNode : null,
+    mouseDownLink : null,
+    svgMouseDownNode : null,
+    mouseUpNode : null,
+    lastKeyDown : -1,
+  }
 }
 
-var sem = 1; //semaphore
+// Come from : https://github.com/cjrd/directed-graph-creator/blob/master/graph-creator.js
+FluidGraph.prototype.consts =  {
+  selectedClass: "selected",
+  connectClass: "connect-node",
+  circleGClass: "conceptG",
+  graphClass: "graph",
+  activeEditId: "active-editing",
+  BACKSPACE_KEY: 8,
+  DELETE_KEY: 46,
+  ENTER_KEY: 13,
+  nodeRadius: 50,
+};
 
 /*
 *
@@ -51,7 +77,7 @@ var sem = 1; //semaphore
 
 //rescale g
 FluidGraph.prototype.rescale = function(){
-  // console.log("rescale start");
+  if (thisGraph.debug) console.log("rescale start");
 
   //Here, "this" is the <g> where mouse double-clic
   thisGraph = window.myGraph;
@@ -60,14 +86,23 @@ FluidGraph.prototype.rescale = function(){
     "translate(" + d3.event.translate + ")"
     + " scale(" + d3.event.scale + ")");
 
-  // console.log("rescale end");
+  if (thisGraph.debug) console.log("rescale end");
 }
 
 //Create a balise SVG with events
 FluidGraph.prototype.initSgvContainer = function(bgElementId){
-  // console.log("initSgvContainer start");
-
   var thisGraph = this;
+
+  if (thisGraph.debug) console.log("initSgvContainer start");
+
+  // listen for key events
+  d3.select(window).on("keydown", function(){
+    thisGraph.bgKeyDown.call(thisGraph);
+  })
+  .on("keyup", function(){
+    thisGraph.bgKeyUp.call(thisGraph);
+  });
+
   var div = thisGraph.firstBgElement;
   var svg;
 
@@ -95,6 +130,8 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
       .on("dblclick", thisGraph.addNode)
       .append('g')
       .attr('id', bgElementId)
+      .on("mousedown", function(d){
+        thisGraph.bgOnMouseDown.call(thisGraph, d)})
       .on("mousemove", function(d){
         thisGraph.bgOnMouseMove.call(thisGraph, d)})
 	    .on("mouseup", function(d){
@@ -112,18 +149,20 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
 
   // line displayed when dragging new nodes
   thisGraph.drag_line = svg.append("path")
+                          .attr("class", "drag_line")
                           .attr("stroke-dasharray", "5,5")
                           .attr("stroke", "#999")
                           .attr("stroke-width", "2")
                           .attr("d", "M0 0 L0 0")
                           .attr("visibility", "hidden");
-  // console.log("initSgvContainer end");
+
+  if (thisGraph.debug) console.log("initSgvContainer end");
 }
 
 FluidGraph.prototype.activateForce = function(){
-  // console.log("activateForce start");
-
   var thisGraph = this;
+
+  if (thisGraph.debug) console.log("activateForce start");
 
   thisGraph.force = d3.layout.force()
                         .nodes(thisGraph.d3data.nodes)
@@ -144,17 +183,17 @@ FluidGraph.prototype.activateForce = function(){
     thisGraph.force.stop();
   }
 
-  // console.log("activateForce end");
+  if (thisGraph.debug) console.log("activateForce end");
 }
 
 FluidGraph.prototype.drawGraph = function(){
-  console.log("drawGraph start");
-
   var thisGraph = this;
 
-  //Update of the nodes
+  if (thisGraph.debug) console.log("drawGraph start");
+
   if (typeof thisGraph.d3data.nodes != "undefined")
   {
+    //Update of the nodes
     thisGraph.nodeidct = 0;
     myGraph.d3data.nodes.forEach(function(node)
             {
@@ -209,8 +248,8 @@ FluidGraph.prototype.drawGraph = function(){
                 	}
               })
               .style("opacity", 1)
-              .style("stroke", "#DDD")
-              .style("stroke-width", 7)
+              .style("stroke", thisGraph.customNodes.strokeColor)
+              .style("stroke-width", thisGraph.customNodes.strokeWidth)
               .style("cursor", "pointer")
               .attr("r", 0)
     				  .transition()
@@ -228,7 +267,7 @@ FluidGraph.prototype.drawGraph = function(){
 
     //Update links
     // Without force :
-    // once you have object nodes, you can create d3data.edges without force.links function
+    // once you have object nodes, you can create d3data.edges without force.links() function
 
     // From the second time, we check every edges to see if there are number to replace by nodes objects
     thisGraph.d3data.edges.forEach(function(link)
@@ -247,8 +286,7 @@ FluidGraph.prototype.drawGraph = function(){
                         .enter()
                         .insert("path", "#node")
                         .attr("id", "path")
-                  			.attr("stroke", "#DDD")
-                  			.attr("stroke-width", 3)
+                  			.attr("stroke-width", thisGraph.customEdges.strokeWidth)
                         .attr("d", function(d) {
                                     var dx = d.target.x - d.source.x,
                                         dy = d.target.y - d.source.y,
@@ -261,6 +299,13 @@ FluidGraph.prototype.drawGraph = function(){
                                         d.target.y;
                                   })
                         .style("fill", "none")
+                        .on("mousedown", function(d){
+                          thisGraph.pathOnMouseDown.call(thisGraph, d3.select(this), d);
+                          }
+                        )
+                        .on("mouseup", function(d){
+                          thisGraph.state.mouseDownLink = null;
+                        });
 
 
     //delete node if there's less object in svgNodes array than in DOM
@@ -274,88 +319,118 @@ FluidGraph.prototype.drawGraph = function(){
     }
   }
 
-  console.log("drawGraph end");
+  if (thisGraph.debug) console.log("drawGraph end");
 }
 
 
-FluidGraph.prototype.movexy = function(d)
-{
-  // if (sem)
-  // {
-    // console.log("movexy start");
+FluidGraph.prototype.movexy = function(d){
+  thisGraph = this;
 
-    thisGraph = this;
+  if (thisGraph.debug) console.log("movexy start");
 
-    if (isNaN(thisGraph.svgNodesEnter[0][0].__data__.x))
-    {
-      console.log("movexy problem if tick...",thisGraph.svgNodesEnter[0][0].__data__.x)
-      throw new Error("movexy still problem if tick :-)...");
-    }
+  if (isNaN(thisGraph.svgNodesEnter[0][0].__data__.x))
+  {
+    console.log("movexy problem if tick...",thisGraph.svgNodesEnter[0][0].__data__.x)
+    throw new Error("movexy still problem if tick :-)...");
+  }
 
-      thisGraph.svgLinksEnter.attr("d", function(d) {
-            var dx = d.target.x - d.source.x,
-                dy = d.target.y - d.source.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
-           return "M" +
-                d.source.x + "," +
-                d.source.y + "A" +
-                dr + "," + dr + " 0 0,1 " +
-                d.target.x + "," +
-                d.target.y;
-          })
+  thisGraph.svgLinksEnter.attr("d", function(d) {
+        var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy);
+       return "M" +
+            d.source.x + "," +
+            d.source.y + "A" +
+            dr + "," + dr + " 0 0,1 " +
+            d.target.x + "," +
+            d.target.y;
+      })
 
-      thisGraph.svgNodesEnter.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  thisGraph.svgNodesEnter.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-    // console.log("movexy end");
-  // }
+  if (thisGraph.debug) console.log("movexy end");
 }
 
-FluidGraph.prototype.fixUnfixNode = function(node)
+FluidGraph.prototype.fixUnfixNode = function(d3node,d)
 {
-  console.log("fixUnfixNode start");
-
-  if (typeof node.name != "undefined")
+  if (typeof d3node.name != "undefined")
   {
     thisNode = this;
   }
   else
   {
-    thisNode = node;
+    thisNode = d3node.node();
   }
+
+  if (thisGraph.debug) console.log("fixUnfixNode start");
 
   if (d3.event.defaultPrevented) return;
 
   //Toggle Class="fixed", fix d force and change circle stroke
   var circle_stroke;
   var status;
-	d3.select(thisNode).select("#nodecircle").classed("fixed", function(d)
+	d3.select(thisNode).select("#nodecircle").classed("selected", function(d)
       {
         if (d.fixed == true)
         {
           d.fixed = false;
-          circle_stroke = "#DDD";
           status = "unfixed";
+          thisGraph.removeSelectFromNode();
           return false;
         }
         else {
           d.fixed = true;
-          circle_stroke = "#999";
           status = "fixed";
+          thisGraph.replaceSelectNode(d3node, d);
           return true;
         }
       })
       .style("stroke", circle_stroke);
 
-  console.log("fixUnfixNode end");
+  if (thisGraph.debug) console.log("fixUnfixNode end");
   return status;
 }
 
+FluidGraph.prototype.replaceSelectNode = function(d3Node, nodeData){
+  var thisGraph = this;
+  d3Node.classed(thisGraph.consts.selectedClass, true);
+  if (thisGraph.state.selectedNode){
+    thisGraph.removeSelectFromNode();
+  }
+  thisGraph.state.selectedNode = nodeData;
+};
+
+FluidGraph.prototype.removeSelectFromNode = function(){
+  var thisGraph = this;
+  thisGraph.svgNodesEnter.filter(function(cd){
+    return cd.id === thisGraph.state.selectedNode.id;
+  }).classed(thisGraph.consts.selectedClass, false);
+  thisGraph.state.selectedNode = null;
+};
+
+FluidGraph.prototype.replaceSelectEdge = function(d3Path, edgeData){
+  var thisGraph = this;
+  d3Path.classed(thisGraph.consts.selectedClass, true);
+  if (thisGraph.state.selectedEdge){
+    thisGraph.removeSelectFromEdge();
+  }
+  thisGraph.state.selectedEdge = edgeData;
+};
+
+FluidGraph.prototype.removeSelectFromEdge = function(){
+  var thisGraph = this;
+  thisGraph.svgLinksEnter.filter(function(cd){
+    return cd === thisGraph.state.selectedEdge;
+  }).classed(thisGraph.consts.selectedClass, false);
+  thisGraph.state.selectedEdge = null;
+};
+
 FluidGraph.prototype.addNode = function(newnode)
 {
-  console.log("addnode start");
-
   //Here, "this" is the <g> where mouse double-clic
   thisGraph = myGraph;
+
+  if (thisGraph.debug) console.log("addnode start");
 
   var xy = [];
 
@@ -398,15 +473,16 @@ FluidGraph.prototype.addNode = function(newnode)
 
   thisGraph.drawGraph();
 
-  console.log("addnode end");
+  if (thisGraph.debug) console.log("addnode end");
   return newnode.identifier;
 }
 
 FluidGraph.prototype.addLink = function(sourceid, targetid)
 {
-  console.log("addLink start");
-
   thisGraph = myGraph;
+
+  if (thisGraph.debug) console.log("addLink start");
+
   // draw link between mouseDownNode and this node
   var newlink = { source: thisGraph.searchIndexOfNodeId(d3data.nodes,sourceid),
                   target: thisGraph.searchIndexOfNodeId(d3data.nodes,targetid)};
@@ -415,110 +491,146 @@ FluidGraph.prototype.addLink = function(sourceid, targetid)
 
   thisGraph.drawGraph();
 
-  console.log("addLink end");
+  if (thisGraph.debug) console.log("addLink end");
 }
 
-FluidGraph.prototype.nodeOnMouseDown = function(d3node,d)
-{
-  console.log("nodeOnMouseDown start");
-
+FluidGraph.prototype.nodeOnMouseDown = function(d3node,d){
   thisGraph = this;
 
-  // sem = 0;
+  if (thisGraph.debug) console.log("nodeOnMouseDown start");
 
-  thisGraph.mouseDownNode = d;
-  thisGraph.svgMouseDownNode = d3node;
+  thisGraph.state.mouseDownNode = d;
+  thisGraph.state.selectedNode = d;
+  thisGraph.state.svgMouseDownNode = d3node;
 
   //initialise drag_line position on this node
-  thisGraph.drag_line.attr("d", "M"+thisGraph.mouseDownNode.x
-                              +" "+thisGraph.mouseDownNode.y
-                              +" L"+thisGraph.mouseDownNode.x
-                              +" "+thisGraph.mouseDownNode.y)
+  thisGraph.drag_line.attr("d", "M"+thisGraph.state.mouseDownNode.x
+                              +" "+thisGraph.state.mouseDownNode.y
+                              +" L"+thisGraph.state.mouseDownNode.x
+                              +" "+thisGraph.state.mouseDownNode.y)
 
-  console.log("nodeOnMouseDown end");
+  if (thisGraph.debug) console.log("nodeOnMouseDown end");
 }
 
-FluidGraph.prototype.nodeOnMouseUp = function(d3node,d)
-{
-  console.log("nodeOnMouseUp start");
+FluidGraph.prototype.nodeOnMouseUp = function(d3node,d){
+//.on("mouseup",function(d){thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this), d)})
+// d3node = d3.select(this) = array[1].<g.node>
+
   thisGraph = this;
 
+  if (thisGraph.debug) console.log("nodeOnMouseUp start");
+
   // if we clicked on an origin node
-  if (thisGraph.mouseDownNode)
+  if (thisGraph.state.mouseDownNode)
   {
-    thisGraph.mouseUpNode = d;
+    thisGraph.state.mouseUpNode = d;
     // if we clicked on the same node, reset vars
-    if (thisGraph.mouseUpNode.identifier == thisGraph.mouseDownNode.identifier)
+    if (thisGraph.state.mouseUpNode.identifier == thisGraph.state.mouseDownNode.identifier)
     {
-      thisGraph.fixUnfixNode(thisGraph.svgMouseDownNode.node());
+      thisGraph.fixUnfixNode(d3node,d);
       thisGraph.resetMouseVars();
-      // sem = 1;
       return;
     }
 
-    thisGraph.fixUnfixNode(thisGraph.svgMouseDownNode.node());
+    //Drop on an other node --> create a link
+    thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode,d);
     thisGraph.drag_line.attr("visibility", "hidden");
-    thisGraph.addLink(thisGraph.mouseDownNode.identifier,thisGraph.mouseUpNode.identifier);
+    thisGraph.addLink(thisGraph.state.mouseDownNode.identifier,thisGraph.state.mouseUpNode.identifier);
     thisGraph.resetMouseVars();
-    // sem = 1;
   }
 
-  console.log("nodeOnMouseUp end");
+  if (thisGraph.debug) console.log("nodeOnMouseUp end");
 }
 
-FluidGraph.prototype.bgOnMouseMove = function()
-{
-  // console.log("bgOnMouseMove start");
+FluidGraph.prototype.pathOnMouseDown = function(d3path, d){
+  var thisGraph = this;
+
+  if (thisGraph.debug) console.log("pathOnMouseDown start");
+
+  d3.event.stopPropagation();
+  thisGraph.state.mouseDownLink = d;
+
+  if (thisGraph.state.selectedNode){
+    thisGraph.removeSelectFromNode();
+  }
+
+  var prevEdge = thisGraph.state.selectedEdge;
+  if (!prevEdge || prevEdge !== d){
+    thisGraph.replaceSelectEdge(d3path, d);
+  } else{
+    thisGraph.removeSelectFromEdge();
+  }
+
+  if (thisGraph.debug) console.log("pathOnMouseDown end");
+}
+
+FluidGraph.prototype.bgOnMouseDown = function(){
   thisGraph = this;
 
+  if (thisGraph.debug) console.log("bgOnMouseDown start");
+
+  if (thisGraph.state.selectedEdge){
+    thisGraph.removeSelectFromEdge();
+  }
+
+  if (thisGraph.state.selectedNode){
+    thisGraph.removeSelectFromNode();
+  }
+
+  if (thisGraph.debug) console.log("bgOnMouseDown start");
+}
+
+FluidGraph.prototype.bgOnMouseMove = function(){
+  thisGraph = this;
+
+  if (thisGraph.debug) console.log("bgOnMouseMove start");
+
   // if the origin click is not a node, then pan the graph (activated by bgOnMouseDown)...
-  if (!thisGraph.mouseDownNode) return;
+  if (!thisGraph.state.mouseDownNode) return;
 
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
   // update drag line
-  thisGraph.drag_line.attr("d", "M"+thisGraph.mouseDownNode.x
-                              +" "+thisGraph.mouseDownNode.y
+  thisGraph.drag_line.attr("d", "M"+thisGraph.state.mouseDownNode.x
+                              +" "+thisGraph.state.mouseDownNode.y
                               +" L"+xycoords[0]
                               +" "+xycoords[1])
 
-  // console.log("bgOnMouseMove end")
+  if (thisGraph.debug) console.log("bgOnMouseMove end")
 }
 
-FluidGraph.prototype.bgOnMouseUp = function()
-{
-  console.log("bgOnMouseUp start");
+FluidGraph.prototype.bgOnMouseUp = function(){
   thisGraph = this;
 
-  if (!thisGraph.mouseDownNode)
+  if (thisGraph.debug) console.log("bgOnMouseUp start");
+
+  if (!thisGraph.state.mouseDownNode)
   {
     thisGraph.resetMouseVars();
+    if (thisGraph.debug) console.log("bgOnMouseUp end");
     return;
   }
 
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
-  var d3svgMouseDownNode = d3.select(thisGraph.svgMouseDownNode.node());
-
   thisGraph.drag_line.attr("visibility", "hidden");
-  thisGraph.fixUnfixNode(thisGraph.svgMouseDownNode.node());
+  thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode);
   var newnodeidentifier = thisGraph.addNode({x:xycoords[0],
                                               y:xycoords[1],
-                                              px:xycoords[0],
-                                              py:xycoords[1]});
+                                              });
 
-  thisGraph.addLink(thisGraph.mouseDownNode.identifier, newnodeidentifier);
+  thisGraph.addLink(thisGraph.state.mouseDownNode.identifier, newnodeidentifier);
 
   thisGraph.resetMouseVars();
 
-  console.log("bgOnMouseUp end");
+  if (thisGraph.debug) console.log("bgOnMouseUp end");
 }
 
 FluidGraph.prototype.dragstart = function(d, i) {
-  console.log("dragstart start");
-
   //Here, "this" is the <g.node> where mouse drag
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("dragstart start");
 
   d3.event.sourceEvent.stopPropagation();
 
@@ -527,14 +639,14 @@ FluidGraph.prototype.dragstart = function(d, i) {
     thisGraph.drag_line.attr("visibility", "visible");
   }
 
-  console.log("dragstart end");
+  if (thisGraph.debug) console.log("dragstart end");
 }
 
 FluidGraph.prototype.dragmove = function(d, i) {
-  // console.log("dragmove start");
-
   //Here, "this" is the <g.node> where mouse drag
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("dragmove start");
 
   if (d.fixed != true) //false or undefined
   {
@@ -548,14 +660,14 @@ FluidGraph.prototype.dragmove = function(d, i) {
     thisGraph.resetMouseVars();
   }
 
-  // console.log("dragmove end");
+  if (thisGraph.debug) console.log("dragmove end");
 }
 
 FluidGraph.prototype.dragend = function(d, i) {
-  console.log("dragend start");
-
   //Here, "this" is the <g.node> where mouse drag
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("dragend start");
 
   if (thisGraph.config.elastic == "On")
   {
@@ -566,7 +678,7 @@ FluidGraph.prototype.dragend = function(d, i) {
     }
   }
 
-  console.log("dragend end");
+  if (thisGraph.debug) console.log("dragend end");
 }
 
 FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm)
@@ -590,43 +702,99 @@ FluidGraph.prototype.spliceLinksForNode = function (nodeid) {
 }
 
 
-FluidGraph.prototype.deleteNode = function(nodeidentifier) {
-  // console.log("deleteNode start");
-
+FluidGraph.prototype.deleteNode = function(nodeIdentifier) {
   //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("deleteNode start");
 
   if (thisGraph.d3data.nodes.length > 0)
   {
     //delete args or the first if not arg.
-    var nodeidentifier = nodeidentifier || thisGraph.d3data.nodes[0].identifier;
-    index = thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes, nodeidentifier);
+    var nodeIdentifier = nodeIdentifier || thisGraph.d3data.nodes[0].identifier;
+    index = thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes, nodeIdentifier);
 
     //delete node
     thisGraph.d3data.nodes.splice(thisGraph.d3data.nodes.indexOf(index), 1);
 
     //delete edges linked to this (old) node
     thisGraph.spliceLinksForNode(index);
+    thisGraph.state.selectedNode = null;
     thisGraph.drawGraph();
   }
   else {
     console.log("No node to delete !");
   }
-  // console.log("deleteNode end");
+  if (thisGraph.debug) console.log("deleteNode end");
 }
+
+FluidGraph.prototype.deleteLink = function(selectedEdge) {
+  //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
+  thisGraph = this;
+
+  if (thisGraph.debug) console.log("deleteLink start");
+
+  if (thisGraph.d3data.edges.length > 0)
+  {
+    thisGraph.d3data.edges.splice(thisGraph.d3data.edges.indexOf(selectedEdge), 1);
+    thisGraph.state.selectedEdge = null;
+    thisGraph.drawGraph();
+  }
+  else {
+    console.log("No edge to delete !");
+  }
+
+  if (thisGraph.debug) console.log("deleteLink end");
+}
+
+// From https://github.com/cjrd/directed-graph-creator/blob/master/graph-creator.js
+FluidGraph.prototype.bgKeyDown = function() {
+  var thisGraph = this;
+
+  if (thisGraph.debug) console.log("bgKeyDown start");
+
+  // make sure repeated key presses don't register for each keydown
+  if(thisGraph.state.lastKeyDown !== -1) return;
+
+  thisGraph.state.lastKeyDown = d3.event.keyCode;
+  var selectedNode = thisGraph.state.selectedNode,
+      selectedEdge = thisGraph.state.selectedEdge;
+
+  switch(d3.event.keyCode) {
+  case thisGraph.consts.BACKSPACE_KEY:
+  case thisGraph.consts.DELETE_KEY:
+    d3.event.preventDefault();
+    if (selectedNode){
+      thisGraph.deleteNode(selectedNode.identifier)
+    } else if (selectedEdge){
+      thisGraph.deleteLink(selectedEdge)
+    }
+    break;
+  }
+
+  if (thisGraph.debug) console.log("bgKeyDown end");
+}
+
+FluidGraph.prototype.bgKeyUp = function() {
+  this.state.lastKeyDown = -1;
+};
 
 FluidGraph.prototype.resetMouseVars = function()
 {
-  thisGraph.mouseDownNode = null;
-  thisGraph.svgMouseDownNode = null;
-  thisGraph.mouseUpNode = null;
-  thisGraph.mouseDownLink = null;
+  if (thisGraph.debug) console.log("resetMouseVars start");
+
+  thisGraph.state.mouseDownNode = null;
+  thisGraph.state.svgMouseDownNode = null;
+  thisGraph.state.mouseUpNode = null;
+  thisGraph.state.mouseDownLink = null;
+
+  if (thisGraph.debug) console.log("resetMouseVars end");
 }
 
 FluidGraph.prototype.deleteGraph = function(skipPrompt) {
-  // console.log("deleteGraph start");
-
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("deleteGraph start");
 
   doDelete = true;
   if (!skipPrompt){
@@ -639,26 +807,28 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
     d3.selectAll("#node").remove();
     d3.selectAll("#path").remove();
   }
-  // console.log("deleteGraph end");
+
+  if (thisGraph.debug) console.log("deleteGraph end");
 }
 
 FluidGraph.prototype.refreshGraph = function() {
-  // console.log("deleteGraph start");
-
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("refreshGraph start");
+
   thisGraph.resetMouseVars();
   if (myGraph.config.force == "On")
     myGraph.activateForce();
 
   myGraph.drawGraph();
 
-  // console.log("deleteGraph end");
+  if (thisGraph.debug) console.log("refreshGraph end");
 }
 
 FluidGraph.prototype.downloadGraph = function() {
-  // console.log("downloadGraph start");
-
   thisGraph = this;
+
+  if (thisGraph.debug) console.log("downloadGraph start");
 
   var saveEdges = [];
   thisGraph.d3data.edges.forEach(function(val, i){
@@ -670,11 +840,11 @@ FluidGraph.prototype.downloadGraph = function() {
   var date_now = now.getDate()+"-"+now.getMonth()+1+"-"+now.getFullYear()+"-"+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
   saveAs(blob, "Carto-"+date_now+".d3json");
 
-  // console.log("downloadGraph end");
+  if (thisGraph.debug) console.log("downloadGraph end");
 }
 
 FluidGraph.prototype.uploadGraph = function() {
-  // console.log("uploadGraph start");
+  if (thisGraph.debug) console.log("uploadGraph start");
 
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     var uploadFile = this.files[0];
@@ -706,10 +876,14 @@ FluidGraph.prototype.uploadGraph = function() {
     alert("Your browser won't let you save this graph -- try upgrading your browser to IE 10+ or Chrome or Firefox.");
   }
 
-  // console.log("uploadGraph end");
+  if (thisGraph.debug) console.log("uploadGraph end");
 }
 
 function checkboxInitialisation() {
+  thisGraph = this;
+
+  if (thisGraph.debug) console.log("checkboxInitialisation end");
+
   if (myGraph.config.force == 'On')
     $('#activeForceCheckbox').checkbox('check');
   else
@@ -719,4 +893,6 @@ function checkboxInitialisation() {
     $('#activeElasticCheckbox').checkbox('check');
   else
     $('#activeElasticCheckbox').checkbox('uncheck');
+
+    if (thisGraph.debug) console.log("checkboxInitialisation end");
 }
