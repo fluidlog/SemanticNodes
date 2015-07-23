@@ -353,14 +353,16 @@ FluidGraph.prototype.movexy = function(d){
 
 FluidGraph.prototype.fixUnfixNode = function(d3node,d)
 {
-  if (typeof d3node.name != "undefined")
-  {
-    thisNode = this;
-  }
-  else
-  {
-    thisNode = d3node.node();
-  }
+  // if (typeof d3node.name != "undefined")
+  // {
+  //   thisNode = this;
+  // }
+  // else
+  // {
+  //   thisNode = d3node.node();
+  // }
+
+  thisGraph = this;
 
   if (thisGraph.debug) console.log("fixUnfixNode start");
 
@@ -369,7 +371,7 @@ FluidGraph.prototype.fixUnfixNode = function(d3node,d)
   //Toggle Class="fixed", fix d force and change circle stroke
   var circle_stroke;
   var status;
-	d3.select(thisNode).select("#nodecircle").classed("selected", function(d)
+	d3.select(d3node.node()).select("#nodecircle").classed("selected", function(d)
       {
         if (d.fixed == true)
         {
@@ -524,6 +526,7 @@ FluidGraph.prototype.nodeOnMouseUp = function(d3node,d){
   if (thisGraph.state.mouseDownNode)
   {
     thisGraph.state.mouseUpNode = d;
+    thisGraph.state.selectedNode = d;
     // if we clicked on the same node, reset vars
     if (thisGraph.state.mouseUpNode.identifier == thisGraph.state.mouseDownNode.identifier)
     {
@@ -564,7 +567,7 @@ FluidGraph.prototype.pathOnMouseDown = function(d3path, d){
   if (thisGraph.debug) console.log("pathOnMouseDown end");
 }
 
-FluidGraph.prototype.bgOnMouseDown = function(){
+FluidGraph.prototype.bgOnMouseDown = function(d){
   thisGraph = this;
 
   if (thisGraph.debug) console.log("bgOnMouseDown start");
@@ -574,13 +577,16 @@ FluidGraph.prototype.bgOnMouseDown = function(){
   }
 
   if (thisGraph.state.selectedNode){
-    thisGraph.removeSelectFromNode();
+    thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode,d);
   }
+
+  //If it still exist somthing "selected", set to "unselected"
+  d3.selectAll(".selected").classed(thisGraph.consts.selectedClass, false);
 
   if (thisGraph.debug) console.log("bgOnMouseDown start");
 }
 
-FluidGraph.prototype.bgOnMouseMove = function(){
+FluidGraph.prototype.bgOnMouseMove = function(d){
   thisGraph = this;
 
   if (thisGraph.debug) console.log("bgOnMouseMove start");
@@ -599,7 +605,7 @@ FluidGraph.prototype.bgOnMouseMove = function(){
   if (thisGraph.debug) console.log("bgOnMouseMove end")
 }
 
-FluidGraph.prototype.bgOnMouseUp = function(){
+FluidGraph.prototype.bgOnMouseUp = function(d){
   thisGraph = this;
 
   if (thisGraph.debug) console.log("bgOnMouseUp start");
@@ -784,7 +790,6 @@ FluidGraph.prototype.resetMouseVars = function()
   if (thisGraph.debug) console.log("resetMouseVars start");
 
   thisGraph.state.mouseDownNode = null;
-  thisGraph.state.svgMouseDownNode = null;
   thisGraph.state.mouseUpNode = null;
   thisGraph.state.mouseDownLink = null;
 
