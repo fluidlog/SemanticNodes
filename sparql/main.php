@@ -24,11 +24,11 @@ $ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_W
 $function_name = $_REQUEST['fn'];
 
 if ($ajax)
-{	
+{
 	header('Content-type: application/json');
 	header("Cache-Control: max-age=1"); // Annule le cache du serveur pour ne plus avoir de persistances dans les requêtes SPARQL
-	
-	
+
+
 	switch ($_REQUEST['fn'])
 	{
 		//Fonctions spécifiques utilisées pour l'application loglink1.1
@@ -42,7 +42,7 @@ if ($ajax)
 			echo json_encode($_REQUEST['fn']());
 			break;
 		case "initKernelGraph" :
-			echo json_encode($_REQUEST['fn'](	$_REQUEST['first_node_iri'], 
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['first_node_iri'],
 												$_REQUEST['second_node_iri']));
 			break;
 		case "addNode" :
@@ -75,7 +75,7 @@ if ($ajax)
 		case "importIntoTriplestore" :
 			echo json_encode($_REQUEST['fn'](	$_REQUEST['imported_graph']));
 			break;
-					
+
 		//Fonctions liées à l'utilisateur
 		case "existUser" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['user_name']));
@@ -138,7 +138,7 @@ if ($ajax)
 		case "deleteUserIntoTriplestore" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['user_iri_id']));
 			break;
-				
+
 		//Fonctions liées aux termes
 		case "getTermsFromTriplestore" :
 			if ($bouchon == "true")
@@ -182,7 +182,7 @@ if ($ajax)
 			}
 			else
 				echo json_encode($_REQUEST['fn']($_REQUEST['user_iri_id']));
-			break;	
+			break;
 		case "incrementTermId" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['term_iri_id']));
 			break;
@@ -198,7 +198,7 @@ if ($ajax)
 		case "getNewTermIri" :
 			echo json_encode($_REQUEST['fn']());
 			break;
-		
+
 		case "saveTermToTriplestore" :
 			$term = json_decode($_REQUEST['terms'],true);
 			echo json_encode($_REQUEST['fn'](	$term[0]["term_iri_id"],
@@ -215,11 +215,11 @@ if ($ajax)
 			echo json_encode($_REQUEST['fn']($_REQUEST['user_connected_iri_id']));
 			break;
 		case "deleteTermFromTriplestore" :
-			echo json_encode($_REQUEST['fn'](	$_REQUEST['term_iri_id'], 
-												$_REQUEST['user_connected_iri_id'], 
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['term_iri_id'],
+												$_REQUEST['user_connected_iri_id'],
 												$_REQUEST['owner_iri_id']));
 			break;
-					
+
 		case "existDomain" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['domain_name']));
 			break;
@@ -235,7 +235,7 @@ if ($ajax)
 		case "getDomainSelected" :
 			echo json_encode($_REQUEST['fn']());
 			break;
-	
+
 		//fonctions d'administration
 		case "getTriplesFromTriplestore" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['domain_name']));
@@ -243,7 +243,7 @@ if ($ajax)
 		case "deleteTripleIntoTriplestore" :
 			echo json_encode($_REQUEST['fn']($_REQUEST['sujet'], $_REQUEST['predicat'], $_REQUEST['objet']));
 			break;
-		
+
 		case "deleteAll" :
 			echo json_encode($_REQUEST['fn']());
 			break;
@@ -257,7 +257,7 @@ else
 	// Via une requête http : http://localhost/fluidlog/sparql/main.php?fn=getTermsFromTriplestore&user_iri_id=1
 	//
 	// ==================================================
-	
+
 	echo ("Bienvenue dans le mode d'appel aux fonctions du triplesore Fluidlog");
 	echo ("<br>Par exemple :");
 	echo ("<br> - Ajouter un terme lie a l'utilisateur possedant user_iri_id = 1 : ");
@@ -280,13 +280,11 @@ else
 	echo ("<br><a href='main.php?fn=deleteLink&source_iri_id=1&target_iri_id=2'>main.php?fn=deleteLink&source_iri_id=1&target_iri_id=2</a>");
 	echo ("<br> - deleteNode ");
 	echo ("<br><a href='main.php?fn=deleteNode&node_iri_id=3'>main.php?fn=deleteNode&node_iri_id=3</a>");
-	echo ("<br> - exportGraph ");
-	echo ("<br><a href='main.php?fn=exportGraph'>main.php?fn=exportGraph</a>");
-	
+
 	echo ("<br> - Supprimer tout le contenu du Triplestore (Attention !) ");
 	echo ("<br><a href='main.php?fn=deleteAll'>main.php?fn=deleteAll</a>");
 	echo ("<br>");
-	
+
 	switch ($_REQUEST['fn'])
 	{
 		//Fonctions spécifiques utilisées pour l'application loglink4.2
@@ -300,7 +298,7 @@ else
 			echo var_dump($_REQUEST['fn']());
 			break;
 		case "initKernelGraph" :
-			echo var_dump($_REQUEST['fn'](	$_REQUEST['first_node_iri'], 
+			echo var_dump($_REQUEST['fn'](	$_REQUEST['first_node_iri'],
 											$_REQUEST['second_node_iri']));
 			break;
 		case "addNode" :
@@ -327,10 +325,13 @@ else
 		case "deleteNode" :
 			echo var_dump($_REQUEST['fn'](	$_REQUEST['node_iri_id']));
 			break;
-		case "exportGraph" :
+		case "exportFromTriplestore" :
 			echo json_encode($_REQUEST['fn']());
 			break;
-					
+		case "importIntoTriplestore" :
+			echo json_encode($_REQUEST['fn'](	$_REQUEST['imported_graph']));
+			break;
+
 		//Fonctions liées à l'utilisateur
 		case "existUser" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['user_name']));
@@ -402,7 +403,7 @@ else
 			break;
 		case "addTermToTriplestore" :
 			//Simuler un seul terme : [{"term_iri_id":"10","text":"zdzdzdz","left":2,"top":52,"owner_iri_id":"1","owner_name":"admin"}]
-	
+
 			// Attention : utiliser le deuxième paramètre à "true" permet de récupérer un tableau associatif à la
 			// place d'un tableau d'objet PHP object(stdClass), ou alors utiliser get_objetc_vars()
 			// Réponse ici : http://stackoverflow.com/questions/3754411/php-json-stdclass-object
@@ -438,7 +439,7 @@ else
 														$_REQUEST['user_connected_iri_id'],
 														$_REQUEST['owner_iri_id']));
 			break;
-					
+
 		case "existDomain" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['domain_name']));
 			break;
@@ -454,18 +455,18 @@ else
 		case "getDomainSelected" :
 			echo var_dump($_REQUEST['fn']());
 			break;
-					
+
 		case "incrementTermId" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['id']));
 			break;
 		case "incrementUserId" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['id']));
 			break;
-		
+
 		case "deleteId" :
 			echo var_dump($_REQUEST['fn']($_REQUEST['delete_id']));
 			break;
-			
+
 		case "deleteAll" :
 			$_REQUEST['fn']();
 			echo "DeleteAll : OK";

@@ -19,11 +19,11 @@ CONST  ENDPOINTSPARQL = "http://io.bordercloud.com/sparql-auth/";
 if (
 	$_SERVER['HTTP_HOST'] === 'fluidlog.com' ||
 	$_SERVER['HTTP_HOST'] === 'www.fluidlog.com' ||
-	$_SERVER['HTTP_HOST'] === 'assemblee-virtuelle.org' ||
-	$_SERVER['HTTP_HOST'] === 'www.assemblee-virtuelle.org'
+	$_SERVER['HTTP_HOST'] === 'virtual-assembly.org' ||
+	$_SERVER['HTTP_HOST'] === 'www.virtual-assembly.org'
 ) {
 	//Prod graph
-	$MyGraph = "http://prod.fluidlog.com";	
+	$MyGraph = "http://prod.fluidlog.com";
 } else {
 	//Test graph
 	$MyGraph = "http://test.fluidlog.com";
@@ -63,7 +63,7 @@ function ARC_connectMaBase()
 	$config = array(
 			'remote_store_endpoint' => "http://io.bordercloud.com/sparql"
 	);
-	
+
 	return ARC2::getRemoteStore($config);
 }
 
@@ -115,19 +115,19 @@ function getTriplesFromTriplestore($domain)
 	{
 		die (print_r($err,true));
 	}
-	
+
 //	var_dump($rows["result"]["rows"][0]);
-	
+
 	$result = array();
 	foreach($rows["result"]["rows"] as $row)
 	{
 		$result[] = array(
-				"sujet" => $row["s"], 
-				"predicat" => $row["p"], 
+				"sujet" => $row["s"],
+				"predicat" => $row["p"],
 				"objet" => $row["o"]
 		);
 	}
-	
+
 	$rich_result[0] = "getTriplesFromTriplestore";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = $result;
@@ -164,7 +164,7 @@ function deleteTripleIntoTriplestore($sujet, $predicat, $objet)
 	{
 		die (print_r($err,true));
 	}
-		
+
 	$rich_result[0] = "deleteTripleIntoTriplestore";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = "";
@@ -177,13 +177,13 @@ function deleteAll()
 	global $MyGraph;
 	global $iri_loglink;
 	global $prefix_loglink;
-	
+
 	//On se connecte
 	$MyEndPointSparql = connectMaBase();
 
  	//on supprime tous les triplets contenant des predicats de l'ontologie loglink
  	$sparql ='
- 		DELETE 
+ 		DELETE
  		WHERE
  		{
  			graph <'.$MyGraph.'>
@@ -195,14 +195,14 @@ function deleteAll()
 
 	$res = $MyEndPointSparql->query($sparql);
 	//afficheText("deleteAll : ".$sparql,520);
-	
+
 	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
 	$err = $MyEndPointSparql->getErrors();
 	if ($err)
 	{
 		die (print_r($err,true));
 	}
-	
+
 	$rich_result[0] = "deleteAll";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = "ok";
@@ -215,7 +215,7 @@ function exportFromTriplestore()
 	global $MyGraph;
 	global $iri_loglink;
 	global $prefix_loglink;
-	
+
 	//On se connecte
 	$MyEndPointSparql = connectMaBase();
 
@@ -225,7 +225,7 @@ function exportFromTriplestore()
 		WHERE
 		{
 			GRAPH <'.$MyGraph.'>
-			{ 
+			{
 				?s ?p ?o
 			} .
 		}
@@ -233,19 +233,20 @@ function exportFromTriplestore()
 
 	$res = $MyEndPointSparql->queryRead($sparql,"text/plain");
 	//afficheText("exportGraph : ".$sparql,520);
-	
+
 	//On vérifie qu'il n'y a pas d'erreur sinon on stop le programme et on affiche les erreurs
 	$err = $MyEndPointSparql->getErrors();
 	if ($err)
 	{
 		die (print_r($err,true));
 	}
-	
+
 	$rich_result[0] = "exportFromTriplestore";
 	$rich_result[1] = $sparql;
 	$rich_result[2] = $res;
 	return $rich_result;
 }
+
 
 //Import d'une sauvegarde en turtle
 function importIntoTriplestore($imported_graph)
@@ -270,57 +271,53 @@ function importIntoTriplestore($imported_graph)
 	$MyEndPointSparql->query($sparql);
 	$err = $MyEndPointSparql->getErrors();
 	if ($err) {
-		throw new \Exception($err);
+		die (print_r($err,true));
 	}
 
-	$stripedGraph = stripslashes($imported_graph);
-	$maxCharacters = 9000;
-	if (strlen($stripedGraph) > $maxCharacters) {
-		$index = 0;
-		$characters = 0;
-		$graphs = [];
-		$nextGraphLines = [];
-		$stripedGraph = str_replace("\rn", "\n", $stripedGraph);
-		$graph = str_replace("\r", "\n", $stripedGraph);
-		$lines = explode("\n", $graph);
-		while ($index < count($lines)) {
-			$nextGraphLines[] = $lines[$index];
-			$index++;
-			if (array_key_exists($index, $lines)) {
-				$characters = $characters + strlen($lines[$index]);
-				if ($characters >= $maxCharacters) {
-					$characters = 0;
-					$graphs[] = $nextGraphLines;
-					$nextGraphLines = [];
-				}
-			}
+	$lines = array_reverse(explode("\n", $imported_graph));
+
+
+	$linemax = 10;
+
+	$tab_packets = [];
+	$packet_index = 0;
+	while (count($lines) > 0)
+	{
+		$line_packet_count = 0;
+		while ($line_packet_count < $linemax) {
+			$tab_packets[$packet_index][] = array_pop($lines);
+			$line_packet_count++;
 		}
-		foreach ($graphs as $index => $lines) {
-			$graphs[$index] = implode("\n", $lines);
-		}
-	} else {
-		$graphs = [$stripedGraph];
+
+		$packet_index++;
 	}
-	foreach ($graphs as $index => $graph) {
-		// Importe le graph avec une requête de type `LOAD`
-		$sparql = <<<"SPARQL"
-INSERT INTO GRAPH <$MyGraph>
-{
-	$graph
-}
-SPARQL;
+
+	foreach ($tab_packets as $index => $tab_packet) {
+		// Importe le graph avec une requête de type `INSERT`
+		$sparql = 'INSERT INTO GRAPH <'.$MyGraph.'>{';
+
+		foreach ($tab_packet as $index_line => $line)
+		{
+				$sparql .= $line;
+
+				if ($index_line + 1 === count($tab_packet)) {
+					trace_sparql(sprintf('Imported a graph from %d of %d packets', $index+1, count($tab_packets))
+												.sprintf(' containing %d triplets',  count($tab_packet)));
+				}
+		}
+		$sparql .= '}';
+		// trace_sparql($sparql);
+
 		$res = $MyEndPointSparql->query($sparql);
 		$err = $MyEndPointSparql->getErrors();
 		if ($err) {
-			throw new \Exception($err);
+			die (print_r($err,true));
 		}
 		$rich_result[0] = "importIntoTriplestore";
 		$rich_result[1] = $sparql;
 		$rich_result[2] = $res;
-		if ($index + 1 === count($graphs)) {
-			trace_sparql(sprintf('Imported a graph from %d chunks',  count($graphs)));
-			return $rich_result;
-		}
 	}
+	return $rich_result;
 }
+
 ?>
