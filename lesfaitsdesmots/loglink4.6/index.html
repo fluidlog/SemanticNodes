@@ -1,54 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8">
 
-        <title>Carto Focus+context</title>
+<head>
+  <meta charset="utf-8">
 
-        <link rel="stylesheet" type="text/css" href="css/loglink4.6.css"/>
+  <title>Carto Focus+context</title>
 
-        <!--[if lt IE 11]>
+  <link rel="stylesheet" type="text/css" href="css/loglink4.6.css" />
+
+  <!--[if lt IE 11]>
         Votre navigateur est obsolète.
         Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
         <![endif]-->
 
-        <script src="js/jquery-2.1.4.min.js"></script>
-        <script src="js/d3.v3.min.js"></script>
-        <script src="js/jquery.mockjax.min.js"></script>
-        <script src="js/FileSaver.min.js"></script>
+  <script src="js/jquery-2.1.4.min.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/jquery.mockjax.min.js"></script>
+  <script src="js/FileSaver.min.js"></script>
 
-        <script src="js/semantic1.12.1.js"></script>
-        <link rel="stylesheet" href="css/semantic1.12.1.css"/>
+  <script src="js/semantic1.12.1.js"></script>
+  <link rel="stylesheet" href="css/semantic1.12.1.css" />
 
-   </head>
+</head>
 
 <body>
 
-    <div class="ui secondary menu" style="margin:0">
-    		<a class="item" id="home" data-content="Project / Actor / Idea / Ressource">Focus + Context</a>
-        <a class="item" id="initGraph" data-content="Initialize the graph"><i class="power large icon" ></i></a>
-        <a class="item" id="deleteGraph" data-content="Delete links and nodes"><i class="erase large icon" ></i></a>
+  <div class="ui secondary menu" style="margin:0">
+    <a class="item" id="home" data-content="Project / Actor / Idea / Ressource">Focus + Context</a>
+    <a class="item" id="initGraph" data-content="Initialize the graph">
+      <i class="power large icon"></i></a>
+    <a class="item" id="deleteGraph" data-content="Delete links and nodes">
+      <i class="erase large icon"></i></a>
 
-        <input type="file" id="hiddenFileUpload" style="visibility:hidden">
-        <a class="item" id="uploadGraph" data-content="Upload a graph"><i class="upload large icon" ></i></a>
+    <input type="file" id="hiddenFileUpload" style="visibility:hidden">
+    <a class="item" id="uploadGraph" data-content="Upload a graph">
+      <i class="upload large icon"></i></a>
 
-        <a class="item" id="downloadGraph" data-content="Download the graph"><i class="download large icon" ></i></a>
-        <a class="ui toggle checkbox" id="activeForceCheckbox">
-          <label>Forces...</label><input type="checkbox">
-        </a>
-        <a class="ui toggle checkbox" id="activeElasticCheckbox">
-          <label>Elastic...</label><input type="checkbox">
-        </a>
-    </div>
+    <a class="item" id="downloadGraph" data-content="Download the graph">
+      <i class="download large icon"></i></a>
+    <a class="item" id="focusContextNode" data-content="Focus on the selected node">
+      <i class="selected radio large icon"></i></a>
+    <a class="item" id="focusContextNodeOff" data-content="Return in graph mode without focus">
+      <i class="remove circle outline large icon"></i></a>
+    <a class="ui toggle checkbox" id="activeForceCheckbox">
+      <label>Forces...</label>
+      <input type="checkbox">
+    </a>
+    <a class="ui toggle checkbox" id="activeElasticCheckbox">
+      <label>Elastic...</label>
+      <input type="checkbox">
+    </a>
+  </div>
 
-    <div id="chart"><div>
-    <script src="js/mockdata.js"></script>
-    <script src="js/mygraph.js"></script>
-    <script src="js/mynodes.js"></script>
-    <script src="js/mylinks.js"></script>
-    <script src="js/mybackground.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/control.js"></script>
+  <div id="chart">
+    <div>
+      <script src="js/mockdata.js"></script>
+      <script src="js/mygraph.js"></script>
+      <script src="js/mynodes.js"></script>
+      <script src="js/mylinks.js"></script>
+      <script src="js/mybackground.js"></script>
+      <script src="js/main.js"></script>
+      <script src="js/control.js"></script>
 </body>
 
 </html>

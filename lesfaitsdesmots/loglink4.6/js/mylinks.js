@@ -1,7 +1,7 @@
 FluidGraph.prototype.drawLinks = function(svgLinks){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("drawLinks start");
+  if (thisGraph.config.debug) console.log("drawLinks start");
 
   svgLinks.attr("id", "path")
           .attr("stroke-width", thisGraph.customEdges.strokeWidth)
@@ -18,18 +18,30 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
                     })
           .style("fill", "none")
 
-  if (thisGraph.debug) console.log("drawLinks end");
+  if (thisGraph.config.debug) console.log("drawLinks end");
 }
 
 FluidGraph.prototype.linkEdit = function(d3node, d){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("linkEdit start");
+  if (thisGraph.config.debug) console.log("linkEdit start");
 
   d3.event.stopPropagation();
   console.log("linkEdit");
 
-  if (thisGraph.debug) console.log("linkEdit end");
+  if (thisGraph.config.debug) console.log("linkEdit end");
+}
+
+FluidGraph.prototype.spliceLinksForNode = function (nodeid) {
+  thisGraph = this;
+
+  var toSplice = thisGraph.d3data.edges.filter(
+    function(l) {
+      return (l.source.id === nodeid) || (l.target.id === nodeid); });
+
+  toSplice.map(
+    function(l) {
+      thisGraph.d3data.edges.splice(thisGraph.d3data.edges.indexOf(l), 1); });
 }
 
 FluidGraph.prototype.replaceSelectLinks = function(d3Path, edgeData){
@@ -53,7 +65,7 @@ FluidGraph.prototype.addLink = function(sourceid, targetid)
 {
   thisGraph = myGraph;
 
-  if (thisGraph.debug) console.log("addLink start");
+  if (thisGraph.config.debug) console.log("addLink start");
 
   // draw link between mouseDownNode and this node
   var newlink = { source: thisGraph.searchIndexOfNodeId(d3data.nodes,sourceid),
@@ -63,13 +75,13 @@ FluidGraph.prototype.addLink = function(sourceid, targetid)
 
   thisGraph.drawGraph();
 
-  if (thisGraph.debug) console.log("addLink end");
+  if (thisGraph.config.debug) console.log("addLink end");
 }
 
 FluidGraph.prototype.linkOnMouseDown = function(d3path, d){
   var thisGraph = this;
 
-  if (thisGraph.debug) console.log("linkOnMouseDown start");
+  if (thisGraph.config.debug) console.log("linkOnMouseDown start");
 
   d3.event.stopPropagation();
   thisGraph.state.mouseDownLink = d;
@@ -85,14 +97,14 @@ FluidGraph.prototype.linkOnMouseDown = function(d3path, d){
     thisGraph.removeSelectFromLinks();
   }
 
-  if (thisGraph.debug) console.log("linkOnMouseDown end");
+  if (thisGraph.config.debug) console.log("linkOnMouseDown end");
 }
 
 FluidGraph.prototype.deleteLink = function(selectedLink) {
   //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("deleteLink start");
+  if (thisGraph.config.debug) console.log("deleteLink start");
 
   if (thisGraph.d3data.edges.length > 0)
   {
@@ -104,5 +116,5 @@ FluidGraph.prototype.deleteLink = function(selectedLink) {
     console.log("No edge to delete !");
   }
 
-  if (thisGraph.debug) console.log("deleteLink end");
+  if (thisGraph.config.debug) console.log("deleteLink end");
 }

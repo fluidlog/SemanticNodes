@@ -1,7 +1,7 @@
 FluidGraph.prototype.bgOnMouseDown = function(d){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("bgOnMouseDown start");
+  if (thisGraph.config.debug) console.log("bgOnMouseDown start");
 
   if (thisGraph.state.selectedLink){
     thisGraph.removeSelectFromLinks();
@@ -12,15 +12,16 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
   }
 
   //If it still exist somthing "selected", set to "unselected"
-  d3.selectAll(".selected").classed(thisGraph.consts.selectedClass, false);
+  d3.selectAll("#path.selected").classed(thisGraph.consts.selectedClass, false);
+  d3.selectAll("#nodecircle.selected").classed(thisGraph.consts.selectedClass, false);
 
-  if (thisGraph.debug) console.log("bgOnMouseDown start");
+  if (thisGraph.config.debug) console.log("bgOnMouseDown start");
 }
 
 FluidGraph.prototype.bgOnMouseMove = function(d){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("bgOnMouseMove start");
+  if (thisGraph.config.debug) console.log("bgOnMouseMove start");
 
   // if the origin click is not a node, then pan the graph (activated by bgOnMouseDown)...
   if (!thisGraph.state.mouseDownNode) return;
@@ -33,18 +34,18 @@ FluidGraph.prototype.bgOnMouseMove = function(d){
                               +" L"+xycoords[0]
                               +" "+xycoords[1])
 
-  if (thisGraph.debug) console.log("bgOnMouseMove end")
+  if (thisGraph.config.debug) console.log("bgOnMouseMove end")
 }
 
 FluidGraph.prototype.bgOnMouseUp = function(d){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("bgOnMouseUp start");
+  if (thisGraph.config.debug) console.log("bgOnMouseUp start");
 
   if (!thisGraph.state.mouseDownNode)
   {
     thisGraph.resetMouseVars();
-    if (thisGraph.debug) console.log("bgOnMouseUp end");
+    if (thisGraph.config.debug) console.log("bgOnMouseUp end");
     return;
   }
 
@@ -60,14 +61,14 @@ FluidGraph.prototype.bgOnMouseUp = function(d){
 
   thisGraph.resetMouseVars();
 
-  if (thisGraph.debug) console.log("bgOnMouseUp end");
+  if (thisGraph.config.debug) console.log("bgOnMouseUp end");
 }
 
 // From https://github.com/cjrd/directed-graph-creator/blob/master/graph-creator.js
 FluidGraph.prototype.bgKeyDown = function() {
   var thisGraph = this;
 
-  if (thisGraph.debug) console.log("bgKeyDown start");
+  if (thisGraph.config.debug) console.log("bgKeyDown start");
 
   // make sure repeated key presses don't register for each keydown
   if(thisGraph.state.lastKeyDown !== -1) return;
@@ -88,7 +89,7 @@ FluidGraph.prototype.bgKeyDown = function() {
     break;
   }
 
-  if (thisGraph.debug) console.log("bgKeyDown end");
+  if (thisGraph.config.debug) console.log("bgKeyDown end");
 }
 
 FluidGraph.prototype.bgKeyUp = function() {

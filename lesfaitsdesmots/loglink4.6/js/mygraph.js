@@ -1,7 +1,8 @@
-function checkboxInitialisation() {
-  thisGraph = this;
+function menuInitialisation() {
 
-  if (thisGraph.debug) console.log("checkboxInitialisation end");
+  if (myGraph.config.debug) console.log("checkboxInitialisation end");
+
+  $('#focusContextNodeOff').hide();
 
   if (myGraph.config.force == 'On')
     $('#activeForceCheckbox').checkbox('check');
@@ -13,7 +14,7 @@ function checkboxInitialisation() {
   else
     $('#activeElasticCheckbox').checkbox('uncheck');
 
-    if (thisGraph.debug) console.log("checkboxInitialisation end");
+    if (myGraph.config.debug) console.log("checkboxInitialisation end");
 }
 
 // define graph object
@@ -38,7 +39,7 @@ var FluidGraph = function (firstBgElement,d3data){
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
-    debug : true,
+    debug : false,
   };
 
   thisGraph.customNodes = {
@@ -95,7 +96,7 @@ FluidGraph.prototype.consts =  {
 
 //rescale g
 FluidGraph.prototype.rescale = function(){
-  if (thisGraph.debug) console.log("rescale start");
+  if (thisGraph.config.debug) console.log("rescale start");
 
   //Here, "this" is the <g> where mouse double-clic
   thisGraph = window.myGraph;
@@ -104,14 +105,14 @@ FluidGraph.prototype.rescale = function(){
     "translate(" + d3.event.translate + ")"
     + " scale(" + d3.event.scale + ")");
 
-  if (thisGraph.debug) console.log("rescale end");
+  if (thisGraph.config.debug) console.log("rescale end");
 }
 
 //Create a balise SVG with events
 FluidGraph.prototype.initSgvContainer = function(bgElementId){
   var thisGraph = this;
 
-  if (thisGraph.debug) console.log("initSgvContainer start");
+  if (thisGraph.config.debug) console.log("initSgvContainer start");
 
   // listen for key events
   d3.select(window).on("keydown", function(){
@@ -174,13 +175,13 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
                           .attr("d", "M0 0 L0 0")
                           .attr("visibility", "hidden");
 
-  if (thisGraph.debug) console.log("initSgvContainer end");
+  if (thisGraph.config.debug) console.log("initSgvContainer end");
 }
 
 FluidGraph.prototype.activateForce = function(){
   var thisGraph = this;
 
-  if (thisGraph.debug) console.log("activateForce start");
+  if (thisGraph.config.debug) console.log("activateForce start");
 
   thisGraph.force = d3.layout.force()
                         .nodes(thisGraph.d3data.nodes)
@@ -201,22 +202,24 @@ FluidGraph.prototype.activateForce = function(){
     thisGraph.force.stop();
   }
 
-  if (thisGraph.debug) console.log("activateForce end");
+  if (thisGraph.config.debug) console.log("activateForce end");
 }
 
-FluidGraph.prototype.drawGraph = function(){
+FluidGraph.prototype.drawGraph = function(d3dataFc){
   var thisGraph = this;
 
-  if (thisGraph.debug) console.log("drawGraph start");
+  var dataToDraw = d3dataFc || thisGraph.d3data;
 
-  if (typeof thisGraph.d3data.nodes != "undefined")
+  if (thisGraph.config.debug) console.log("drawGraph start");
+
+  if (typeof dataToDraw.nodes != "undefined")
   {
     //Update of the nodes
     thisGraph.nodeidct = 0;
-    myGraph.d3data.nodes.forEach(function(node)
+    dataToDraw.nodes.forEach(function(node)
             {
               thisGraph.nodeidct++;
-              if (typeof myGraph.d3data.nodes.px == "undefined")
+              if (typeof dataToDraw.nodes.px == "undefined")
               {
                 node.px = node.x;
                 node.py = node.y;
@@ -226,7 +229,7 @@ FluidGraph.prototype.drawGraph = function(){
             });
 
     thisGraph.svgNodesEnter = thisGraph.bgElement.selectAll("#node")
-    				              .data(thisGraph.d3data.nodes)
+    				              .data(dataToDraw.nodes)
 
     thisGraph.svgNodes = thisGraph.svgNodesEnter
                                 .enter()
@@ -264,17 +267,17 @@ FluidGraph.prototype.drawGraph = function(){
     // once you have object nodes, you can create d3data.edges without force.links() function
 
     // From the second time, we check every edges to see if there are number to replace by nodes objects
-    thisGraph.d3data.edges.forEach(function(link)
+    dataToDraw.edges.forEach(function(link)
             {
               if (typeof(link.source) == "number")
               {
-                link.source = thisGraph.d3data.nodes[link.source];
-                link.target = thisGraph.d3data.nodes[link.target];
+                link.source = dataToDraw.nodes[link.source];
+                link.target = dataToDraw.nodes[link.target];
               }
             });
 
     thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#path")
-                  			.data(thisGraph.d3data.edges)
+                  			.data(dataToDraw.edges)
 
     thisGraph.svgLinks = thisGraph.svgLinksEnter
                         .enter()
@@ -302,13 +305,13 @@ FluidGraph.prototype.drawGraph = function(){
     }
   }
 
-  if (thisGraph.debug) console.log("drawGraph end");
+  if (thisGraph.config.debug) console.log("drawGraph end");
 }
 
 FluidGraph.prototype.movexy = function(d){
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("movexy start");
+  if (thisGraph.config.debug) console.log("movexy start");
 
   if (isNaN(thisGraph.svgNodesEnter[0][0].__data__.x))
   {
@@ -330,44 +333,24 @@ FluidGraph.prototype.movexy = function(d){
 
   thisGraph.svgNodesEnter.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-  if (thisGraph.debug) console.log("movexy end");
-}
-
-FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm)
-{
-  for(var i = 0, len = o.length; i < len; i++) {
-      if (o[i].identifier === searchTerm) return i;
-  }
-  return -1;
-}
-
-FluidGraph.prototype.spliceLinksForNode = function (nodeid) {
-  thisGraph = this;
-
-  var toSplice = thisGraph.d3data.edges.filter(
-    function(l) {
-      return (l.source.id === nodeid) || (l.target.id === nodeid); });
-
-  toSplice.map(
-    function(l) {
-      thisGraph.d3data.edges.splice(thisGraph.d3data.edges.indexOf(l), 1); });
+  if (thisGraph.config.debug) console.log("movexy end");
 }
 
 FluidGraph.prototype.resetMouseVars = function()
 {
-  if (thisGraph.debug) console.log("resetMouseVars start");
+  if (thisGraph.config.debug) console.log("resetMouseVars start");
 
   thisGraph.state.mouseDownNode = null;
   thisGraph.state.mouseUpNode = null;
   thisGraph.state.mouseDownLink = null;
 
-  if (thisGraph.debug) console.log("resetMouseVars end");
+  if (thisGraph.config.debug) console.log("resetMouseVars end");
 }
 
 FluidGraph.prototype.deleteGraph = function(skipPrompt) {
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("deleteGraph start");
+  if (thisGraph.config.debug) console.log("deleteGraph start");
 
   doDelete = true;
   if (!skipPrompt){
@@ -381,13 +364,13 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
     d3.selectAll("#path").remove();
   }
 
-  if (thisGraph.debug) console.log("deleteGraph end");
+  if (thisGraph.config.debug) console.log("deleteGraph end");
 }
 
 FluidGraph.prototype.refreshGraph = function() {
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("refreshGraph start");
+  if (thisGraph.config.debug) console.log("refreshGraph start");
 
   thisGraph.resetMouseVars();
   if (myGraph.config.force == "On")
@@ -395,13 +378,13 @@ FluidGraph.prototype.refreshGraph = function() {
 
   myGraph.drawGraph();
 
-  if (thisGraph.debug) console.log("refreshGraph end");
+  if (thisGraph.config.debug) console.log("refreshGraph end");
 }
 
 FluidGraph.prototype.downloadGraph = function() {
   thisGraph = this;
 
-  if (thisGraph.debug) console.log("downloadGraph start");
+  if (thisGraph.config.debug) console.log("downloadGraph start");
 
   var saveEdges = [];
   thisGraph.d3data.edges.forEach(function(val, i){
@@ -413,11 +396,11 @@ FluidGraph.prototype.downloadGraph = function() {
   var date_now = now.getDate()+"-"+now.getMonth()+1+"-"+now.getFullYear()+"-"+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
   saveAs(blob, "Carto-"+date_now+".d3json");
 
-  if (thisGraph.debug) console.log("downloadGraph end");
+  if (thisGraph.config.debug) console.log("downloadGraph end");
 }
 
 FluidGraph.prototype.uploadGraph = function() {
-  if (thisGraph.debug) console.log("uploadGraph start");
+  if (thisGraph.config.debug) console.log("uploadGraph start");
 
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     var uploadFile = this.files[0];
@@ -449,5 +432,5 @@ FluidGraph.prototype.uploadGraph = function() {
     alert("Your browser won't let you save this graph -- try upgrading your browser to IE 10+ or Chrome or Firefox.");
   }
 
-  if (thisGraph.debug) console.log("uploadGraph end");
+  if (thisGraph.config.debug) console.log("uploadGraph end");
 }
