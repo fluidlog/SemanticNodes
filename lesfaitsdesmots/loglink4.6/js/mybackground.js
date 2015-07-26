@@ -29,7 +29,7 @@ FluidGraph.prototype.bgOnMouseMove = function(d){
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
   // update drag line
-  if (thisGraph.config.curvesLinks)
+  if (thisGraph.customLinks.curvesLinks)
   {
     thisGraph.drag_line.attr("d", function(d) {
              var dx = xycoords[0] - thisGraph.state.mouseDownNode.x,
@@ -91,17 +91,15 @@ FluidGraph.prototype.bgKeyDown = function() {
   if(thisGraph.state.lastKeyDown !== -1) return;
 
   thisGraph.state.lastKeyDown = d3.event.keyCode;
-  var selectedNode = thisGraph.state.selectedNode,
-      selectedLink = thisGraph.state.selectedLink;
 
   switch(d3.event.keyCode) {
   case thisGraph.consts.BACKSPACE_KEY:
   case thisGraph.consts.DELETE_KEY:
     d3.event.preventDefault();
-    if (selectedNode){
+    if (thisGraph.state.selectedNode){
       thisGraph.deleteNode(selectedNode.identifier)
-    } else if (selectedLink){
-      thisGraph.deleteLink(selectedLink)
+    } else if (thisGraph.state.selectedLink){
+      thisGraph.deleteLink()
     }
     break;
   }

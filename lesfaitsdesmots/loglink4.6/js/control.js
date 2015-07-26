@@ -91,7 +91,7 @@ $('#focusContextNodeOff')
 
 $('#curvesLinks')
   .click(function() {
-    myGraph.config.curvesLinks = true;
+    myGraph.customLinks.curvesLinks = true;
     myGraph.refreshGraph();
     $('#curvesLinksOff').show();
     $('#curvesLinks').hide();
@@ -108,7 +108,7 @@ $('#curvesLinks')
 
 $('#curvesLinksOff')
   .click(function() {
-    myGraph.config.curvesLinks = false;
+    myGraph.customLinks.curvesLinks = false;
     myGraph.refreshGraph();
     $('#curvesLinksOff').hide();
     $('#curvesLinks').show();

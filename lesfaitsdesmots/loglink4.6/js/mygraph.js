@@ -41,19 +41,20 @@ var FluidGraph = function (firstBgElement,d3data){
     linkDistance : 100,
     charge : -1000,
     debug : false,
-    curvesLinks : true,
   };
 
   thisGraph.customNodes = {
     strokeWidth : 7,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
+    bringNodeToFrontOnHover : false,
   }
 
-  thisGraph.customEdges = {
+  thisGraph.customLinks = {
     strokeWidth: 7,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
+    curvesLinks : true,
   }
 
   thisGraph.firstBgElement = firstBgElement || [],
@@ -179,9 +180,10 @@ FluidGraph.prototype.initDragLine = function(){
   if (thisGraph.config.debug) console.log("initDragLine start");
 
   // line displayed when dragging new nodes
-  if (thisGraph.config.curvesLinks)
+  if (thisGraph.customLinks.curvesLinks)
   {
     thisGraph.drag_line = thisGraph.bgElement.append("path")
+                          .attr("id", "drag_line")
                           .attr("class", "drag_line")
                           .attr("stroke-dasharray", "5,5")
                           .attr("stroke", "#999")
@@ -191,6 +193,7 @@ FluidGraph.prototype.initDragLine = function(){
   }
   else {
     thisGraph.drag_line = thisGraph.bgElement.append("line")
+                          .attr("id", "drag_line")
                           .attr("class", "drag_line")
                           .attr("stroke-dasharray", "5,5")
                           .attr("stroke", "#999")
@@ -307,13 +310,13 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
               }
             });
 
-    thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#path")
+    thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#link")
                   			.data(dataToDraw.edges)
 
     thisGraph.svgLinks = thisGraph.svgLinksEnter
                         .enter()
 
-    if (thisGraph.config.curvesLinks)
+    if (thisGraph.customLinks.curvesLinks)
     {
       thisGraph.svgLinks = thisGraph.svgLinksEnter
                           .enter()
@@ -363,7 +366,7 @@ FluidGraph.prototype.movexy = function(d){
     throw new Error("movexy still problem if tick :-)...");
   }
 
-  if (thisGraph.config.curvesLinks)
+  if (thisGraph.customLinks.curvesLinks)
   {
     thisGraph.svgLinksEnter.attr("d", function(d) {
           var dx = d.target.x - d.source.x,
@@ -414,7 +417,8 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
     thisGraph.d3data.nodes = [];
     thisGraph.d3data.edges = [];
     d3.selectAll("#node").remove();
-    d3.selectAll("#path").remove();
+    d3.selectAll("#link").remove();
+    d3.selectAll("#drag_line").remove();
   }
 
   if (thisGraph.config.debug) console.log("deleteGraph end");
@@ -430,7 +434,8 @@ FluidGraph.prototype.refreshGraph = function() {
     myGraph.activateForce();
 
   d3.selectAll("#node").remove();
-  d3.selectAll("#path").remove();
+  d3.selectAll("#link").remove();
+  d3.select("#drag_line").remove();
   myGraph.initDragLine()
   myGraph.drawGraph();
 

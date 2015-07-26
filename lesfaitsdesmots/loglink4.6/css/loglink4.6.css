@@ -4,10 +4,15 @@ path{
   stroke : #DDD;
 }
 
-path.drag_line{
+.drag_line{
   stroke : #999;
 }
-path.selected{
+
+.link.selected{
+  stroke : #999;
+}
+
+.link.selected{
   stroke : #999;
 }
 

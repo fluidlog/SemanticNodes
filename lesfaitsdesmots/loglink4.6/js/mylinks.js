@@ -3,11 +3,12 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
 
   if (thisGraph.config.debug) console.log("drawLinks start");
 
-  if (thisGraph.config.curvesLinks)
+  if (thisGraph.customLinks.curvesLinks)
   {
-    svgLinks.attr("id", "path")
-            .attr("stroke", thisGraph.customEdges.strokeColor)
-            .attr("stroke-width", thisGraph.customEdges.strokeWidth)
+    svgLinks.attr("id", "link")
+            .attr("class", "link")
+            .attr("stroke", thisGraph.customLinks.strokeColor)
+            .attr("stroke-width", thisGraph.customLinks.strokeWidth)
             .attr("d", function(d) {
                         var dx = d.target.x - d.source.x,
                             dy = d.target.y - d.source.y,
@@ -22,9 +23,10 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
             .style("fill", "none")
   }
   else { //false
-    svgLinks.attr("id", "path")
-            .attr("stroke", thisGraph.customEdges.strokeColor)
-            .attr("stroke-width", thisGraph.customEdges.strokeWidth)
+    svgLinks.attr("id", "link")
+            .attr("class", "link")
+            .attr("stroke", thisGraph.customLinks.strokeColor)
+            .attr("stroke-width", thisGraph.customLinks.strokeWidth)
             .attr("x1", function(d) { return d.source.x; })
     		  	.attr("y1", function(d) { return d.source.y; })
     		  	.attr("x2", function(d) { return d.target.x; })
@@ -113,7 +115,7 @@ FluidGraph.prototype.linkOnMouseDown = function(d3path, d){
   if (thisGraph.config.debug) console.log("linkOnMouseDown end");
 }
 
-FluidGraph.prototype.deleteLink = function(selectedLink) {
+FluidGraph.prototype.deleteLink = function() {
   //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
   thisGraph = this;
 
@@ -121,12 +123,12 @@ FluidGraph.prototype.deleteLink = function(selectedLink) {
 
   if (thisGraph.d3data.edges.length > 0)
   {
-    thisGraph.d3data.edges.splice(thisGraph.d3data.edges.indexOf(selectedLink), 1);
+    thisGraph.d3data.edges.splice(thisGraph.d3data.edges.indexOf(thisGraph.state.selectedLink), 1);
     thisGraph.state.selectedLink = null;
     thisGraph.drawGraph();
   }
   else {
-    console.log("No edge to delete !");
+    console.log("No link to delete !");
   }
 
   if (thisGraph.config.debug) console.log("deleteLink end");

@@ -39,16 +39,22 @@ FluidGraph.prototype.drawNodes = function(svgNodes){
   if (thisGraph.config.debug) console.log("drawNodes end");
 }
 
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
+
 FluidGraph.prototype.nodeOnMouseOver = function(d3node,d){
   thisGraph = this;
 
   if (thisGraph.config.debug) console.log("nodeOnMouseOver start");
 
-  var el = d3node.node();
-  var p_el = el.parentNode;
-
-  //Make the node on the top by changing the order of the svg sequence
-  el.parentNode.appendChild(el);
+  if (thisGraph.customNodes.bringNodeToFrontOnHover)
+  {
+    var el = d3.select(d3node.node());
+    el.moveToFront();
+  }
 
   if (thisGraph.config.debug) console.log("nodeOnMouseOver end");
 }
