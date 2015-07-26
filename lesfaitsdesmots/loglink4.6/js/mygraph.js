@@ -3,6 +3,7 @@ function menuInitialisation() {
   if (myGraph.config.debug) console.log("checkboxInitialisation end");
 
   $('#focusContextNodeOff').hide();
+  $('#curvesLinks').hide();
 
   if (myGraph.config.force == 'On')
     $('#activeForceCheckbox').checkbox('check');
@@ -40,6 +41,7 @@ var FluidGraph = function (firstBgElement,d3data){
     linkDistance : 100,
     charge : -1000,
     debug : false,
+    curvesLinks : true,
   };
 
   thisGraph.customNodes = {
@@ -166,16 +168,41 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
 
   thisGraph.bgElement = d3.select("#"+bgElementId);
 
+  thisGraph.initDragLine();
+
+  if (thisGraph.config.debug) console.log("initSgvContainer end");
+}
+
+FluidGraph.prototype.initDragLine = function(){
+  var thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("initDragLine start");
+
   // line displayed when dragging new nodes
-  thisGraph.drag_line = svg.append("path")
+  if (thisGraph.config.curvesLinks)
+  {
+    thisGraph.drag_line = thisGraph.bgElement.append("path")
                           .attr("class", "drag_line")
                           .attr("stroke-dasharray", "5,5")
                           .attr("stroke", "#999")
                           .attr("stroke-width", "2")
                           .attr("d", "M0 0 L0 0")
                           .attr("visibility", "hidden");
+  }
+  else {
+    thisGraph.drag_line = thisGraph.bgElement.append("line")
+                          .attr("class", "drag_line")
+                          .attr("stroke-dasharray", "5,5")
+                          .attr("stroke", "#999")
+                          .attr("stroke-width", "2")
+                          .attr("x1", 0)
+                    	    .attr("y1", 0)
+                    	    .attr("x2", 0)
+                    	    .attr("y2", 0)
+                          .attr("visibility", "hidden");
+  }
 
-  if (thisGraph.config.debug) console.log("initSgvContainer end");
+  if (thisGraph.config.debug) console.log("initDragLine start");
 }
 
 FluidGraph.prototype.activateForce = function(){
@@ -241,6 +268,10 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
                                   thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this), d)})
                                 .on("mouseup",function(d){
                                   thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this), d)})
+                                .on("mouseover",function(d){
+                                  thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this), d)})
+                                .on("mouseout",function(d){
+                                  thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this), d)})
                                 .call(d3.behavior.drag()
                                           .on("dragstart", function(args){
                                             thisGraph.nodeOnDragStart.call(thisGraph, args)})
@@ -281,8 +312,21 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
 
     thisGraph.svgLinks = thisGraph.svgLinksEnter
                         .enter()
-                        .insert("path", "#node")
-                        .on("dblclick", function(d){
+
+    if (thisGraph.config.curvesLinks)
+    {
+      thisGraph.svgLinks = thisGraph.svgLinksEnter
+                          .enter()
+                          .insert("path", "#node")
+    }
+    else
+    {
+      thisGraph.svgLinks = thisGraph.svgLinksEnter
+                          .enter()
+                          .insert("line", "#node")
+    }
+
+    thisGraph.svgLinks.on("dblclick", function(d){
                           thisGraph.linkEdit.call(thisGraph, d3.select(this), d);
                           }
                         )
@@ -319,17 +363,26 @@ FluidGraph.prototype.movexy = function(d){
     throw new Error("movexy still problem if tick :-)...");
   }
 
-  thisGraph.svgLinksEnter.attr("d", function(d) {
-        var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
-            dr = Math.sqrt(dx * dx + dy * dy);
-       return "M" +
-            d.source.x + "," +
-            d.source.y + "A" +
-            dr + "," + dr + " 0 0,1 " +
-            d.target.x + "," +
-            d.target.y;
-      })
+  if (thisGraph.config.curvesLinks)
+  {
+    thisGraph.svgLinksEnter.attr("d", function(d) {
+          var dx = d.target.x - d.source.x,
+              dy = d.target.y - d.source.y,
+              dr = Math.sqrt(dx * dx + dy * dy);
+         return "M" +
+              d.source.x + "," +
+              d.source.y + "A" +
+              dr + "," + dr + " 0 0,1 " +
+              d.target.x + "," +
+              d.target.y;
+        })
+  }
+  else { //false
+    thisGraph.svgLinksEnter.attr("x1", function(d) { return d.source.x; })
+		      .attr("y1", function(d) { return d.source.y; })
+		      .attr("x2", function(d) { return d.target.x; })
+		      .attr("y2", function(d) { return d.target.y; });
+  }
 
   thisGraph.svgNodesEnter.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
@@ -376,6 +429,9 @@ FluidGraph.prototype.refreshGraph = function() {
   if (myGraph.config.force == "On")
     myGraph.activateForce();
 
+  d3.selectAll("#node").remove();
+  d3.selectAll("#path").remove();
+  myGraph.initDragLine()
   myGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("refreshGraph end");

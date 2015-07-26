@@ -29,10 +29,27 @@ FluidGraph.prototype.bgOnMouseMove = function(d){
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
   // update drag line
-  thisGraph.drag_line.attr("d", "M"+thisGraph.state.mouseDownNode.x
-                              +" "+thisGraph.state.mouseDownNode.y
-                              +" L"+xycoords[0]
-                              +" "+xycoords[1])
+  if (thisGraph.config.curvesLinks)
+  {
+    thisGraph.drag_line.attr("d", function(d) {
+             var dx = xycoords[0] - thisGraph.state.mouseDownNode.x,
+                  dy = xycoords[1] - thisGraph.state.mouseDownNode.y,
+                  dr = Math.sqrt(dx * dx + dy * dy);
+             return "M" +
+                  thisGraph.state.mouseDownNode.x + "," +
+                  thisGraph.state.mouseDownNode.y + "A" +
+                  dr + "," + dr + " 0 0,1 " +
+                  xycoords[0] + "," +
+                  xycoords[1];
+                })
+                .style("fill", "none")
+  }
+  else{ //false
+    thisGraph.drag_line.attr("x1", thisGraph.state.mouseDownNode.x)
+                	      .attr("y1", thisGraph.state.mouseDownNode.y)
+                	      .attr("x2", xycoords[0])
+                	      .attr("y2", xycoords[1]);
+  }
 
   if (thisGraph.config.debug) console.log("bgOnMouseMove end")
 }

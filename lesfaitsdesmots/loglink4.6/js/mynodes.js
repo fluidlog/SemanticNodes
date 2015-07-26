@@ -39,6 +39,28 @@ FluidGraph.prototype.drawNodes = function(svgNodes){
   if (thisGraph.config.debug) console.log("drawNodes end");
 }
 
+FluidGraph.prototype.nodeOnMouseOver = function(d3node,d){
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOver start");
+
+  var el = d3node.node();
+  var p_el = el.parentNode;
+
+  //Make the node on the top by changing the order of the svg sequence
+  el.parentNode.appendChild(el);
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOver end");
+}
+
+FluidGraph.prototype.nodeOnMouseOut = function(d3node,d){
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOut start");
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOut end");
+}
+
 FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm)
 {
   for(var i = 0, len = o.length; i < len; i++) {

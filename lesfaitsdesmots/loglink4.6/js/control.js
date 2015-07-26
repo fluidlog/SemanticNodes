@@ -61,6 +61,7 @@ $('#focusContextNode')
   .click(function() {
     myGraph.focusContextNode(); //On selected node
     $('#focusContextNodeOff').show();
+    $('#focusContextNode').hide();
   })
   .popup({
     inline: true,
@@ -76,6 +77,41 @@ $('#focusContextNodeOff')
   .click(function() {
     myGraph.focusContextNodeOff();
     $('#focusContextNodeOff').hide();
+    $('#focusContextNode').show();
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
+$('#curvesLinks')
+  .click(function() {
+    myGraph.config.curvesLinks = true;
+    myGraph.refreshGraph();
+    $('#curvesLinksOff').show();
+    $('#curvesLinks').hide();
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
+$('#curvesLinksOff')
+  .click(function() {
+    myGraph.config.curvesLinks = false;
+    myGraph.refreshGraph();
+    $('#curvesLinksOff').hide();
+    $('#curvesLinks').show();
   })
   .popup({
     inline: true,

@@ -3,20 +3,33 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
 
   if (thisGraph.config.debug) console.log("drawLinks start");
 
-  svgLinks.attr("id", "path")
-          .attr("stroke-width", thisGraph.customEdges.strokeWidth)
-          .attr("d", function(d) {
-                      var dx = d.target.x - d.source.x,
-                          dy = d.target.y - d.source.y,
-                          dr = Math.sqrt(dx * dx + dy * dy);
-                      return "M" +
-                          d.source.x + "," +
-                          d.source.y + "A" +
-                          dr + "," + dr + " 0 0,1 " +
-                          d.target.x + "," +
-                          d.target.y;
-                    })
-          .style("fill", "none")
+  if (thisGraph.config.curvesLinks)
+  {
+    svgLinks.attr("id", "path")
+            .attr("stroke", thisGraph.customEdges.strokeColor)
+            .attr("stroke-width", thisGraph.customEdges.strokeWidth)
+            .attr("d", function(d) {
+                        var dx = d.target.x - d.source.x,
+                            dy = d.target.y - d.source.y,
+                            dr = Math.sqrt(dx * dx + dy * dy);
+                        return "M" +
+                            d.source.x + "," +
+                            d.source.y + "A" +
+                            dr + "," + dr + " 0 0,1 " +
+                            d.target.x + "," +
+                            d.target.y;
+                      })
+            .style("fill", "none")
+  }
+  else { //false
+    svgLinks.attr("id", "path")
+            .attr("stroke", thisGraph.customEdges.strokeColor)
+            .attr("stroke-width", thisGraph.customEdges.strokeWidth)
+            .attr("x1", function(d) { return d.source.x; })
+    		  	.attr("y1", function(d) { return d.source.y; })
+    		  	.attr("x2", function(d) { return d.target.x; })
+    		  	.attr("y2", function(d) { return d.target.y; })     
+  }
 
   if (thisGraph.config.debug) console.log("drawLinks end");
 }
