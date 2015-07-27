@@ -2,8 +2,8 @@ var data = [];
 
 data[0] = {
       nodes: [
-              {id:0, name: "A", size:20, type:"P", x:100, y:100, identifier:"http://fluidlog.com/0" },
-              {id:1, name: "B", size:20, type:"I", x:200, y:200, identifier:"http://fluidlog.com/1" },
+              {id:0, label: "A", type:"project", x:100, y:100, identifier:"http://fluidlog.com/0" },
+              {id:1, label: "B", type:"idea", x:200, y:200, identifier:"http://fluidlog.com/1" },
       ],
       edges: [
               { source: 0, target: 1 },
@@ -12,9 +12,9 @@ data[0] = {
 
 data[1] = {
       nodes: [
-              {id:0, name: "A", size:20, type:"P", x:100, y:100, identifier:"http://fluidlog.com/0" },
-              {id:1, name: "B", size:20, type:"I", x:200, y:200, identifier:"http://fluidlog.com/1" },
-              {id:1, name: "C", size:20, type:"P", x:300, y:300, identifier:"http://fluidlog.com/2" },
+              {id:0, label: "A", type:"project", x:100, y:100, identifier:"http://fluidlog.com/0" },
+              {id:1, label: "B", type:"idea", x:200, y:200, identifier:"http://fluidlog.com/1" },
+              {id:1, label: "C", type:"project", x:300, y:300, identifier:"http://fluidlog.com/2" },
       ],
       edges: [
               { source: 0, target: 1 },
@@ -23,14 +23,14 @@ data[1] = {
 
 data[2] = {
       nodes: [
-              {id:0, name: "A", size:20, type:"P", x:100, y:100, identifier:"http://fluidlog.com/0" },
-              {id:1, name: "B", size:20, type:"I", x:200, y:200, identifier:"http://fluidlog.com/1" },
-              {id:2, name: "C", size:20, type:"P", x:300, y:300, identifier:"http://fluidlog.com/2" },
-              {id:3, name: "D", size:20, type:"I", x:400, y:400, identifier:"http://fluidlog.com/3" },
-              {id:4, name: "E", size:20, type:"P", x:300, y:400, identifier:"http://fluidlog.com/4" },
-              {id:5, name: "F", size:20, type:"P", x:500, y:300, identifier:"http://fluidlog.com/5" },
-              {id:6, name: "G", size:20, type:"P", x:300, y:500, identifier:"http://fluidlog.com/6" },
-              {id:7, name: "H", size:20, type:"P", x:400, y:500, identifier:"http://fluidlog.com/7" },
+              {id:0, label: "A petit texte", size:20, type:"project", x:100, y:100, identifier:"http://fluidlog.com/0" },
+              {id:1, label: "B texte sur deux longues lignes", size:20, type:"idea", x:200, y:200, identifier:"http://fluidlog.com/1" },
+              {id:2, label: "C", type:"project", x:300, y:300, identifier:"http://fluidlog.com/2" },
+              {id:3, label: "D", type:"idea", x:400, y:400, identifier:"http://fluidlog.com/3" },
+              {id:4, label: "E", type:"project", x:300, y:400, identifier:"http://fluidlog.com/4" },
+              {id:5, label: "F", type:"project", x:500, y:300, identifier:"http://fluidlog.com/5" },
+              {id:6, label: "G", type:"project", x:300, y:500, identifier:"http://fluidlog.com/6" },
+              {id:7, label: "H", type:"project", x:400, y:500, identifier:"http://fluidlog.com/7" },
       ],
       edges: [
               { source: 0, target: 1 },

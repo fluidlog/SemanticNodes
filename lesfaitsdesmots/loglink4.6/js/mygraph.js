@@ -31,7 +31,6 @@ var FluidGraph = function (firstBgElement,d3data){
 
   thisGraph.config = {
     size : 20,
-    type : "N",
     xNewNode : 100,
     yNewNode : 100,
     bgElementType : "panzoom", //choixe : "panzoom" or "simple"
@@ -44,10 +43,49 @@ var FluidGraph = function (firstBgElement,d3data){
   };
 
   thisGraph.customNodes = {
-    strokeWidth : 7,
+    rectSvg : true, //False = circle
+    sizeOfCircleNode : 20,
+    strokeWidth : 10,
+    strokeOpacity : .5,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
+    colorType : {"project" : "#89A5E5",
+                  "actor" : "#F285B9",
+                  "idea" : "#FFD98D",
+                  "ressource" : "#CDF989",
+                  "without" : "white"},
+    typeOfNewNode : "without",
+  	colorTypeRgba : {"project" : "137,165,229",
+                      "actor" : "242,133,185",
+                      "idea" : "255,217,141",
+                      "ressource" : "205,249,137",
+                      "without" : "white"},
+    imageType : {"project" : "lab", "actor" : "user", "idea" : "idea", "ressource" : "tree", "without" : "circle thin"},
+    displayId : true,
+    displayType : true,
+    displayText : true,
+    cursor : "grab", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
     bringNodeToFrontOnHover : false,
+    widthClosed : 80,
+		heightClosed : 80,
+		widthOpened : 200,
+		heightOpened : 200,
+		curvesCorners : 50,
+		widthStrokeHover : 20,
+		transitionEasing : "elastic", //Values : linear (default), elastic
+		transitionDurationOpen : 1000,
+		transitionDurationClose : 500,
+		transitionDelay : 0,
+  }
+
+  thisGraph.customNodesText = {
+    cursor : "text", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
+    fontSize : 14,
+    FontFamily : "Helvetica Neue, Helvetica, Arial, sans-serif;",
+    strokeOpacity : .5,
+    awesomeText : true,
+    widthMax : 160,
+		heightMax : 160,
   }
 
   thisGraph.customLinks = {
@@ -75,6 +113,7 @@ var FluidGraph = function (firstBgElement,d3data){
     svgMouseDownNode : null,
     mouseUpNode : null,
     lastKeyDown : -1,
+    nodeOpened : null,
   }
 }
 
