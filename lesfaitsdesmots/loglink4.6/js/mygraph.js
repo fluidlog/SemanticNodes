@@ -1,6 +1,6 @@
-function menuInitialisation() {
+function menuInitialisation(myGraph) {
 
-  if (myGraph.config.debug) console.log("checkboxInitialisation end");
+  if (myGraph.config.debug) console.log("checkboxInitialisation start");
 
   $('#focusContextNodeOff').hide();
   $('#curvesLinks').hide();
@@ -15,7 +15,7 @@ function menuInitialisation() {
   else
     $('#activeElasticCheckbox').checkbox('uncheck');
 
-    if (myGraph.config.debug) console.log("checkboxInitialisation end");
+  if (myGraph.config.debug) console.log("checkboxInitialisation end");
 }
 
 // define graph object
@@ -95,6 +95,7 @@ var FluidGraph = function (firstBgElement,d3data){
     curvesLinks : true,
   }
 
+  thisGraph.graphName = "Untiled";
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
   thisGraph.bgElement = null,
@@ -352,9 +353,6 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
     thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#link")
                   			.data(dataToDraw.edges)
 
-    thisGraph.svgLinks = thisGraph.svgLinksEnter
-                        .enter()
-
     if (thisGraph.customLinks.curvesLinks)
     {
       thisGraph.svgLinks = thisGraph.svgLinksEnter
@@ -368,19 +366,35 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
                           .insert("line", "#node")
     }
 
-    thisGraph.svgLinks.on("dblclick", function(d){
-                          thisGraph.linkEdit.call(thisGraph, d3.select(this), d);
-                          }
-                        )
-                        .on("mousedown", function(d){
+    thisGraph.svgLinks.on("mousedown", function(d){
                           thisGraph.linkOnMouseDown.call(thisGraph, d3.select(this), d);
                           }
                         )
                         .on("mouseup", function(d){
                           thisGraph.state.mouseDownLink = null;
                         })
+                        // .on("dblclick", function(d){
+                        //   thisGraph.linkEdit.call(thisGraph, d3.select(this), d);
+                        //   }
+                        // )
 
-    thisGraph.drawLinks(thisGraph.svgLinks);
+                        thisGraph.svgLinks.attr("id", "link")
+                                .attr("class", "link")
+                                .attr("stroke", thisGraph.customLinks.strokeColor)
+                                .attr("stroke-width", thisGraph.customLinks.strokeWidth)
+                                .attr("d", function(d) {
+                                            var dx = d.target.x - d.source.x,
+                                                dy = d.target.y - d.source.y,
+                                                dr = Math.sqrt(dx * dx + dy * dy);
+                                            return "M" +
+                                                d.source.x + "," +
+                                                d.source.y + "A" +
+                                                dr + "," + dr + " 0 0,1 " +
+                                                d.target.x + "," +
+                                                d.target.y;
+                                          })
+                                .style("fill", "none")
+    // thisGraph.drawLinks(thisGraph.svgLinks);
 
     //delete link if there's less object in svgLinks array than in DOM
     thisGraph.svgLinksEnter.exit().remove();
@@ -499,6 +513,7 @@ FluidGraph.prototype.downloadGraph = function() {
   if (thisGraph.config.debug) console.log("downloadGraph end");
 }
 
+
 FluidGraph.prototype.uploadGraph = function() {
   if (thisGraph.config.debug) console.log("uploadGraph start");
 
@@ -533,4 +548,12 @@ FluidGraph.prototype.uploadGraph = function() {
   }
 
   if (thisGraph.config.debug) console.log("uploadGraph end");
+}
+
+FluidGraph.prototype.saveGraph = function(graphName) {
+  if (thisGraph.config.debug) console.log("saveGraph start");
+
+  $('#saveGraphLabel').text(graphName);
+
+  if (thisGraph.config.debug) console.log("saveGraph end");
 }

@@ -1,3 +1,33 @@
+
+$('#home')
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
+$("#saveGraph").click(function () {
+  if ($('#saveGraphLabel').val() != "Untiled")
+  {
+    $('#saveGraphModal')
+      .modal({
+            onApprove : function()
+              {
+                myGraph.graphName = $('#graphNameInput').val();
+                myGraph.saveGraph(myGraph.graphName);
+              }
+            })
+      .modal('show');
+  }
+  else {
+    myGraph.saveGraph(myGraph.graphName);
+  }
+});
+
 $('#initGraph')
   .click(function() {
     location.reload(true)
@@ -15,6 +45,20 @@ $('#initGraph')
 $('#deleteGraph')
   .click(function() {
     myGraph.deleteGraph(false);
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
+$('#createGraph')
+  .click(function() {
+    myGraph.createGraph();
   })
   .popup({
     inline: true,

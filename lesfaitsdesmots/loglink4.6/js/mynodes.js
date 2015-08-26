@@ -536,7 +536,11 @@ FluidGraph.prototype.deleteNode = function(nodeIdentifier) {
     index = thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes, nodeIdentifier);
 
     //delete node
-    thisGraph.d3data.nodes.splice(thisGraph.d3data.nodes.indexOf(index), 1);
+    var tab = ["a","b","c"];
+    tab.splice(1,1);
+    var id = thisGraph.d3data.nodes.indexOf(index);
+
+    thisGraph.d3data.nodes.splice(index, 1);
 
     //delete edges linked to this (old) node
     thisGraph.spliceLinksForNode(index);

@@ -1,9 +1,9 @@
 // Carto focus + Context
 
 // Please edit this: LDP or semantic_forms server
-var serverURLPrefix = "http://SSSSS.org:9000/ldp/"
+var serverURLPrefix = "http://localhost:9000/ldp/"
 
-function getD3Data( jsonDataURL ) {
+function getSemFormsData( jsonDataURL ) {
   var d3data;
 	// Appelle le serveur de manière synchrone. C'est à dire, attend la réponse avant de continuer
 	$.ajax(
@@ -25,22 +25,8 @@ function getD3Data( jsonDataURL ) {
 }
 
 function makeFluidGraph( graphURI ) {
-  var d3data = getD3Data( serverURLPrefix + graphURI );
+  var d3data = getSemFormsData( serverURLPrefix + graphURI );
   var myGraph = new FluidGraph("#chart", d3data)
-
-  // TODO move this to FluidGraph constructor
-  {
-    myGraph.initSgvContainer("bgElement");
-    var checkboxIsInitialized = false;
-    checkboxInitialisation(myGraph);
-
-    if (myGraph.config.force == "On") {
-	myGraph.activateForce();
-    } else {
-	$('#activeElasticCheckbox').addClass('disabled');
-    }
-    checkboxIsInitialized = true;
-  }
 
   myGraph.drawGraph();
 }

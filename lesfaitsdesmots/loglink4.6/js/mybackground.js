@@ -100,7 +100,7 @@ FluidGraph.prototype.bgKeyDown = function() {
   case thisGraph.consts.DELETE_KEY:
     d3.event.preventDefault();
     if (thisGraph.state.selectedNode){
-      thisGraph.deleteNode(selectedNode.identifier)
+      thisGraph.deleteNode(thisGraph.state.selectedNode.identifier)
     } else if (thisGraph.state.selectedLink){
       thisGraph.deleteLink()
     }

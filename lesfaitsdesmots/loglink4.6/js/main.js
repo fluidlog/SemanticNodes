@@ -37,6 +37,17 @@ $(document).ready()
   }
 
   checkboxIsInitialized = true;
-  myGraph.drawGraph();
+  // myGraph.drawGraph();
 
+
+  // var myStore = new MyStore({container : "https://localhost:8443/2013",
+  //                             context : "http://owl.openinitiative.com/oicontext.jsonld"})
+  //
+  // var people ;
+  // myStore.get("https://ldp.openinitiative.com:8443/2013/people/8a71fbcb20").then(function(object){
+  //   people = object.about.name;
+  //   myGraph.addNode({id:15, label: people, type:"ressource", x:500, y:100, identifier:"http://fluidlog.com/15" })
+  // });
+
+  // makeFluidGraph( "toto" );
 }
