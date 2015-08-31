@@ -44,14 +44,11 @@ path {
   stroke: #DDD;
   stroke-width: 3px;
 }
+.fo_type_image {
+  text-align: center;
+}
 .circle_type_selected {
   stroke: #999;
-}
-.fo_xhtml_content_opened_node {
-  width: 200px;
-  height: 200px;
-  padding: 20px;
-  margin: 0px;
 }
 .fo_xhtml_content_text_node{
   display: flex;
@@ -83,4 +80,11 @@ path {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
+}
+.fo_xhtml_content_edit_node {
+  display: flex;
+  flex-direction:column;
+  justify-content:center;
+  align-content:center;
+  align-items:center;
 }

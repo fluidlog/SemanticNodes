@@ -49,6 +49,7 @@ var FluidGraph = function (firstBgElement,d3data){
     strokeOpacity : .5,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
+    listType : ["project","actor","idea","ressource"],
     colorType : {"project" : "#89A5E5",
                   "actor" : "#F285B9",
                   "idea" : "#FFD98D",
@@ -76,6 +77,30 @@ var FluidGraph = function (firstBgElement,d3data){
 		transitionDurationOpen : 1000,
 		transitionDurationClose : 500,
 		transitionDelay : 0,
+  }
+
+  thisGraph.nodeTypeIcon = {
+    r : 13,
+    cxClosed : 0,
+    cxOpened : 0,
+    cyClosed : (thisGraph.customNodes.heightClosed/2)-10,
+    cyOpened : (thisGraph.customNodes.heightOpened/2)-10,
+    xClosed : -11,
+    xOpened : -11,
+    yClosed : (thisGraph.customNodes.heightClosed/2)-20,
+    yOpened : (thisGraph.customNodes.heightOpened/2)-20,
+  }
+
+  thisGraph.nodeIdCircle = {
+    r : 10,
+    cxClosed : 0,
+    cyClosed : -(thisGraph.customNodes.heightClosed/2)+6,
+    cxOpened : 0,
+    cyOpened : -(thisGraph.customNodes.heightOpened/2),
+    dxClosed : 0,
+    dyClosed : -(thisGraph.customNodes.heightClosed/2)+10,
+    dxOpened : 0,
+    dyOpened : -(thisGraph.customNodes.heightOpened/2)+5,
   }
 
   thisGraph.customNodesText = {
@@ -114,7 +139,7 @@ var FluidGraph = function (firstBgElement,d3data){
     svgMouseDownNode : null,
     mouseUpNode : null,
     lastKeyDown : -1,
-    nodeOpened : null,
+    openedNode : null,
   }
 }
 
