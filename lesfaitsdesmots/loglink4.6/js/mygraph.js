@@ -77,6 +77,8 @@ var FluidGraph = function (firstBgElement,d3data){
 		transitionDurationOpen : 1000,
 		transitionDurationClose : 500,
 		transitionDelay : 0,
+    blankNodeLabel : "New...",
+    blankNodeType : "without",
   }
 
   thisGraph.nodeTypeIcon = {
@@ -104,13 +106,11 @@ var FluidGraph = function (firstBgElement,d3data){
   }
 
   thisGraph.customNodesText = {
-    cursor : "text", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
     fontSize : 14,
     FontFamily : "Helvetica Neue, Helvetica, Arial, sans-serif;",
     strokeOpacity : .5,
-    awesomeText : true,
     widthMax : 160,
-		heightMax : 160,
+		heightMax : thisGraph.customNodes.heightClosed,
   }
 
   thisGraph.customLinks = {
@@ -120,7 +120,7 @@ var FluidGraph = function (firstBgElement,d3data){
     curvesLinks : true,
   }
 
-  thisGraph.graphName = "Untiled";
+  thisGraph.graphName = "Untilted";
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
   thisGraph.bgElement = null,
@@ -330,16 +330,6 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
                                 .enter()
                         				.append("g")
                         				.attr("id", "node")
-                                .on("dblclick",function(d){
-                                  thisGraph.nodeEdit.call(thisGraph, d3.select(this), d)})
-                                .on("mousedown",function(d){
-                                  thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this), d)})
-                                .on("mouseup",function(d){
-                                  thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this), d)})
-                                .on("mouseover",function(d){
-                                  thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this), d)})
-                                .on("mouseout",function(d){
-                                  thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this), d)})
                                 .call(d3.behavior.drag()
                                           .on("dragstart", function(args){
                                             thisGraph.nodeOnDragStart.call(thisGraph, args)})
@@ -488,7 +478,7 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
 
   doDelete = true;
   if (!skipPrompt){
-    doDelete = window.confirm("Press OK to delete this graph");
+    doDelete = window.confirm("Press OK to delete the graph named " + thisGraph.graphName);
   }
   if(doDelete){
     thisGraph.resetMouseVars();
@@ -497,6 +487,10 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
     d3.selectAll("#node").remove();
     d3.selectAll("#link").remove();
     d3.selectAll("#drag_line").remove();
+
+    localStorage.removeItem("loglink46|"+thisGraph.graphName);
+    $('#saveGraphLabel').text(thisGraph.graphName);
+    thisGraph.graphName = "Untilted"
   }
 
   if (thisGraph.config.debug) console.log("deleteGraph end");
@@ -525,12 +519,7 @@ FluidGraph.prototype.downloadGraph = function() {
 
   if (thisGraph.config.debug) console.log("downloadGraph start");
 
-  var saveEdges = [];
-  thisGraph.d3data.edges.forEach(function(val, i){
-    saveEdges.push({source: val.source.id, target: val.target.id});
-  });
-  var d3dataToSave = {"nodes": thisGraph.d3data.nodes, "edges": saveEdges};
-  var blob = new Blob([window.JSON.stringify(d3dataToSave)], {type: "text/plain;charset=utf-8"});
+  var blob = new Blob([jsonifyGraph()], {type: "text/plain;charset=utf-8"});
   var now = new Date();
   var date_now = now.getDate()+"-"+now.getMonth()+1+"-"+now.getFullYear()+"-"+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
   saveAs(blob, "Carto-"+date_now+".d3json");
@@ -538,8 +527,24 @@ FluidGraph.prototype.downloadGraph = function() {
   if (thisGraph.config.debug) console.log("downloadGraph end");
 }
 
+FluidGraph.prototype.jsonifyGraph = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("jsonifyGraph start");
+
+  var saveEdges = [];
+  thisGraph.d3data.edges.forEach(function(val, i){
+    saveEdges.push({source: val.source.id, target: val.target.id});
+  });
+  var d3dataToSave = window.JSON.stringify({"nodes": thisGraph.d3data.nodes, "edges": saveEdges});
+
+  if (thisGraph.config.debug) console.log("jsonifyGraph end");
+
+  return d3dataToSave;
+}
 
 FluidGraph.prototype.uploadGraph = function() {
+  thisGraph = this;
   if (thisGraph.config.debug) console.log("uploadGraph start");
 
   if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -575,10 +580,13 @@ FluidGraph.prototype.uploadGraph = function() {
   if (thisGraph.config.debug) console.log("uploadGraph end");
 }
 
-FluidGraph.prototype.saveGraph = function(graphName) {
+FluidGraph.prototype.saveGraph = function() {
+  thisGraph = this;
   if (thisGraph.config.debug) console.log("saveGraph start");
 
-  $('#saveGraphLabel').text(graphName);
+  $('#saveGraphLabel').text(thisGraph.graphName);
+
+  localStorage.setItem("loglink46|"+thisGraph.graphName,thisGraph.jsonifyGraph())
 
   if (thisGraph.config.debug) console.log("saveGraph end");
 }

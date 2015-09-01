@@ -7,7 +7,8 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
 
   var rectCircle;
   if (thisGraph.customNodes.rectSvg) {
-    rectCircle = svgNodes.append("rect")
+    rectCircle = svgNodes
+      .append("rect")
       .attr("x", -thisGraph.customNodes.widthClosed / 2)
       .attr("y", -thisGraph.customNodes.heightClosed / 2)
       .attr("width", thisGraph.customNodes.widthClosed)
@@ -34,14 +35,14 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     .style("cursor", thisGraph.customNodes.cursor)
     .style("opacity", 1)
 
-  if (thisGraph.customNodes.displayText)
-    thisGraph.displayText(svgNodes)
-
   if (thisGraph.customNodes.displayId)
     thisGraph.displayId(svgNodes)
 
   if (thisGraph.customNodes.displayType)
     thisGraph.displayType(svgNodes)
+
+  if (thisGraph.customNodes.displayText)
+    thisGraph.displayText(svgNodes)
 
   if (thisGraph.config.debug) console.log("drawNodes end");
 }
@@ -51,50 +52,75 @@ FluidGraph.prototype.displayText = function(svgNodes) {
 
   if (thisGraph.config.debug) console.log("displayId start");
 
-  if (thisGraph.customNodesText.awesomeText) {
-    // content closed node
-    var fo_content_text_node = svgNodes
-      .append("foreignObject")
-      .attr("id", "fo_content_text_node")
-      .attr("x", -thisGraph.customNodesText.widthMax / 2)
-      .attr("y", -thisGraph.customNodesText.heightMax / 2)
-      .attr("width", thisGraph.customNodesText.widthMax)
-      .attr("height", thisGraph.customNodesText.heightMax)
+  var fo_content_text_node = svgNodes
+    .append("foreignObject")
+    .attr("id", "fo_content_text_node")
+    .attr("x", -thisGraph.customNodesText.widthMax / 2)
+    .attr("y", -thisGraph.customNodesText.heightMax / 2)
+    .attr("width", thisGraph.customNodesText.widthMax)
+    .attr("height", thisGraph.customNodesText.heightMax)
 
-    //fo xhtml
-    var fo_xhtml_content_text_node = fo_content_text_node
-      .append('xhtml:div')
-      .attr("class", "fo_xhtml_content_text_node")
-      .attr("style", "width:"+thisGraph.customNodesText.widthMax+"px;"
-                    +"height:"+thisGraph.customNodesText.heightMax+"px;"  )
+  //fo xhtml
+  var fo_xhtml_content_text_node = fo_content_text_node
+    .append('xhtml:div')
+    .attr("class", "fo_xhtml_content_text_node")
+    .attr("style", "width:"+thisGraph.customNodesText.widthMax+"px;"
+                  +"height:"+thisGraph.customNodesText.heightMax+"px;")
 
-    //label_closed_node
-    var label_closed_node = fo_xhtml_content_text_node
-      .append("div")
-      .attr("id", "label_closed_node")
-      .attr("class", "label_closed_node")
-      .attr("style", function(d) {
-        return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba[d.type]
-                                    + "," + thisGraph.customNodesText.strokeOpacity + ");"
-                                    + "border: 1px solid rgba("
-                                    + thisGraph.customNodes.colorTypeRgba[d.type] + ","
-                                    + thisGraph.customNodesText.strokeOpacity + ")";
-      })
-      .text(function(d, i) {
-        return d.label;
-      })
-  } else {
-    svgNodes
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", ".25em")
-      .text(function(d) {
-        return d.label
-      })
-      .style("font-size", thisGraph.customNodesText.fontSize)
-      .style("font-family", thisGraph.customNodesText.fontFamily)
-      .style("cursor", thisGraph.customNodesText.cursor)
-  }
+  //label_closed_node
+  var label_closed_node = fo_xhtml_content_text_node
+    .append("div")
+    .attr("id", "label_closed_node")
+    .attr("class", "label_closed_node")
+    .attr("style", function(d) {
+      return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba[d.type]
+                                  + "," + thisGraph.customNodesText.strokeOpacity + ");"
+                                  + "border: 1px solid rgba("
+                                  + thisGraph.customNodes.colorTypeRgba[d.type] + ","
+                                  + thisGraph.customNodesText.strokeOpacity + ");"
+                                  + "cursor:" + thisGraph.customNodes.cursor + ";"
+    })
+    .text(function(d, i) {
+      return d.label;
+    })
+    .on("mousedown",function(d){
+      thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+    .on("mouseup",function(d){
+      thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+    .on("mouseover",function(d){
+      thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+    .on("mouseout",function(d){
+      thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+    .on("dblclick",function(d){
+      thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+
+  //Rect to put events
+  var fo_content_circle_node = svgNodes
+    .append("foreignObject")
+    .attr("id", "fo_content_circle_node")
+    .attr("x", -thisGraph.customNodesText.widthMax / 2)
+    .attr("y", -thisGraph.customNodesText.heightMax / 2)
+    .attr("width", thisGraph.customNodesText.widthMax)
+    .attr("height", thisGraph.customNodesText.heightMax)
+
+  var fo_xhtml_content_circle_node = fo_content_circle_node
+    .append('xhtml:div')
+    .attr("class", "fo_xhtml_content_circle_event_node")
+    .attr("style", "margin-left:40px;padding:" + thisGraph.customNodes.widthClosed/2 + "px;"
+                  + "width:"+thisGraph.customNodes.widthClosed+"px;"
+                  + "height:"+thisGraph.customNodes.heightClosed+"px;position:static;"
+                  + "cursor:" + thisGraph.customNodes.cursor + ";")
+
+    .on("mousedown",function(d){
+      thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
+    .on("mouseup",function(d){
+      thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
+    .on("mouseover",function(d){
+      thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
+    .on("mouseout",function(d){
+      thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
+    .on("dblclick",function(d){
+      thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
 
   if (thisGraph.config.debug) console.log("displayId end");
 }
@@ -170,10 +196,44 @@ FluidGraph.prototype.displayType = function(svgNodes) {
   if (thisGraph.config.debug) console.log("displayType end");
 }
 
-FluidGraph.prototype.nodeEdit = function(d3node, d) {
+FluidGraph.prototype.changeTypeNode = function(node,type) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("nodeEdit start");
+  if (thisGraph.config.debug) console.log("displayType start");
+
+  var el = d3.select(node);
+
+  var nodecircle = el.select("#nodecircle");
+  nodecircle.style("fill", thisGraph.customNodes.colorType[type]);
+
+  var type_el = el.select("#fo_type_image");
+  type_el.select('#fo_i_type_image').remove();
+  type_el.select('#fo_div_type_image')
+      .append('i')
+        .attr("id", "fo_i_type_image")
+        .attr("class", "ui large " + thisGraph.customNodes.imageType[type] + " icon")
+      .attr("style", "display:inline")
+
+  var circle_id_el = el.select("#circle_id");
+  circle_id_el.style("fill", function(d) { return thisGraph.customNodes.colorType[type] } );
+
+  if (thisGraph.config.debug) console.log("displayType end");
+}
+
+FluidGraph.prototype.changeLabelNode = function(node,type) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("changeLabelNode start");
+
+  var el = d3.select(node);
+
+  if (thisGraph.config.debug) console.log("changeLabelNode end");
+}
+
+FluidGraph.prototype.editNode = function(d3node, d) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("editNode start");
 
   d3.event.stopPropagation();
 
@@ -234,117 +294,11 @@ FluidGraph.prototype.nodeEdit = function(d3node, d) {
     })
 
   if (thisGraph.state.openedNode)
-    thisGraph.closeNode(thisGraph.state.openedNode);
+    thisGraph.closeEditNode(thisGraph.state.openedNode);
 
-  thisGraph.state.openedNode = d3node;
+  thisGraph.state.openedNode = d3node.node();
 
-  if (thisGraph.config.debug) console.log("nodeEdit end");
-}
-
-FluidGraph.prototype.displayContentEditNode2 = function(d3node, d) {
-  thisGraph = this;
-
-  if (thisGraph.config.debug) console.log("displayContentEditNode2 start");
-
-  var el = d3node;
-  var p_el = d3.select(d3node.node().parentNode); //p_el = g#node
-
-  var fo = p_el
-    .append("foreignObject")
-    .attr("id","fo_opened_flud")
-    .attr("x", function (){return d.x-thisGraph.customNodes.widthOpened/2})
-    .attr("y", function (){return d.y-thisGraph.customNodes.heightOpened/2})
-    .attr("width", thisGraph.customNodes.widthOpened)
-    .attr("height", thisGraph.customNodes.heightOpened)
-
-  var fo_xhtml = fo
-    .append('xhtml:div')
-      .attr("class", "fo_xhtml")
-
-  //Segment sur lequel nous allons déposer le formulaire
-  var flud_segment = fo_xhtml
-        .append("div")
-        .attr("class", "ui raised segment")
-
-  //Type du flud dans une étiquette (label ui)
-  var label_type = flud_segment
-        .append("div")
-        .attr("class", "ui blue ribbon label")
-
-  //type icon
-  var icon_type = label_type
-        .append("i")
-          .attr("class", "lab icon")
-
-  //dropdown type
-  var dropdown_type = label_type
-        .append("div")
-        .attr("class", "ui dropdown")
-        .attr("id", "dropdown_type")
-
-  //text
-  var text_type = dropdown_type
-        .append("div")
-        .attr("class", "text")
-        .text(function (){return d.type})
-
-  //dropdown icon
-  var icon_type = dropdown_type
-        .append("i")
-          .attr("class", "dropdown icon")
-
-  //dropdown menu
-  var dropdown_type_menu = dropdown_type
-        .append("div")
-        .attr("class", "menu")
-
-  var dropdown_project = dropdown_type_menu
-        .append("div")
-        .attr("class", "item")
-        .text("Project")
-
-  var dropdown_actor = dropdown_type_menu
-        .append("div")
-        .attr("class", "item")
-        .text("Actor")
-
-  var dropdown_idea = dropdown_type_menu
-        .append("div")
-        .attr("class", "item")
-        .text("Idea")
-
-  var dropdown_ressource = dropdown_type_menu
-        .append("div")
-        .attr("class", "item")
-        .text("Ressource")
-
-$('#dropdown_type').dropdown({
-    // you can use any ui transition
-    transition: 'drop'
-  });
-
-  //Segment sur lequel nous allons déposer le formulaire
-  var form_segment = flud_segment
-        .append("div")
-        .attr("class", "ui form top attached segment")
-        .attr("style", "margin-top:3px;padding:0px")
-
-  //Titre du flud
-  var title_content = form_segment
-        .append("div")
-        .attr("class", "ui top attached label")
-        .text("Description")
-  var field_content = form_segment
-        .append("div")
-        .attr("class", "field")
-  var textarea_content = form_segment
-        .append("textarea")
-        .attr("style", "height:20px;width:180px;")
-        .text(function() {
-          this.focus();
-            return d.label;
-        })
-
+  if (thisGraph.config.debug) console.log("editNode end");
 }
 
 FluidGraph.prototype.displayContentEditNode = function(d3node, d) {
@@ -413,26 +367,17 @@ FluidGraph.prototype.displayContentEditNode = function(d3node, d) {
         .attr("id", "select_type")
         .attr("style", "padding:0px")
 
-  // //text
-  // var text_type = select_type
-  //       .append("div")
-  //       .attr("class", "text")
-  //         .text(function (){return d.type})
-
   thisGraph.customNodes.listType.forEach(function(type) {
     var option = select_type.append("option")
 
+    option.attr("value", type)
+
     if (d.type === type)
-      select_type.attr("selected")
+      option.attr("selected",true)
 
     option.text(type)
 
   });
-
-// $('#select_type').dropdown({
-//     // you can use any ui transition
-//     transition: 'drop'
-//   });
 
   /*
    *
@@ -465,16 +410,29 @@ var textarea_label_open_flud = field_description
   if (thisGraph.config.debug) console.log("displayContentEditNode end");
 }
 
-FluidGraph.prototype.closeNode = function(d3node) {
+FluidGraph.prototype.closeEditNode = function() {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("closeNode start");
+  if (thisGraph.config.debug) console.log("closeEditNode start");
 
-  var el = d3node;
-  var p_el = d3node.parentNode; //p_el = g_closed_node
+  var el = d3.select(thisGraph.state.openedNode);
+  var p_el = d3.select(thisGraph.state.openedNode.parentNode); //p_el = g#node
+
+  var type_node_select = p_el.select("#select_type");
+  var description_node_textarea = p_el.select("#textarea_label_edit_node");
+
+  var type_node = type_node_select.node().value;
+  var description_node = description_node_textarea.node().value;
+  if (description_node == "")
+    description_node = thisGraph.customNodes.blankNodeLabel;
+
+  thisGraph.state.openedNode.__data__.type = type_node;
+  thisGraph.state.openedNode.__data__.label = description_node;
+
+  thisGraph.saveEditNode();
 
   el.select("#fo_content_edit_node").remove();
-  thisGraph.displayText(d3node);
+  thisGraph.displayText(el);
 
   el
     .select("#circle_id")
@@ -514,8 +472,23 @@ FluidGraph.prototype.closeNode = function(d3node) {
 
   thisGraph.state.openedNode = null;
 
-  if (thisGraph.config.debug) console.log("closeNode end");
+  if (thisGraph.config.debug) console.log("closeEditNode end");
 }
+
+FluidGraph.prototype.saveEditNode = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("saveEditNode start");
+
+  var openedNodeData = thisGraph.state.openedNode.__data__;
+  thisGraph.d3data.nodes[openedNodeData.id].type = openedNodeData.type;
+  thisGraph.d3data.nodes[openedNodeData.id].label = openedNodeData.label;
+  thisGraph.changeTypeNode(thisGraph.state.openedNode,openedNodeData.type);
+  thisGraph.changeLabelNode(thisGraph.state.openedNode,openedNodeData.label);
+
+  if (thisGraph.config.debug) console.log("saveEditNode end");
+}
+
 
 d3.selection.prototype.moveToFront = function() {
   return this.each(function() {
@@ -711,7 +684,7 @@ FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
   if (thisGraph.config.debug) console.log("nodeOnMouseDown start");
 
   if (thisGraph.state.openedNode)
-    var openedNode = thisGraph.state.openedNode.node()
+    var openedNode = thisGraph.state.openedNode
 
   if (d3node.node() != openedNode)
   {

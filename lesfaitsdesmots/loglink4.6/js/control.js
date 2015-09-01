@@ -18,7 +18,7 @@ $("#saveGraph").click(function () {
             onApprove : function()
               {
                 myGraph.graphName = $('#graphNameInput').val();
-                myGraph.saveGraph(myGraph.graphName);
+                myGraph.saveGraph();
               }
             })
       .modal('show');
