@@ -37,7 +37,7 @@ $(document).ready()
   }
 
   checkboxIsInitialized = true;
-  // myGraph.drawGraph();
+  myGraph.drawGraph();
 
 
   // var myStore = new MyStore({container : "https://localhost:8443/2013",

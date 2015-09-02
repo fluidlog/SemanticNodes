@@ -97,6 +97,7 @@ FluidGraph.prototype.bgKeyDown = function() {
 
   switch(d3.event.keyCode) {
   case thisGraph.consts.BACKSPACE_KEY:
+  break;
   case thisGraph.consts.DELETE_KEY:
     d3.event.preventDefault();
     if (thisGraph.state.selectedNode){

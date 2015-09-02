@@ -40,6 +40,7 @@ var FluidGraph = function (firstBgElement,d3data){
     linkDistance : 100,
     charge : -1000,
     debug : false,
+    version : "loglink46",
   };
 
   thisGraph.customNodes = {
@@ -49,7 +50,7 @@ var FluidGraph = function (firstBgElement,d3data){
     strokeOpacity : .5,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
-    listType : ["project","actor","idea","ressource"],
+    listType : ["without", "project","actor","idea","ressource"],
     colorType : {"project" : "#89A5E5",
                   "actor" : "#F285B9",
                   "idea" : "#FFD98D",
@@ -62,10 +63,10 @@ var FluidGraph = function (firstBgElement,d3data){
                       "ressource" : "205,249,137",
                       "without" : "white"},
     imageType : {"project" : "lab", "actor" : "user", "idea" : "idea", "ressource" : "tree", "without" : "circle thin"},
-    displayId : true,
+    displayId : false,
     displayType : true,
     displayText : true,
-    cursor : "grab", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
+    cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
     bringNodeToFrontOnHover : false,
     widthClosed : 80,
 		heightClosed : 80,
@@ -488,12 +489,24 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
     d3.selectAll("#link").remove();
     d3.selectAll("#drag_line").remove();
 
-    localStorage.removeItem("loglink46|"+thisGraph.graphName);
+    localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.graphName);
     $('#saveGraphLabel').text(thisGraph.graphName);
     thisGraph.graphName = "Untilted"
   }
 
   if (thisGraph.config.debug) console.log("deleteGraph end");
+}
+
+FluidGraph.prototype.initGraph = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("initGraph start");
+
+  thisGraph.deleteGraph(false);
+  thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
+  thisGraph.drawGraph();
+
+  if (thisGraph.config.debug) console.log("initGraph end");
 }
 
 FluidGraph.prototype.refreshGraph = function() {
@@ -519,7 +532,7 @@ FluidGraph.prototype.downloadGraph = function() {
 
   if (thisGraph.config.debug) console.log("downloadGraph start");
 
-  var blob = new Blob([jsonifyGraph()], {type: "text/plain;charset=utf-8"});
+  var blob = new Blob([thisGraph.jsonifyGraph()], {type: "text/plain;charset=utf-8"});
   var now = new Date();
   var date_now = now.getDate()+"-"+now.getMonth()+1+"-"+now.getFullYear()+"-"+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
   saveAs(blob, "Carto-"+date_now+".d3json");
@@ -555,16 +568,8 @@ FluidGraph.prototype.uploadGraph = function() {
       var txtRes = filereader.result;
       // TODO better error handling
       try{
-        var jsonObj = JSON.parse(txtRes);
+        thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
         thisGraph.deleteGraph(true);
-        thisGraph.d3data.nodes = jsonObj.nodes;
-
-        var newEdges = jsonObj.edges;
-        newEdges.forEach(function(e, i){
-          newEdges[i] = {source: thisGraph.d3data.nodes.filter(function(n){return n.id == e.source;})[0],
-                      target: thisGraph.d3data.nodes.filter(function(n){return n.id == e.target;})[0]};
-        });
-        thisGraph.d3data.edges = newEdges;
         thisGraph.drawGraph();
       }catch(err){
         window.alert("Error parsing uploaded file\nerror message: " + err.message);
@@ -580,13 +585,130 @@ FluidGraph.prototype.uploadGraph = function() {
   if (thisGraph.config.debug) console.log("uploadGraph end");
 }
 
+FluidGraph.prototype.jsonD3ToD3Data = function(jsonInput) {
+  thisGraph = this;
+  if (thisGraph.config.debug) console.log("jsonGraphToData start");
+
+  var d3data = {};
+  var jsonObj = JSON.parse(jsonInput);
+  d3data.nodes = jsonObj.nodes;
+
+  var newEdges = jsonObj.edges;
+  newEdges.forEach(function(e, i){
+    newEdges[i] = {source: d3data.nodes.filter(function(n){return n.id == e.source;})[0],
+                target: d3data.nodes.filter(function(n){return n.id == e.target;})[0]};
+  });
+  d3data.edges = newEdges;
+
+  if (thisGraph.config.debug) console.log("jsonGraphToData end");
+
+  return d3data;
+}
+
 FluidGraph.prototype.saveGraph = function() {
   thisGraph = this;
   if (thisGraph.config.debug) console.log("saveGraph start");
 
   $('#saveGraphLabel').text(thisGraph.graphName);
 
-  localStorage.setItem("loglink46|"+thisGraph.graphName,thisGraph.jsonifyGraph())
+  localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName,thisGraph.jsonifyGraph())
 
   if (thisGraph.config.debug) console.log("saveGraph end");
+}
+
+FluidGraph.prototype.prepareOpenModal = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("openGraph start");
+
+  var listOfGraphs = [];
+
+  Object.keys(localStorage)
+      .forEach(function(key){
+          var regexp = new RegExp(thisGraph.config.version);
+           if (regexp.test(key)) {
+             var keyvalue = [];
+             keyvalue[0] = key.split("|").pop();
+             keyvalue[1] = localStorage.getItem(key)
+
+             listOfGraphs.push(keyvalue)
+           }
+       });
+
+  d3.select('#graphSelection').remove();
+  var selectGraph = d3.select('#graphList')
+        .append("select")
+        .attr("id", "graphSelection")
+        .on("change", function(d){
+          thisGraph.displayPreviewModal.call(thisGraph)})
+
+  listOfGraphs.forEach(function(value, index) {
+    var option = selectGraph
+                .append("option")
+                .attr("value", value[0])
+
+                if (index==0)
+                  option.attr("selected",true)
+
+    option.text(value[0])
+  });
+
+  if (thisGraph.config.debug) console.log("openGraph end");
+}
+
+FluidGraph.prototype.displayPreviewModal = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("displayPreviewModal start");
+
+  var selectGraph = d3.select('#graphSelection');
+  var selectedoption = selectGraph.node().selectedIndex;
+  var selectedGraph = selectGraph.node().options[selectedoption].value;
+
+  var txtRes = localStorage.getItem(thisGraph.config.version+"|"+selectedGraph);
+
+  thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
+
+  d3.select("#contentGrapPreview").remove();
+
+  var contentGrapPreview = d3.select("#graphPreview")
+              .append("div")
+              .attr("id", "contentGrapPreview")
+  var ul =  contentGrapPreview
+                .append("ul")
+
+  var numberOfNodes = 0;
+  //Use every instead of forEach to stop loop when you want
+  thisGraph.d3data.nodes.every(function(node, index) {
+    var li = ul
+              .append("li")
+              .text(node.label)
+    numberOfNodes++;
+    if (numberOfNodes > 4)
+      return false;
+    else
+      return true
+  });
+
+  var total = contentGrapPreview
+                .append("div")
+                .attr("id","totalGraphPreview")
+                .html("<b>Total of nodes :</b> "+numberOfNodes+"<br> <b>Total of links :</b> "+thisGraph.d3data.edges.length);
+
+  if (thisGraph.config.debug) console.log("displayPreviewModal end");
+
+}
+
+FluidGraph.prototype.openGraph = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("openGraph start");
+
+  thisGraph.resetMouseVars();
+  d3.selectAll("#node").remove();
+  d3.selectAll("#link").remove();
+  d3.selectAll("#drag_line").remove();
+  thisGraph.drawGraph();
+
+  if (thisGraph.config.debug) console.log("openGraph end");
 }

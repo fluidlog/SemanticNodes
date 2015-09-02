@@ -10,8 +10,22 @@ $('#home')
     }
   });
 
+$('#newGraph')
+  .click(function() {
+    myGraph.initGraph();
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
 $("#saveGraph").click(function () {
-  if ($('#saveGraphLabel').val() != "Untiled")
+  if ($('#saveGraphLabel').val() != "Untilted")
   {
     $('#saveGraphModal')
       .modal({
@@ -28,37 +42,17 @@ $("#saveGraph").click(function () {
   }
 });
 
-$('#initGraph')
-  .click(function() {
-    location.reload(true)
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
-
-$('#deleteGraph')
-  .click(function() {
-    myGraph.deleteGraph(false);
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
-
-$('#createGraph')
-  .click(function() {
-    myGraph.createGraph();
+$('#openGraph').click(function() {
+  myGraph.prepareOpenModal();
+  myGraph.displayPreviewModal();
+  $('#openGraphModal')
+    .modal({
+          onApprove : function()
+            {
+              myGraph.openGraph();
+            }
+          })
+    .modal('show');
   })
   .popup({
     inline: true,
