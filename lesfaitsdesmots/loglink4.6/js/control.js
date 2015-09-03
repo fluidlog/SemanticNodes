@@ -12,7 +12,7 @@ $('#home')
 
 $('#newGraph')
   .click(function() {
-    myGraph.initGraph();
+    myGraph.newGraph();
   })
   .popup({
     inline: true,
@@ -25,8 +25,10 @@ $('#newGraph')
   });
 
 $("#saveGraph").click(function () {
-  if ($('#saveGraphLabel').val() != "Untilted")
+  var saveGraphLabel = $('#saveGraphLabel').html();
+  if (saveGraphLabel == myGraph.config.newGraphName)
   {
+    $('#graphNameInput').val("");
     $('#saveGraphModal')
       .modal({
             onApprove : function()
@@ -38,13 +40,13 @@ $("#saveGraph").click(function () {
       .modal('show');
   }
   else {
-    myGraph.saveGraph(myGraph.graphName);
+    myGraph.saveGraph();
   }
 });
 
 $('#openGraph').click(function() {
-  myGraph.prepareOpenModal();
-  myGraph.displayPreviewModal();
+  myGraph.getContentLocalStorage();
+  myGraph.displayContentModal();
   $('#openGraphModal')
     .modal({
           onApprove : function()
