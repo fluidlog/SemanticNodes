@@ -58,7 +58,7 @@ FluidGraph.prototype.bgOnMouseMove = function(d){
 }
 
 FluidGraph.prototype.bgOnMouseUp = function(d){
-  thisGraph = this;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("bgOnMouseUp start");
 

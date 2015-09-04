@@ -630,8 +630,7 @@ FluidGraph.prototype.removeSelectFromNode = function() {
 };
 
 FluidGraph.prototype.addNode = function(newnode) {
-  //Here, "this" is the <g> where mouse double-clic
-  thisGraph = myGraph;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("addnode start");
 
@@ -655,7 +654,7 @@ FluidGraph.prototype.addNode = function(newnode) {
   if (typeof newnode.type == "undefined")
     newnode.type = thisGraph.customNodes.typeOfNewNode;
   if (typeof newnode.identifier == "undefined")
-    newnode.identifier = thisGraph.config.uriBase + (d3data.nodes.length);
+    newnode.identifier = thisGraph.config.uriBase + (thisGraph.d3data.nodes.length);
   if (typeof newnode.id == "undefined")
     newnode.id = thisGraph.nodeidct++;
 
@@ -789,8 +788,7 @@ FluidGraph.prototype.nodeOnDragEnd = function(d, i) {
 }
 
 FluidGraph.prototype.deleteNode = function(nodeIdentifier) {
-  //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
-  thisGraph = this;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("deleteNode start");
 

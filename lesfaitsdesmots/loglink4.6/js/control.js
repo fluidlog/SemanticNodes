@@ -24,6 +24,28 @@ $('#newGraph')
     }
   });
 
+$('#openGraph').click(function() {
+  myGraph.getContentLocalStorage();
+  myGraph.displayContentOpenGraphModal();
+  $('#openGraphModal')
+    .modal({
+          onApprove : function()
+            {
+              myGraph.openGraph();
+            }
+          })
+    .modal('show');
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
 $("#saveGraph").click(function () {
   var saveGraphLabel = $('#saveGraphLabel').html();
   if (saveGraphLabel == myGraph.config.newGraphName)
@@ -44,27 +66,24 @@ $("#saveGraph").click(function () {
   }
 });
 
-$('#openGraph').click(function() {
+$("#manageGraph").click(function () {
   myGraph.getContentLocalStorage();
-  myGraph.displayContentModal();
-  $('#openGraphModal')
-    .modal({
-          onApprove : function()
-            {
-              myGraph.openGraph();
-            }
-          })
-    .modal('show');
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
+  if (myGraph.listOfLocalGraphs.length > 0)
+  {
+    myGraph.displayContentManageGraphModal()
+    $('#manageGraphModal')
+      .modal({
+            onApprove : function()
+              {
+                myGraph.manageGraphs();
+              }
+            })
+      .modal('show');
     }
-  });
+    else {
+      alert ("You don't have any graph in your local store")
+    }
+});
 
 $('#uploadGraph')
   .click(function() {

@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Carto Focus+context</title>
+  <title>Fluid Graph</title>
 
   <link rel="stylesheet" type="text/css" href="css/loglink4.6.css" />
 
@@ -33,7 +33,11 @@
     <a class="item" id="openGraph" data-content="Open an existing graph">
       <i class="folder open outline large icon"></i></a>
     <a class="item" id="saveGraph" data-content="Save the graph">
-      <i class="save large icon"></i><label style="display:inline-block" id="saveGraphLabel">Untilted</label></a>
+      <i class="save large icon"></i>
+      <label style="display:inline-block" id="saveGraphLabel">Untilted</label>
+    </a>
+    <a class="item" id="manageGraph" data-content="Manage graphs list">
+      <i class="browser large icon"></i></a>
 
     <input type="file" id="hiddenFileUpload" style="visibility:hidden">
     <a class="item" id="uploadGraph" data-content="Upload a graph">
@@ -62,20 +66,24 @@
     </a>
   </div>
 
-  <div class="ui small modal" id="saveGraphModal">
+  <div class="ui long modal" id="openGraphModal">
     <i class="close icon"></i>
     <div class="header">
-      Please give a name to your graph
+      Welcome to the open graph assistant !
     </div>
     <div class="content">
       <div class="image">
-        <i class="upload icon"></i>
+        <i class="folder open outline icon"></i> (Graphs are stored in the local database of your browser)
       </div>
-      <div class="description" >
-          <p>Please enter the name of the graph (without illegal caracters) and press 'OK'.</p>
-          <div class="ui input" >
-            <input type="text" id="graphNameInput" accept="text">
-          </div>
+      <div class="ui horizontal segments">
+        <div class="ui raised segment" id="openGraphModalList">
+          <b>Please choose the graph you want to open :</b>
+          <br>
+        </div>
+        <div class="ui raised segment" id="openGraphModalPreview">
+          <b>Extract of the content of the graph (5 first nodes) :</b>
+          <br>
+        </div>
       </div>
     </div>
     <div class="actions">
@@ -84,29 +92,51 @@
     </div>
   </div>
 
-  <div class="ui long modal" id="openGraphModal">
+  <div class="ui small modal" id="saveGraphModal">
     <i class="close icon"></i>
     <div class="header">
-      Please select a local graph
-      <br>
-      (This graph is stored in the local database of your browser)
+      Welcome to the save graph assistant !
     </div>
     <div class="content">
       <div class="image">
-        <i class="folder open outline icon"></i>
+        <i class="save icon"></i>
       </div>
-      <div class="ui horizontal segments">
-        <div class="ui raised segment" id="graphList">
-          <b>Please choose the graph :</b> <br>
-        </div>
-        <div class="ui raised segment" id="graphPreview">
-          <b>Extract of the content of the graph (5 first nodes) :</b> <br>
-        </div>
+      <div class="description" >
+          <p>Please enter the name of the graph (without illegal caracters) and press save button.</p>
+          <div class="ui input" >
+            <input type="text" id="graphNameInput" accept="text">
+          </div>
       </div>
     </div>
     <div class="actions">
       <div class="ui button deny">Cancel</div>
-      <div class="ui button approve">OK</div>
+      <div class="ui button approve">Save</div>
+    </div>
+  </div>
+
+  <div class="ui small modal" id="manageGraphModal">
+    <i class="close icon"></i>
+    <div class="header">
+      Welcome to the manage graph assistant !
+    </div>
+    <div class="content">
+      <div class="image">
+        <i class="browser icon"></i>
+      </div>
+      <div class="description" id="manageGraphModalList">
+        <div class="ui segments">
+          <div class="segment">
+            <b>Please click on options relative to a graph</b>
+          </div>
+          <div class="segment">
+            <div id="manageGraphModalDivTable" style="height:100px;overflow:auto">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui button deny">Close</div>
     </div>
   </div>
 

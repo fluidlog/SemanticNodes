@@ -48,7 +48,7 @@ FluidGraph.prototype.linkEdit = function(d3node, d){
 }
 
 FluidGraph.prototype.spliceLinksForNode = function (nodeid) {
-  thisGraph = this;
+  var thisGraph = this;
 
   var toSplice = thisGraph.d3data.edges.filter(
     function(l) {
@@ -78,13 +78,15 @@ FluidGraph.prototype.removeSelectFromLinks = function(){
 
 FluidGraph.prototype.addLink = function(sourceid, targetid)
 {
-  thisGraph = myGraph;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("addLink start");
 
-  // draw link between mouseDownNode and this node
-  var newlink = { source: thisGraph.searchIndexOfNodeId(d3data.nodes,sourceid),
-                  target: thisGraph.searchIndexOfNodeId(d3data.nodes,targetid)};
+  // draw link between mouseDownNode and this new node
+  var sourceObj = thisGraph.d3data.nodes[thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes,sourceid)];
+  var targetObj = thisGraph.d3data.nodes[thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes,targetid)];
+  var newlink = { source: sourceObj,
+                  target: targetObj};
 
   thisGraph.d3data.edges.push(newlink);
 
@@ -116,8 +118,7 @@ FluidGraph.prototype.linkOnMouseDown = function(d3path, d){
 }
 
 FluidGraph.prototype.deleteLink = function() {
-  //In console mode "this" is myGraph (executed by : myGraph.deleteNode())
-  thisGraph = this;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("deleteLink start");
 

@@ -125,6 +125,7 @@ var FluidGraph = function (firstBgElement,d3data){
   thisGraph.graphName = thisGraph.config.newGraphName;
   thisGraph.listOfLocalGraphs = [];
   thisGraph.selectedGraphName = null;
+  thisGraph.graphToDeleteName = null;
   thisGraph.firstBgElement = firstBgElement || [],
   thisGraph.d3data = d3data || [],
   thisGraph.bgElement = null,
@@ -214,7 +215,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
     svg = outer
       .append('g')
       .call(d3.behavior.zoom()
-        .scaleExtent([1, 10])
+        // .scaleExtent([1, 10])
         .on("zoom", thisGraph.rescale))
       .on("dblclick.zoom", null)
       .on("click", null)
@@ -229,10 +230,10 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
         thisGraph.bgOnMouseUp.call(thisGraph, d)})
 
     svg.append('rect')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('width', thisGraph.width)
-          .attr('height', thisGraph.height)
+          .attr('x', -thisGraph.width*3)
+          .attr('y', -thisGraph.height*3)
+          .attr('width', thisGraph.width*7)
+          .attr('height', thisGraph.height*7)
           .attr('fill', "#eee")
   }
 
@@ -418,7 +419,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
     //delete link if there's less object in svgLinks array than in DOM
     thisGraph.svgLinksEnter.exit().remove();
 
-    if (myGraph.config.force == "Off")
+    if (thisGraph.config.force == "Off")
     {
       thisGraph.movexy.call(thisGraph);
     }
@@ -487,35 +488,10 @@ FluidGraph.prototype.newGraph = function() {
   if (thisGraph.config.debug) console.log("newGraph end");
 }
 
-FluidGraph.prototype.deleteGraph = function(skipPrompt) {
-  thisGraph = this;
-
-  if (thisGraph.config.debug) console.log("deleteGraph start");
-
-  doDelete = true;
-  if (!skipPrompt){
-    doDelete = window.confirm("Press OK to delete the graph named " + thisGraph.graphName);
-  }
-  if(doDelete){
-    thisGraph.resetMouseVars();
-    thisGraph.d3data.nodes = [];
-    thisGraph.d3data.edges = [];
-    d3.selectAll("#node").remove();
-    d3.selectAll("#link").remove();
-    d3.selectAll("#drag_line").remove();
-
-    localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.graphName);
-    thisGraph.graphName = thisGraph.config.newGraphName
-    $('#saveGraphLabel').text(thisGraph.graphName);
-  }
-
-  if (thisGraph.config.debug) console.log("deleteGraph end");
-}
-
 FluidGraph.prototype.clearGraph = function(skipPrompt) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("deleteGraph start");
+  if (thisGraph.config.debug) console.log("clearGraph start");
 
   thisGraph.resetMouseVars();
   thisGraph.d3data.nodes = [];
@@ -527,23 +503,23 @@ FluidGraph.prototype.clearGraph = function(skipPrompt) {
   thisGraph.graphName = thisGraph.config.newGraphName
   $('#saveGraphLabel').text(thisGraph.graphName);
 
-  if (thisGraph.config.debug) console.log("deleteGraph end");
+  if (thisGraph.config.debug) console.log("clearGraph end");
 }
 
 FluidGraph.prototype.refreshGraph = function() {
-  thisGraph = this;
+  var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("refreshGraph start");
 
   thisGraph.resetMouseVars();
-  if (myGraph.config.force == "On")
-    myGraph.activateForce();
+  if (thisGraph.config.force == "On")
+    thisGraph.activateForce();
 
   d3.selectAll("#node").remove();
   d3.selectAll("#link").remove();
   d3.select("#drag_line").remove();
-  myGraph.initDragLine()
-  myGraph.drawGraph();
+  thisGraph.initDragLine()
+  thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("refreshGraph end");
 }
@@ -590,7 +566,8 @@ FluidGraph.prototype.uploadGraph = function() {
       // TODO better error handling
       try{
         thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
-        thisGraph.deleteGraph(true);
+        thisGraph.clearGraph();
+        thisGraph.initDragLine()
         thisGraph.drawGraph();
       }catch(err){
         window.alert("Error parsing uploaded file\nerror message: " + err.message);
@@ -659,28 +636,30 @@ FluidGraph.prototype.getContentLocalStorage = function() {
   if (thisGraph.config.debug) console.log("openGraph end");
 }
 
-FluidGraph.prototype.displayContentModal = function() {
+FluidGraph.prototype.displayContentOpenGraphModal = function() {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("displayPreviewModal start");
+  if (thisGraph.config.debug) console.log("displayContentOpenGraphModal start");
 
-  var selectGraph = d3.select('#graphSelection');
-  if (selectGraph.node())
+  //Get index selected if selection change
+  var openGraphModalSelection = d3.select('#openGraphModalSelection');
+  if (openGraphModalSelection.node())
   {
-    var selectedoption = selectGraph.node().selectedIndex;
-    thisGraph.selectedGraphName = selectGraph.node().options[selectedoption].value;
+    var selectedoption = openGraphModalSelection.node().selectedIndex;
+    thisGraph.selectedGraphName = openGraphModalSelection.node().options[selectedoption].value;
   }
 
-  d3.select('#graphSelection').remove();
-  var selectGraph = d3.select('#graphList')
+  d3.select('#openGraphModalSelection').remove();
+  openGraphModalSelection = d3.select('#openGraphModalList')
         .append("select")
-        .attr("id", "graphSelection")
+        .attr("id", "openGraphModalSelection")
         .attr("multiple", true)
+        .attr("style","width:300px; height:100px")
         .on("change", function(d){
-          thisGraph.displayContentModal.call(thisGraph)})
+          thisGraph.displayContentOpenGraphModal.call(thisGraph)})
 
   thisGraph.listOfLocalGraphs.forEach(function(value, index) {
-    var option = selectGraph
+    var option = openGraphModalSelection
                 .append("option")
                 .attr("value", value[0])
 
@@ -709,33 +688,31 @@ FluidGraph.prototype.displayContentModal = function() {
   thisGraph.graphName = thisGraph.selectedGraphName;
   $('#saveGraphLabel').text(thisGraph.graphName);
 
-  d3.select("#contentGrapPreview").remove();
+  d3.select("#contentOpenGraphModalPreview").remove();
 
-  var contentGrapPreview = d3.select("#graphPreview")
+  var contentOpenGraphModalPreview = d3.select("#openGraphModalPreview")
               .append("div")
-              .attr("id", "contentGrapPreview")
-  var ul =  contentGrapPreview
+              .attr("id", "contentOpenGraphModalPreview")
+  var ul =  contentOpenGraphModalPreview
                 .append("ul")
 
-  var numberOfNodes = 0;
   //Use every instead of forEach to stop loop when you want
   thisGraph.d3data.nodes.every(function(node, index) {
     var li = ul
               .append("li")
               .text(node.label)
-    numberOfNodes++;
-    if (numberOfNodes > 4)
+    if (index > 4)
       return false;
     else
       return true
   });
 
-  var total = contentGrapPreview
+  var total = contentOpenGraphModalPreview
                 .append("div")
-                .attr("id","totalGraphPreview")
-                .html("<b>Total of nodes :</b> "+numberOfNodes+"<br> <b>Total of links :</b> "+thisGraph.d3data.edges.length);
+                .attr("id","totalOpenGraphModalPreview")
+                .html("<b>Total of nodes :</b> "+thisGraph.d3data.nodes.length+"<br> <b>Total of links :</b> "+thisGraph.d3data.edges.length);
 
-  if (thisGraph.config.debug) console.log("displayPreviewModal end");
+  if (thisGraph.config.debug) console.log("displayContentOpenGraphModal end");
 
 }
 
@@ -749,7 +726,100 @@ FluidGraph.prototype.openGraph = function() {
   d3.selectAll("#link").remove();
   d3.selectAll("#drag_line").remove();
 
+  thisGraph.initDragLine()
   thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("openGraph end");
+}
+
+FluidGraph.prototype.displayContentManageGraphModal = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("displayContentManageGraphModal start");
+
+  d3.select('#manageGraphModalTable').remove();
+  var manageGraphModalTable = d3.select('#manageGraphModalDivTable')
+                            .append("table")
+                            .attr("id", "manageGraphModalTable")
+                            .attr("class","ui celled table")
+
+  var manageGraphModalThead = manageGraphModalTable
+                            .append("thread")
+
+  var manageGraphModalTrHead =  manageGraphModalTable
+                          .append("tr")
+
+  manageGraphModalTrHead.append("th")
+                            .text("Name")
+  manageGraphModalTrHead.append("th")
+                            .text("Content")
+  manageGraphModalTrHead.append("th")
+                            .text("Action")
+
+  var manageGraphModalTbody =  manageGraphModalTable.append("tbody")
+
+
+  thisGraph.listOfLocalGraphs.forEach(function(value, index) {
+    var data = JSON.parse(value[1]);
+
+    var nodesPreview = "(";
+    data.nodes.every(function(node, index){
+      if (index > 2)
+      {
+        nodesPreview += node.label.split(" ",2);
+        return false;
+      }
+      else {
+        if (index == data.nodes.length-1)
+          nodesPreview += node.label.split(" ",2);
+        else
+          nodesPreview += node.label.split(" ",2) + ',';
+        return true;
+      }
+    });
+    nodesPreview += ")";
+
+    var manageGraphModalTrBody =  manageGraphModalTbody
+                            .append("tr")
+
+    manageGraphModalTrBody.append("td")
+                            .text(value[0]);
+
+    manageGraphModalTrBody.append("td")
+                            .text(' ' + nodesPreview);
+
+    manageGraphModalTrBody.append("td")
+                          .append("button")
+                          .attr("class", "ui mini labeled icon button")
+                          .on("click", function (){
+                            thisGraph.graphToDeleteName = value[0];
+                            thisGraph.deleteGraph.call(thisGraph);
+                            thisGraph.getContentLocalStorage.call(thisGraph);
+                            thisGraph.displayContentManageGraphModal.call(thisGraph);
+                          })
+                          .text("Delete")
+                          .append("i")
+                          .attr("class", "delete small icon")
+
+  });
+
+  if (thisGraph.config.debug) console.log("displayContentManageGraphModal end");
+}
+
+FluidGraph.prototype.deleteGraph = function(skipPrompt) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("deleteGraph start");
+
+  doDelete = true;
+  if (!skipPrompt){
+    doDelete = window.confirm("Press OK to delete the graph named " + thisGraph.graphToDeleteName);
+  }
+  if(doDelete){
+    localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.graphToDeleteName);
+    if (thisGraph.graphToDeleteName == thisGraph.graphName)
+      newGraph();
+  }
+
+  if (thisGraph.config.debug) console.log("deleteGraph end");
 }
