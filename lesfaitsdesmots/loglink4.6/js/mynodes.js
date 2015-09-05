@@ -629,11 +629,10 @@ FluidGraph.prototype.removeSelectFromNode = function() {
   thisGraph.state.selectedNode = null;
 };
 
-FluidGraph.prototype.addNode = function(newnode) {
-  var thisGraph = this;
+FluidGraph.prototype.addNode = function(thisGraph, newnode) {
+  //Warning, here, we need "this" for mouse coord
 
-  if (thisGraph.config.debug) console.log("addnode start");
-
+  if (thisGraph.config.debug) console.log("addNode start");
   var xy = [];
 
   if (typeof this.__ondblclick != "undefined") //if after dblclick

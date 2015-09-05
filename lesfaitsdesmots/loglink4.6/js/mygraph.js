@@ -168,11 +168,8 @@ FluidGraph.prototype.consts =  {
 ****************************/
 
 //rescale g
-FluidGraph.prototype.rescale = function(){
+FluidGraph.prototype.rescale = function(thisGraph){
   if (thisGraph.config.debug) console.log("rescale start");
-
-  //Here, "this" is the <g> where mouse double-clic
-  thisGraph = window.myGraph;
 
   thisGraph.bgElement.attr("transform",
     "translate(" + d3.event.translate + ")"
@@ -216,10 +213,10 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
       .append('g')
       .call(d3.behavior.zoom()
         // .scaleExtent([1, 10])
-        .on("zoom", thisGraph.rescale))
+        .on("zoom", function(d){thisGraph.rescale.call(this, thisGraph, d)}))
       .on("dblclick.zoom", null)
       .on("click", null)
-      .on("dblclick", thisGraph.addNode)
+      .on("dblclick", function(d){thisGraph.addNode.call(this, thisGraph, d)})
       .append('g')
       .attr('id', bgElementId)
       .on("mousedown", function(d){
@@ -818,7 +815,7 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
   if(doDelete){
     localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.graphToDeleteName);
     if (thisGraph.graphToDeleteName == thisGraph.graphName)
-      newGraph();
+      thisGraph.newGraph();
   }
 
   if (thisGraph.config.debug) console.log("deleteGraph end");

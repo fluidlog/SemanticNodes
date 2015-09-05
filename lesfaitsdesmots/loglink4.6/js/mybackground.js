@@ -73,9 +73,8 @@ FluidGraph.prototype.bgOnMouseUp = function(d){
 
   thisGraph.drag_line.attr("visibility", "hidden");
   thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode);
-  var newnodeidentifier = thisGraph.addNode({x:xycoords[0],
-                                              y:xycoords[1],
-                                              });
+  var newnodeidentifier = thisGraph.addNode.call(this, thisGraph,
+                                              {x:xycoords[0],y:xycoords[1]});
 
   thisGraph.addLink(thisGraph.state.mouseDownNode.identifier, newnodeidentifier);
 
