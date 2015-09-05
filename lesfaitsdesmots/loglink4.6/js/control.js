@@ -100,7 +100,7 @@ $('#uploadGraph')
   });
 
 $('#hiddenFileUpload')
-  .on("change", myGraph.uploadGraph)
+  .on("change", function() {myGraph.uploadGraph.call(this, myGraph)})
 
 $('#downloadGraph')
   .click(function() {

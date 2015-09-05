@@ -485,7 +485,7 @@ FluidGraph.prototype.newGraph = function() {
   if (thisGraph.config.debug) console.log("newGraph end");
 }
 
-FluidGraph.prototype.clearGraph = function(skipPrompt) {
+FluidGraph.prototype.clearGraph = function() {
   thisGraph = this;
 
   if (thisGraph.config.debug) console.log("clearGraph start");
@@ -550,8 +550,8 @@ FluidGraph.prototype.jsonifyGraph = function() {
   return d3dataToSave;
 }
 
-FluidGraph.prototype.uploadGraph = function() {
-  thisGraph = this;
+FluidGraph.prototype.uploadGraph = function(thisGraph) {
+//Here, we need this for get the object file
   if (thisGraph.config.debug) console.log("uploadGraph start");
 
   if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -562,8 +562,8 @@ FluidGraph.prototype.uploadGraph = function() {
       var txtRes = filereader.result;
       // TODO better error handling
       try{
-        thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
         thisGraph.clearGraph();
+        thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
         thisGraph.initDragLine()
         thisGraph.drawGraph();
       }catch(err){
