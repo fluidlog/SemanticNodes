@@ -52,23 +52,23 @@ FluidGraph.prototype.displayText = function(svgNodes) {
 
   if (thisGraph.config.debug) console.log("displayId start");
 
-  var fo_content_text_node = svgNodes
+  var fo_content_closed_node_label = svgNodes
     .append("foreignObject")
-    .attr("id", "fo_content_text_node")
+    .attr("id", "fo_content_closed_node_label")
     .attr("x", -thisGraph.customNodesText.widthMax / 2)
     .attr("y", -thisGraph.customNodesText.heightMax / 2)
     .attr("width", thisGraph.customNodesText.widthMax)
     .attr("height", thisGraph.customNodesText.heightMax)
 
   //fo xhtml
-  var fo_xhtml_content_text_node = fo_content_text_node
+  var fo_xhtml_content_closed_node_label = fo_content_closed_node_label
     .append('xhtml:div')
-    .attr("class", "fo_xhtml_content_text_node")
+    .attr("class", "fo_xhtml_content_closed_node_label")
     .attr("style", "width:"+thisGraph.customNodesText.widthMax+"px;"
                   +"height:"+thisGraph.customNodesText.heightMax+"px;")
 
   //label_closed_node
-  var label_closed_node = fo_xhtml_content_text_node
+  var label_closed_node = fo_xhtml_content_closed_node_label
     .append("div")
     .attr("id", "label_closed_node")
     .attr("class", "label_closed_node")
@@ -87,26 +87,23 @@ FluidGraph.prototype.displayText = function(svgNodes) {
       thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
     .on("mouseup",function(d){
       thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
-    .on("mouseover",function(d){
-      thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
-    .on("mouseout",function(d){
-      thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
     .on("dblclick",function(d){
       thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
 
   //Rect to put events
-  var fo_content_circle_node = svgNodes
+  var fo_content_closed_node_events = svgNodes
     .append("foreignObject")
-    .attr("id", "fo_content_circle_node")
+    .attr("id", "fo_content_closed_node_events")
     .attr("x", -thisGraph.customNodesText.widthMax / 2)
     .attr("y", -thisGraph.customNodesText.heightMax / 2)
     .attr("width", thisGraph.customNodesText.widthMax)
     .attr("height", thisGraph.customNodesText.heightMax)
 
-  var fo_xhtml_content_circle_node = fo_content_circle_node
+  var fo_xhtml_content_closed_node_events = fo_content_closed_node_events
     .append('xhtml:div')
-    .attr("class", "fo_xhtml_content_circle_event_node")
-    .attr("style", "margin-left:40px;padding:" + thisGraph.customNodes.widthClosed/2 + "px;"
+    .attr("class", "fo_xhtml_content_closed_node_events")
+    .attr("style", "margin-left:" + thisGraph.customNodes.widthClosed/2 + "px;"
+                  + "padding:" + thisGraph.customNodes.widthClosed/2 + "px;"
                   + "width:"+thisGraph.customNodes.widthClosed+"px;"
                   + "height:"+thisGraph.customNodes.heightClosed+"px;position:static;"
                   + "cursor:" + thisGraph.customNodes.cursor + ";")
@@ -117,8 +114,6 @@ FluidGraph.prototype.displayText = function(svgNodes) {
       thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
     .on("mouseover",function(d){
       thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
-    .on("mouseout",function(d){
-      thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
     .on("dblclick",function(d){
       thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
 
@@ -237,76 +232,78 @@ FluidGraph.prototype.editNode = function(d3node, d) {
 
   d3.event.stopPropagation();
 
+  if (thisGraph.state.editedNode)
+    thisGraph.closeNode.call(thisGraph, "edited");
+  if (thisGraph.state.openedNode)
+    thisGraph.closeNode.call(thisGraph, "opened");
+
   var el = d3node;
   var p_el = d3.select(d3node.node().parentNode); //p_el = g#node
 
-  el
-    .select("#fo_content_text_node").remove();
+  el.select("#fo_content_closed_node_label").remove();
+  el.select("#fo_content_closed_node_events").remove();
 
   el
     .select("#circle_id")
     .transition()
-    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("cx", thisGraph.nodeIdCircle.cxOpened)
-    .attr("cy", thisGraph.nodeIdCircle.cyOpened)
+    .attr("cx", thisGraph.nodeIdCircle.cxEdited)
+    .attr("cy", thisGraph.nodeIdCircle.cyEdited)
 
   el
     .select("#text_id")
     .transition()
-    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("dx", thisGraph.nodeIdCircle.dxOpened)
-    .attr("dy", thisGraph.nodeIdCircle.dyOpened)
+    .attr("dx", thisGraph.nodeIdCircle.dxEdited)
+    .attr("dy", thisGraph.nodeIdCircle.dyEdited)
 
   el
     .select("#circle_type")
     .transition()
-    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("cx", 0)
-    .attr("cy", thisGraph.nodeTypeIcon.cyOpened)
+    .attr("cx", thisGraph.nodeTypeIcon.cxEdited)
+    .attr("cy", thisGraph.nodeTypeIcon.cyEdited)
 
   el
     .select("#fo_type_image")
     .transition()
-    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("x", -10)
-    .attr("y", thisGraph.nodeTypeIcon.yOpened)
+    .attr("x", thisGraph.nodeTypeIcon.xEdited)
+    .attr("y", thisGraph.nodeTypeIcon.yEdited)
 
   el
     .select("#nodecircle")
     .transition()
-    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("x", -thisGraph.customNodes.widthOpened / 2)
-    .attr("y", -thisGraph.customNodes.heightOpened / 2)
-    .attr("width", thisGraph.customNodes.widthOpened)
-    .attr("height", thisGraph.customNodes.heightOpened)
+    .attr("x", -thisGraph.customNodes.widthEdited / 2)
+    .attr("y", -thisGraph.customNodes.heightEdited / 2)
+    .attr("width", thisGraph.customNodes.widthEdited)
+    .attr("height", thisGraph.customNodes.heightEdited)
     .each("end", function(d) {
-      thisGraph.displayContentEditNode.call(thisGraph, d3.select(this), d)
+      thisGraph.displayContentEditedNode.call(thisGraph, d3.select(this), d)
     })
 
-  if (thisGraph.state.openedNode)
-    thisGraph.closeEditNode(thisGraph.state.openedNode);
-
-  thisGraph.state.openedNode = d3node.node();
+  thisGraph.state.editedNode = d3node.node();
 
   if (thisGraph.config.debug) console.log("editNode end");
 }
 
-FluidGraph.prototype.displayContentEditNode = function(d3node, d) {
+FluidGraph.prototype.displayContentEditedNode = function(d3node, d) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("displayContentEditNode start");
+  if (thisGraph.config.debug) console.log("displayContentEditedNode start");
 
-  var el = d3node;
+  var el = d3node.node();
   var p_el = d3.select(d3node.node().parentNode); //p_el = g#node
 
   /*
@@ -315,25 +312,25 @@ FluidGraph.prototype.displayContentEditNode = function(d3node, d) {
    *
    * */
 
-  var fo_edit_node = p_el
+  var fo_content_edited_node_label = p_el
         .append("foreignObject")
-        .attr("id","fo_content_edit_node")
-        .attr("x", -thisGraph.customNodes.widthOpened/2)
-        .attr("y", -thisGraph.customNodes.heightOpened/2)
-        .attr("width", thisGraph.customNodes.widthOpened)
-        .attr("height", thisGraph.customNodes.heightOpened)
+        .attr("id","fo_content_edited_node_label")
+        .attr("x", -thisGraph.customNodes.widthEdited/2)
+        .attr("y", -thisGraph.customNodes.heightEdited/2)
+        .attr("width", thisGraph.customNodes.widthEdited)
+        .attr("height", thisGraph.customNodes.heightEdited)
 
-  var fo_xhtml = fo_edit_node
+  var fo_xhtml_content_edited_node_label = fo_content_edited_node_label
         .append('xhtml:div')
-        .attr("class", "fo_xhtml_content_edit_node")
+        .attr("class", "fo_xhtml_content_edited_node_label")
         //Warning : using css doesn't work !
-        .attr("style", "width:"+thisGraph.customNodes.widthOpened+"px;"
-                      +"height:"+thisGraph.customNodes.heightOpened+"px;"
+        .attr("style", "width:"+thisGraph.customNodes.widthEdited+"px;"
+                      +"height:"+thisGraph.customNodes.heightEdited+"px;"
                       +"cursor:"+thisGraph.customNodes.cursor+";"
                       +"position:static;")
 
   //Node Segment
-  var  node_segment = fo_xhtml
+  var  node_segment = fo_xhtml_content_edited_node_label
         .append("div")
         .attr("class", "ui raised segment")
         .attr("style", "position:static;margin:0px;padding:10px")
@@ -407,32 +404,222 @@ var textarea_label_open_flud = field_description
               })
 
 
-  if (thisGraph.config.debug) console.log("displayContentEditNode end");
+  if (thisGraph.config.debug) console.log("displayContentEditedNode end");
 }
 
-FluidGraph.prototype.closeEditNode = function() {
+FluidGraph.prototype.openNode = function(d3node, d) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("closeEditNode start");
+  if (thisGraph.config.debug) console.log("openNodeOnHover start");
 
-  var el = d3.select(thisGraph.state.openedNode);
-  var p_el = d3.select(thisGraph.state.openedNode.parentNode); //p_el = g#node
+  if (thisGraph.state.openedNode)
+    thisGraph.closeNode(thisGraph.state.openedNode);
 
-  var type_node_select = p_el.select("#select_type");
-  var description_node_textarea = p_el.select("#textarea_label_edit_node");
+  var el = d3node;
+  var p_el = d3.select(d3node.node().parentNode); //p_el = g#node
 
-  var type_node = type_node_select.node().value;
-  var description_node = description_node_textarea.node().value;
-  if (description_node == "")
-    description_node = thisGraph.customNodes.blankNodeLabel;
+  el.select("#fo_content_closed_node_label").remove();
+  el.select("#fo_content_closed_node_events").remove();
 
-  thisGraph.state.openedNode.__data__.type = type_node;
-  thisGraph.state.openedNode.__data__.label = description_node;
+  el
+    .select("#circle_id")
+    .transition()
+    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .delay(thisGraph.customNodes.transitionDelay)
+    .ease(thisGraph.customNodes.transitionEasing)
+    .attr("cx", thisGraph.nodeIdCircle.cxOpened)
+    .attr("cy", thisGraph.nodeIdCircle.cyOpened)
 
-  thisGraph.saveEditNode();
+  el
+    .select("#text_id")
+    .transition()
+    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .delay(thisGraph.customNodes.transitionDelay)
+    .ease(thisGraph.customNodes.transitionEasing)
+    .attr("dx", thisGraph.nodeIdCircle.dxOpened)
+    .attr("dy", thisGraph.nodeIdCircle.dyOpened)
 
-  el.select("#fo_content_edit_node").remove();
-  thisGraph.displayText(el);
+  el
+    .select("#circle_type")
+    .transition()
+    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .delay(thisGraph.customNodes.transitionDelay)
+    .ease(thisGraph.customNodes.transitionEasing)
+    .attr("cx", 0)
+    .attr("cy", thisGraph.nodeTypeIcon.cyOpened)
+
+  el
+    .select("#fo_type_image")
+    .transition()
+    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .delay(thisGraph.customNodes.transitionDelay)
+    .ease(thisGraph.customNodes.transitionEasing)
+    .attr("x", -10)
+    .attr("y", thisGraph.nodeTypeIcon.yOpened)
+
+  el
+    .select("#nodecircle")
+    .transition()
+    .duration(thisGraph.customNodes.transitionDurationOpen)
+    .delay(thisGraph.customNodes.transitionDelay)
+    .ease(thisGraph.customNodes.transitionEasing)
+    .attr("x", -thisGraph.customNodes.widthOpened / 2)
+    .attr("y", -thisGraph.customNodes.heightOpened / 2)
+    .attr("width", thisGraph.customNodes.widthOpened)
+    .attr("height", thisGraph.customNodes.heightOpened)
+    .each("end", function(d) {
+      thisGraph.displayContentOpenedNode.call(thisGraph, d3.select(this), d)
+    })
+
+  thisGraph.state.openedNode = d3node.node();
+
+  if (thisGraph.config.debug) console.log("openNodeOnHover end");
+}
+
+FluidGraph.prototype.displayContentOpenedNode = function(d3node, d) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("displayContentEditedNode start");
+
+  var el = d3node.node();
+  var p_el = d3.select(d3node.node().parentNode); //p_el = g#node
+
+  var fo_edit_node = p_el
+        .append("foreignObject")
+        .attr("id","fo_content_opened_node")
+        .attr("x", -thisGraph.customNodes.widthOpened/2)
+        .attr("y", -thisGraph.customNodes.heightOpened/2)
+        .attr("width", thisGraph.customNodes.widthOpened)
+        .attr("height", thisGraph.customNodes.heightOpened)
+
+  var fo_xhtml = fo_edit_node
+        .append('xhtml:div')
+        .attr("class", "fo_xhtml_content_open_node")
+        //Warning : using css doesn't work !?
+        .attr("style", "width:"+thisGraph.customNodes.widthOpened+"px;"
+                      +"height:"+thisGraph.customNodes.heightOpened+"px;"
+                      +"cursor:"+thisGraph.customNodes.cursor+";"
+                      +"position:static;")
+
+    /*
+     *
+     * Label
+     *
+     * */
+
+  //Node label (description)
+  var text_label = fo_xhtml
+    .append("div")
+    .attr("class", "open_node_label")
+    .attr("id", "open_node_label")
+    .attr("style", function(d) {
+      return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba["gray"]
+                                  + "," + thisGraph.customNodesText.strokeOpacity + ");"
+                                  + "border: 1px solid rgba("
+                                  + thisGraph.customNodes.colorTypeRgba["gray"] + ","
+                                  + thisGraph.customNodesText.strokeOpacity + ");"
+                                  + "cursor:" + thisGraph.customNodes.cursor + ";"
+    })
+    .text(function(){return d.label})
+
+    /*
+     *
+     * neighbours
+     *
+     * */
+
+ var neighbour1 = fo_xhtml
+   .append("div")
+   .attr("class", "open_node_neighbour")
+   .attr("id", "open_node_neighbour")
+   .attr("style", function(d) {
+     return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba["actor"]
+                                 + "," + thisGraph.customNodesText.strokeOpacity + ");"
+                                 + "border: 1px solid rgba("
+                                 + thisGraph.customNodes.colorTypeRgba["actor"] + ","
+                                 + thisGraph.customNodesText.strokeOpacity + ");"
+                                 + "cursor:" + thisGraph.customNodes.cursor + ";"
+   })
+   .text("neighbour 1")
+
+ var neighbour2 = fo_xhtml
+   .append("div")
+   .attr("class", "open_node_neighbour")
+   .attr("id", "open_node_neighbour")
+   .attr("style", function(d) {
+     return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba["idea"]
+                                 + "," + thisGraph.customNodesText.strokeOpacity + ");"
+                                 + "border: 1px solid rgba("
+                                 + thisGraph.customNodes.colorTypeRgba["idea"] + ","
+                                 + thisGraph.customNodesText.strokeOpacity + ");"
+                                 + "cursor:" + thisGraph.customNodes.cursor + ";"
+   })
+   .text("neighbour 2")
+
+  //Rect to put events
+  var fo_content_opened_node_events = p_el
+    .append("foreignObject")
+    .attr("id", "fo_content_opened_node_events")
+    .attr("x", -thisGraph.customNodes.widthOpened / 2)
+    .attr("y", -thisGraph.customNodes.heightOpened / 2)
+    .attr("width", thisGraph.customNodes.widthOpened)
+    .attr("height", thisGraph.customNodes.heightOpened)
+
+  var fo_xhtml_content_opened_node_events = fo_content_opened_node_events
+    .append('xhtml:div')
+    .attr("class", "fo_xhtml_content_opened_node_events")
+    .attr("style", "padding:" + thisGraph.customNodes.widthOpened/2 + "px;"
+                  + "width:"+thisGraph.customNodes.widthOpened+"px;"
+                  + "height:"+thisGraph.customNodes.heightOpened+"px;position:static;"
+                  + "cursor:" + thisGraph.customNodes.cursor + ";")
+
+    .on("mouseout",function(d){
+      thisGraph.nodeOnMouseOut.call(thisGraph, d3.select(this.parentNode), d)})
+    .on("dblclick",function(d){
+      thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)
+      })
+
+  if (thisGraph.config.debug) console.log("displayContentEditedNode end");
+
+}
+
+FluidGraph.prototype.closeNode = function(typeOfNode) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("closeNode start");
+
+  if (typeOfNode == "edited")
+  {
+    var el = d3.select(thisGraph.state.editedNode);
+    var p_el = d3.select(thisGraph.state.editedNode.parentNode);
+
+    var type_node_select = p_el.select("#select_type");
+    var description_node_textarea = p_el.select("#textarea_label_edit_node");
+
+    var type_node = type_node_select.node().value;
+    var description_node = description_node_textarea.node().value;
+    if (description_node == "")
+      description_node = thisGraph.customNodes.blankNodeLabel;
+
+    thisGraph.state.editedNode.__data__.type = type_node;
+    thisGraph.state.editedNode.__data__.label = description_node;
+
+    thisGraph.saveEditNode();
+
+    el.select("#fo_content_edited_node_label").remove();
+    thisGraph.displayText(el);
+
+    thisGraph.state.editedNode = null;
+  }
+  else { //opened
+      var el = d3.select(thisGraph.state.openedNode);
+
+      el.select("#fo_content_opened_node").remove();
+      el.select("#fo_content_opened_node_events").remove();
+      thisGraph.displayText(el);
+
+      thisGraph.state.openedNode = null;
+  }
 
   el
     .select("#circle_id")
@@ -470,9 +657,7 @@ FluidGraph.prototype.closeEditNode = function() {
     .attr("width", thisGraph.customNodes.widthClosed)
     .attr("height", thisGraph.customNodes.heightClosed)
 
-  thisGraph.state.openedNode = null;
-
-  if (thisGraph.config.debug) console.log("closeEditNode end");
+  if (thisGraph.config.debug) console.log("closeNode end");
 }
 
 FluidGraph.prototype.saveEditNode = function() {
@@ -480,30 +665,33 @@ FluidGraph.prototype.saveEditNode = function() {
 
   if (thisGraph.config.debug) console.log("saveEditNode start");
 
-  var openedNodeData = thisGraph.state.openedNode.__data__;
+  var openedNodeData = thisGraph.state.editedNode.__data__;
   thisGraph.d3data.nodes[openedNodeData.id].type = openedNodeData.type;
   thisGraph.d3data.nodes[openedNodeData.id].label = openedNodeData.label;
-  thisGraph.changeTypeNode(thisGraph.state.openedNode,openedNodeData.type);
-  thisGraph.changeLabelNode(thisGraph.state.openedNode,openedNodeData.label);
+  thisGraph.changeTypeNode(thisGraph.state.editedNode,openedNodeData.type);
+  thisGraph.changeLabelNode(thisGraph.state.editedNode,openedNodeData.label);
 
   if (thisGraph.config.debug) console.log("saveEditNode end");
 }
 
-
-d3.selection.prototype.moveToFront = function() {
-  return this.each(function() {
-    this.parentNode.appendChild(this);
-  });
-};
 
 FluidGraph.prototype.nodeOnMouseOver = function(d3node, d) {
   thisGraph = this;
 
   if (thisGraph.config.debug) console.log("nodeOnMouseOver start");
 
-  if (thisGraph.customNodes.bringNodeToFrontOnHover) {
+  if (thisGraph.config.bringNodeToFrontOnHover) {
     var el = d3.select(d3node.node());
     el.moveToFront();
+  }
+
+  if (thisGraph.config.repulseNeighbourOnHover) {
+    var el = d3.select(d3node.node());
+    el.repulseNeighbour.call(thisGraph, d, 100);
+  }
+
+  if (thisGraph.config.openNodeOnHover) {
+    thisGraph.openNode.call(thisGraph, d3node, d);
   }
 
   if (thisGraph.config.debug) console.log("nodeOnMouseOver end");
@@ -514,8 +702,33 @@ FluidGraph.prototype.nodeOnMouseOut = function(d3node, d) {
 
   if (thisGraph.config.debug) console.log("nodeOnMouseOut start");
 
+  if (thisGraph.config.repulseNeighbourOnHover) {
+    var el = d3.select(d3node.node());
+    el.repulseNeighbour.call(thisGraph, d, 1);
+  }
+
+  if (thisGraph.config.openNodeOnHover) {
+    thisGraph.closeNode.call(thisGraph, "opened");
+  }
+
   if (thisGraph.config.debug) console.log("nodeOnMouseOut end");
 }
+
+d3.selection.prototype.repulseNeighbour = function(d, weight) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOver start");
+
+  d.weight = weight;
+
+  if (thisGraph.config.debug) console.log("nodeOnMouseOver end");
+}
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function() {
+    this.parentNode.appendChild(this);
+  });
+};
 
 FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm) {
   for (var i = 0, len = o.length; i < len; i++) {
@@ -681,10 +894,10 @@ FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
 
   if (thisGraph.config.debug) console.log("nodeOnMouseDown start");
 
-  if (thisGraph.state.openedNode)
-    var openedNode = thisGraph.state.openedNode
+  if (thisGraph.state.editedNode)
+    var editedNode = thisGraph.state.editedNode
 
-  if (d3node.node() != openedNode)
+  if (d3node.node() != editedNode)
   {
     thisGraph.state.mouseDownNode = d;
     thisGraph.state.selectedNode = d;

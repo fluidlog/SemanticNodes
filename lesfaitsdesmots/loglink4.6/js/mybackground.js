@@ -15,8 +15,8 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
   d3.selectAll("#path.selected").classed(thisGraph.consts.selectedClass, false);
   d3.selectAll("#nodecircle.selected").classed(thisGraph.consts.selectedClass, false);
 
-  if (thisGraph.state.openedNode)
-    thisGraph.closeEditNode()
+  if (thisGraph.state.editedNode)
+    thisGraph.closeNode.call(thisGraph, "edited")
 
   if (thisGraph.config.debug) console.log("bgOnMouseDown start");
 }

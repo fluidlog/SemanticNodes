@@ -42,6 +42,9 @@ var FluidGraph = function (firstBgElement,d3data){
     debug : false,
     version : "loglink46",
     newGraphName : "Untilted",
+    bringNodeToFrontOnHover : false,
+    repulseNeighbourOnHover : true,
+    openNodeOnHover : true,
   };
 
   thisGraph.customNodes = {
@@ -56,28 +59,32 @@ var FluidGraph = function (firstBgElement,d3data){
                   "actor" : "#F285B9",
                   "idea" : "#FFD98D",
                   "ressource" : "#CDF989",
-                  "without" : "white"},
+                  "without" : "white",
+                  "gray" : "gray"},
     typeOfNewNode : "without",
   	colorTypeRgba : {"project" : "137,165,229",
                       "actor" : "242,133,185",
                       "idea" : "255,217,141",
                       "ressource" : "205,249,137",
-                      "without" : "white"},
+                      "without" : "255,255,255",
+                      "gray" : "200,200,200"},
     imageType : {"project" : "lab", "actor" : "user", "idea" : "idea", "ressource" : "tree", "without" : "circle thin"},
     displayId : false,
     displayType : true,
     displayText : true,
     cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
-    bringNodeToFrontOnHover : false,
     widthClosed : 80,
 		heightClosed : 80,
-		widthOpened : 200,
-		heightOpened : 200,
+    widthOpened : 160,
+		heightOpened : 230,
+    widthEdited : 200,
+		heightEdited : 200,
 		curvesCorners : 50,
 		widthStrokeHover : 20,
 		transitionEasing : "elastic", //Values : linear (default), elastic
-		transitionDurationOpen : 1000,
-		transitionDurationClose : 500,
+    transitionDurationOpen : 300,
+    transitionDurationEdit : 1000,
+		transitionDurationClose : 300,
 		transitionDelay : 0,
     blankNodeLabel : "New...",
     blankNodeType : "without",
@@ -87,12 +94,16 @@ var FluidGraph = function (firstBgElement,d3data){
     r : 13,
     cxClosed : 0,
     cxOpened : 0,
+    cxEdited : 0,
     cyClosed : (thisGraph.customNodes.heightClosed/2)-10,
     cyOpened : (thisGraph.customNodes.heightOpened/2)-10,
+    cyEdited : (thisGraph.customNodes.heightEdited/2)-10,
     xClosed : -11,
     xOpened : -11,
+    xEdited : -11,
     yClosed : (thisGraph.customNodes.heightClosed/2)-20,
     yOpened : (thisGraph.customNodes.heightOpened/2)-20,
+    yEdited : (thisGraph.customNodes.heightEdited/2)-20,
   }
 
   thisGraph.nodeIdCircle = {
@@ -101,10 +112,14 @@ var FluidGraph = function (firstBgElement,d3data){
     cyClosed : -(thisGraph.customNodes.heightClosed/2)+6,
     cxOpened : 0,
     cyOpened : -(thisGraph.customNodes.heightOpened/2),
+    cxEdited : 0,
+    cyEdited : -(thisGraph.customNodes.heightOpened/2),
     dxClosed : 0,
     dyClosed : -(thisGraph.customNodes.heightClosed/2)+10,
     dxOpened : 0,
     dyOpened : -(thisGraph.customNodes.heightOpened/2)+5,
+    dxEdited : 0,
+    dyEdited : -(thisGraph.customNodes.heightOpened/2)+5,
   }
 
   thisGraph.customNodesText = {
@@ -144,6 +159,7 @@ var FluidGraph = function (firstBgElement,d3data){
     svgMouseDownNode : null,
     mouseUpNode : null,
     lastKeyDown : -1,
+    editedNode : null,
     openedNode : null,
   }
 }

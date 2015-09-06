@@ -50,7 +50,7 @@ path {
 .circle_type_selected {
   stroke: #999;
 }
-.fo_xhtml_content_text_node{
+.fo_xhtml_content_closed_node_label{
   display: flex;
   flex-direction:column;
   justify-content:center;
@@ -81,10 +81,33 @@ path {
   -webkit-border-radius: 10px;
   border-radius: 10px;
 }
-.fo_xhtml_content_edit_node {
+.fo_xhtml_content_edited_node_label {
   display: flex;
   flex-direction:column;
   justify-content:center;
   align-content:center;
   align-items:center;
+}
+.open_node_label {
+  padding-top: 10px;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+
+
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+}
+.open_node_neighbour {
+  padding: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+  text-align: center;
+
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
 }
