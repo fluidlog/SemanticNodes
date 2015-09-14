@@ -3,7 +3,16 @@ function menuInitialisation(myGraph) {
   if (myGraph.config.debug) console.log("checkboxInitialisation start");
 
   $('#focusContextNodeOff').hide();
-  $('#curvesLinks').hide();
+
+  if (myGraph.config.curvesLinks == 'On')
+    $('#curvesLinksCheckbox').checkbox('check');
+  else
+    $('#curvesLinksCheckbox').checkbox('uncheck');
+
+  if (myGraph.config.openNodeOnHover == 'On')
+    $('#openNodeOnHoverCheckbox').checkbox('check');
+  else
+    $('#openNodeOnHoverCheckbox').checkbox('uncheck');
 
   if (myGraph.config.force == 'On')
     $('#activeForceCheckbox').checkbox('check');
@@ -30,12 +39,14 @@ var FluidGraph = function (firstBgElement,d3data){
   var thisGraph = this;
 
   thisGraph.config = {
-    size : 20,
-    xNewNode : 100,
+    backgroundColor : "#EEE",
+    xNewNode : 200,
     yNewNode : 100,
     bgElementType : "panzoom", //choixe : "panzoom" or "simple"
     force : "Off",
     elastic : "Off",
+    curvesLinks : "On",
+    openNodeOnHover : "Off",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
@@ -43,23 +54,18 @@ var FluidGraph = function (firstBgElement,d3data){
     version : "loglink46",
     newGraphName : "Untilted",
     bringNodeToFrontOnHover : false,
-    repulseNeighbourOnHover : true,
-    openNodeOnHover : true,
+    repulseNeighbourOnHover : false,
   };
 
   thisGraph.customNodes = {
-    rectSvg : true, //False = circle
-    sizeOfCircleNode : 20,
-    strokeWidth : 10,
+    strokeWidth : "10px",
     strokeOpacity : .5,
-    strokeColor: "#DDD",
-    strokeSelectedColor: "#999",
     listType : ["without", "project","actor","idea","ressource"],
     colorType : {"project" : "#89A5E5",
                   "actor" : "#F285B9",
                   "idea" : "#FFD98D",
                   "ressource" : "#CDF989",
-                  "without" : "white",
+                  "without" : "#999",
                   "gray" : "gray"},
     typeOfNewNode : "without",
   	colorTypeRgba : {"project" : "137,165,229",
@@ -134,7 +140,6 @@ var FluidGraph = function (firstBgElement,d3data){
     strokeWidth: 7,
     strokeColor: "#DDD",
     strokeSelectedColor: "#999",
-    curvesLinks : true,
   }
 
   thisGraph.graphName = thisGraph.config.newGraphName;
@@ -247,7 +252,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
           .attr('y', -thisGraph.height*3)
           .attr('width', thisGraph.width*7)
           .attr('height', thisGraph.height*7)
-          .attr('fill', "#eee")
+          .attr('fill', thisGraph.config.backgroundColor)
   }
 
   thisGraph.bgElement = d3.select("#"+bgElementId);
@@ -263,7 +268,7 @@ FluidGraph.prototype.initDragLine = function(){
   if (thisGraph.config.debug) console.log("initDragLine start");
 
   // line displayed when dragging new nodes
-  if (thisGraph.customLinks.curvesLinks)
+  if (thisGraph.config.curvesLinks == "On")
   {
     thisGraph.drag_line = thisGraph.bgElement.append("path")
                           .attr("id", "drag_line")
@@ -386,7 +391,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
     thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#link")
                   			.data(dataToDraw.edges)
 
-    if (thisGraph.customLinks.curvesLinks)
+    if (thisGraph.config.curvesLinks == "On")
     {
       thisGraph.svgLinks = thisGraph.svgLinksEnter
                           .enter()
@@ -452,7 +457,7 @@ FluidGraph.prototype.movexy = function(d){
     throw new Error("movexy still problem if tick :-)...");
   }
 
-  if (thisGraph.customLinks.curvesLinks)
+  if (thisGraph.config.curvesLinks == "On")
   {
     thisGraph.svgLinksEnter.attr("d", function(d) {
           var dx = d.target.x - d.source.x,
@@ -495,6 +500,7 @@ FluidGraph.prototype.newGraph = function() {
   if (thisGraph.config.debug) console.log("newGraph start");
 
   thisGraph.clearGraph();
+  thisGraph.changeGraphName();
   thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
   thisGraph.drawGraph();
 
@@ -512,9 +518,6 @@ FluidGraph.prototype.clearGraph = function() {
   d3.selectAll("#node").remove();
   d3.selectAll("#link").remove();
   d3.selectAll("#drag_line").remove();
-
-  thisGraph.graphName = thisGraph.config.newGraphName
-  $('#saveGraphLabel').text(thisGraph.graphName);
 
   if (thisGraph.config.debug) console.log("clearGraph end");
 }
@@ -545,7 +548,7 @@ FluidGraph.prototype.downloadGraph = function() {
   var blob = new Blob([thisGraph.jsonifyGraph()], {type: "text/plain;charset=utf-8"});
   var now = new Date();
   var date_now = now.getDate()+"-"+now.getMonth()+1+"-"+now.getFullYear()+"-"+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
-  saveAs(blob, "Carto-"+date_now+".d3json");
+  saveAs(blob, "Carto-"+thisGraph.graphName+"-"+date_now+".d3json");
 
   if (thisGraph.config.debug) console.log("downloadGraph end");
 }
@@ -559,41 +562,11 @@ FluidGraph.prototype.jsonifyGraph = function() {
   thisGraph.d3data.edges.forEach(function(val, i){
     saveEdges.push({source: val.source.id, target: val.target.id});
   });
-  var d3dataToSave = window.JSON.stringify({"nodes": thisGraph.d3data.nodes, "edges": saveEdges});
+  var d3dataToSave = window.JSON.stringify({"name" : thisGraph.graphName, "nodes": thisGraph.d3data.nodes, "edges": saveEdges});
 
   if (thisGraph.config.debug) console.log("jsonifyGraph end");
 
   return d3dataToSave;
-}
-
-FluidGraph.prototype.uploadGraph = function(thisGraph) {
-//Here, we need this for get the object file
-  if (thisGraph.config.debug) console.log("uploadGraph start");
-
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    var uploadFile = this.files[0];
-    var filereader = new window.FileReader();
-
-    filereader.onload = function(){
-      var txtRes = filereader.result;
-      // TODO better error handling
-      try{
-        thisGraph.clearGraph();
-        thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
-        thisGraph.initDragLine()
-        thisGraph.drawGraph();
-      }catch(err){
-        window.alert("Error parsing uploaded file\nerror message: " + err.message);
-        return;
-      }
-    };
-    filereader.readAsText(uploadFile);
-
-  } else {
-    alert("Your browser won't let you save this graph -- try upgrading your browser to IE 10+ or Chrome or Firefox.");
-  }
-
-  if (thisGraph.config.debug) console.log("uploadGraph end");
 }
 
 FluidGraph.prototype.jsonD3ToD3Data = function(jsonInput) {
@@ -602,6 +575,7 @@ FluidGraph.prototype.jsonD3ToD3Data = function(jsonInput) {
 
   var d3data = {};
   var jsonObj = JSON.parse(jsonInput);
+  thisGraph.GraphName = jsonObj.name;
   d3data.nodes = jsonObj.nodes;
 
   var newEdges = jsonObj.edges;
@@ -616,11 +590,55 @@ FluidGraph.prototype.jsonD3ToD3Data = function(jsonInput) {
   return d3data;
 }
 
+FluidGraph.prototype.uploadGraph = function(input) {
+
+thisGraph = this;
+
+if (thisGraph.config.debug) console.log("uploadGraph start");
+
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    var uploadFile = input[0].files[0];
+    var filereader = new window.FileReader();
+
+    filereader.onload = function(){
+      var txtRes = filereader.result;
+      // TODO better error handling
+      try{
+        thisGraph.clearGraph();
+        thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
+        thisGraph.changeGraphName();
+        thisGraph.initDragLine()
+        thisGraph.drawGraph();
+      }catch(err){
+        window.alert("Error parsing uploaded file\nerror message: " + err.message);
+        return;
+      }
+    };
+    filereader.readAsText(uploadFile);
+    $("#sidebarButton").click();
+
+  } else {
+    alert("Your browser won't let you save this graph -- try upgrading your browser to IE 10+ or Chrome or Firefox.");
+  }
+
+  if (thisGraph.config.debug) console.log("uploadGraph end");
+}
+
+FluidGraph.prototype.changeGraphName = function(newGraphName) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("changeGraphName start");
+
+  $('#graphNameLabel').text(thisGraph.graphName);
+
+  if (thisGraph.config.debug) console.log("changeGraphName end");
+}
+
 FluidGraph.prototype.saveGraph = function() {
   thisGraph = this;
   if (thisGraph.config.debug) console.log("saveGraph start");
 
-  $('#saveGraphLabel').text(thisGraph.graphName);
+  thisGraph.changeGraphName();
   thisGraph.selectedGraphName = thisGraph.graphName;
 
   localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName,thisGraph.jsonifyGraph())
@@ -631,7 +649,7 @@ FluidGraph.prototype.saveGraph = function() {
 FluidGraph.prototype.getContentLocalStorage = function() {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("openGraph start");
+  if (thisGraph.config.debug) console.log("getContentLocalStorage start");
 
   thisGraph.listOfLocalGraphs = [];
   Object.keys(localStorage)
@@ -646,7 +664,7 @@ FluidGraph.prototype.getContentLocalStorage = function() {
            }
        });
 
-  if (thisGraph.config.debug) console.log("openGraph end");
+  if (thisGraph.config.debug) console.log("getContentLocalStorage end");
 }
 
 FluidGraph.prototype.displayContentOpenGraphModal = function() {
@@ -699,7 +717,7 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
   thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
 
   thisGraph.graphName = thisGraph.selectedGraphName;
-  $('#saveGraphLabel').text(thisGraph.graphName);
+  thisGraph.changeGraphName();
 
   d3.select("#contentOpenGraphModalPreview").remove();
 

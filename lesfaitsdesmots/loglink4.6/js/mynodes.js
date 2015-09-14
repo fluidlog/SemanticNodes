@@ -6,22 +6,14 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
   if (thisGraph.config.debug) console.log("drawNodes start");
 
   var rectCircle;
-  if (thisGraph.customNodes.rectSvg) {
-    rectCircle = svgNodes
-      .append("rect")
-      .attr("x", -thisGraph.customNodes.widthClosed / 2)
-      .attr("y", -thisGraph.customNodes.heightClosed / 2)
-      .attr("width", thisGraph.customNodes.widthClosed)
-      .attr("height", thisGraph.customNodes.heightClosed)
-      .attr("rx", thisGraph.customNodes.curvesCorners)
-      .attr("ry", thisGraph.customNodes.curvesCorners)
-  } else {
-    rectCircle = svgNodes.append("circle")
-      .attr("r", 0)
-      .transition()
-      .duration(300)
-      .attr("r", thisGraph.customNodes.sizeOfCircleNode)
-  }
+  rectCircle = svgNodes
+    .append("rect")
+    .attr("x", -thisGraph.customNodes.widthClosed / 2)
+    .attr("y", -thisGraph.customNodes.heightClosed / 2)
+    .attr("width", thisGraph.customNodes.widthClosed)
+    .attr("height", thisGraph.customNodes.heightClosed)
+    .attr("rx", thisGraph.customNodes.curvesCorners)
+    .attr("ry", thisGraph.customNodes.curvesCorners)
 
   rectCircle
     .attr("id", "nodecircle")
@@ -29,8 +21,10 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     .style("fill", function(d) {
       return thisGraph.customNodes.colorType[d.type]
     })
-    .style("stroke", thisGraph.customNodes.strokeColor)
-    .style("stroke-width", thisGraph.customNodes.strokeWidth)
+    .style("stroke", function(d) {
+      return thisGraph.customNodes.colorType[d.type]
+    })
+    // .style("stroke-width", thisGraph.customNodes.strokeWidth)
     .style("stroke-opacity", thisGraph.customNodes.strokeOpacity)
     .style("cursor", thisGraph.customNodes.cursor)
     .style("opacity", 1)
@@ -200,6 +194,7 @@ FluidGraph.prototype.changeTypeNode = function(node,type) {
 
   var nodecircle = el.select("#nodecircle");
   nodecircle.style("fill", thisGraph.customNodes.colorType[type]);
+  nodecircle.style("stroke", thisGraph.customNodes.colorType[type]);
 
   var type_el = el.select("#fo_type_image");
   type_el.select('#fo_i_type_image').remove();
@@ -690,7 +685,7 @@ FluidGraph.prototype.nodeOnMouseOver = function(d3node, d) {
     el.repulseNeighbour.call(thisGraph, d, 100);
   }
 
-  if (thisGraph.config.openNodeOnHover) {
+  if (thisGraph.config.openNodeOnHover == "On") {
     thisGraph.openNode.call(thisGraph, d3node, d);
   }
 
@@ -735,6 +730,17 @@ FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm) {
     if (o[i].identifier === searchTerm) return i;
   }
   return -1;
+}
+
+FluidGraph.prototype.getNeighbourNode = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("getNeighbourNode start");
+
+
+
+  if (thisGraph.config.debug) console.log("getNeighbourNode end");
+
 }
 
 FluidGraph.prototype.focusContextNode = function() {
@@ -803,42 +809,40 @@ FluidGraph.prototype.fixUnfixNode = function(d3node, d) {
 
   if (d3.event.defaultPrevented) return;
 
-  //Toggle Class="fixed", fix d force and change circle stroke
-  var circle_stroke;
+  var nodecircle = d3node.select("#nodecircle");
   var status;
-  d3.select(d3node.node()).select("#nodecircle").classed("selected", function(d) {
-      if (d.fixed == true) {
-        d.fixed = false;
-        status = "unfixed";
-        thisGraph.removeSelectFromNode();
-        return false;
-      } else {
-        d.fixed = true;
-        status = "fixed";
-        thisGraph.replaceSelectNode(d3node, d);
-        return true;
-      }
-    })
-    .style("stroke", circle_stroke);
+
+  if (d.fixed == true) {
+    d.fixed = false;
+    status = "unfixed";
+    thisGraph.removeSelectFromNode();
+    return false;
+  }
+  else {
+    d.fixed = true;
+    status = "fixed";
+    thisGraph.replaceSelectNode(nodecircle, d);
+    return true;
+  }
 
   if (thisGraph.config.debug) console.log("fixUnfixNode end");
   return status;
 }
 
-FluidGraph.prototype.replaceSelectNode = function(d3Node, nodeData) {
+FluidGraph.prototype.replaceSelectNode = function(nodecircle, d) {
   var thisGraph = this;
-  d3Node.classed(thisGraph.consts.selectedClass, true);
+  nodecircle.classed(thisGraph.consts.selectedClass, true);
   if (thisGraph.state.selectedNode) {
     thisGraph.removeSelectFromNode();
   }
-  thisGraph.state.selectedNode = nodeData;
+  thisGraph.state.selectedNode = d;
 };
 
 FluidGraph.prototype.removeSelectFromNode = function() {
   var thisGraph = this;
   thisGraph.svgNodesEnter.filter(function(cd) {
     return cd.id === thisGraph.state.selectedNode.id;
-  }).classed(thisGraph.consts.selectedClass, false);
+  }).select("#nodecircle").classed(thisGraph.consts.selectedClass, false);
   thisGraph.state.selectedNode = null;
 };
 
@@ -861,8 +865,6 @@ FluidGraph.prototype.addNode = function(thisGraph, newnode) {
 
   if (typeof newnode.label == "undefined")
     newnode.label = "new";
-  if (typeof newnode.size == "undefined")
-    newnode.size = thisGraph.customNodes.sizeOfCircleNode;
   if (typeof newnode.type == "undefined")
     newnode.type = thisGraph.customNodes.typeOfNewNode;
   if (typeof newnode.identifier == "undefined")
@@ -900,7 +902,7 @@ FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
   if (d3node.node() != editedNode)
   {
     thisGraph.state.mouseDownNode = d;
-    thisGraph.state.selectedNode = d;
+    // thisGraph.state.selectedNode = d;
     thisGraph.state.svgMouseDownNode = d3node;
 
     //initialise drag_line position on this node
@@ -921,7 +923,7 @@ FluidGraph.prototype.nodeOnMouseUp = function(d3node, d) {
   // if we clicked on an origin node
   if (thisGraph.state.mouseDownNode) {
     thisGraph.state.mouseUpNode = d;
-    thisGraph.state.selectedNode = d;
+    // thisGraph.state.selectedNode = d;
     // if we clicked on the same node, reset vars
     if (thisGraph.state.mouseUpNode.identifier == thisGraph.state.mouseDownNode.identifier) {
       thisGraph.fixUnfixNode(d3node, d);

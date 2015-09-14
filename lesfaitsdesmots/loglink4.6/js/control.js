@@ -6,7 +6,7 @@ $('#home')
     position: 'bottom left',
     delay: {
       show: 100,
-      hide: 500
+      hide: 300
     }
   });
 
@@ -20,7 +20,7 @@ $('#newGraph')
     position: 'bottom left',
     delay: {
       show: 100,
-      hide: 500
+      hide: 300
     }
   });
 
@@ -35,27 +35,27 @@ $('#openGraph').click(function() {
             }
           })
     .modal('show');
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
+})
+.popup({
+  inline: true,
+  hoverable: true,
+  position: 'bottom left',
+  delay: {
+    show: 100,
+    hide: 300
+  }
+});
 
 $("#saveGraph").click(function () {
-  var saveGraphLabel = $('#saveGraphLabel').html();
-  if (saveGraphLabel == myGraph.config.newGraphName)
+  var graphNameLabel = $('#graphNameLabel').html();
+  if (graphNameLabel == myGraph.config.newGraphName)
   {
     $('#graphNameInput').val("");
     $('#saveGraphModal')
       .modal({
             onApprove : function()
               {
-                myGraph.graphName = $('#graphNameInput').val();
+                thisGraph.graphName = $('#graphNameInput').val();
                 myGraph.saveGraph();
               }
             })
@@ -64,7 +64,17 @@ $("#saveGraph").click(function () {
   else {
     myGraph.saveGraph();
   }
+})
+.popup({
+  inline: true,
+  hoverable: true,
+  position: 'bottom left',
+  delay: {
+    show: 100,
+    hide: 300
+  }
 });
+
 
 $("#manageGraph").click(function () {
   myGraph.getContentLocalStorage();
@@ -83,26 +93,53 @@ $("#manageGraph").click(function () {
     else {
       alert ("You don't have any graph in your local store")
     }
+})
+.popup({
+  inline: true,
+  hoverable: true,
+  position: 'bottom left',
+  delay: {
+    show: 100,
+    hide: 500
+  }
 });
 
-$('#uploadGraph')
-  .click(function() {
-    $("#hiddenFileUpload").click();
+$('#sidebarButton').click(function(){
+    $('.right.sidebar').sidebar('toggle');
+});
+
+$('#sidebarMenuHelpItem').click(function () {
+  $('#helpModal')
+    .modal('show');
+});
+
+$('#sidebarMenuSettingsItem').click(function () {
+  $('#settingsModal')
+    .modal('show');
+});
+
+$('#sidebarMenuUploadGraphItem').click(function() {
+    $('#uploadModal')
+      .modal('show')
+      .modal({
+        onApprove : function()
+          {
+            var input = $('#uploadInput');
+            myGraph.uploadGraph(input);
+          }
+        })
   })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
+.popup({
+  inline: true,
+  hoverable: true,
+  position: 'bottom left',
+  delay: {
+    show: 100,
+    hide: 500
+  }
+});
 
-$('#hiddenFileUpload')
-  .on("change", function() {myGraph.uploadGraph.call(this, myGraph)})
-
-$('#downloadGraph')
+$('#sidebarMenuDownloadGraphItem')
   .click(function() {
     myGraph.downloadGraph(myGraph);
   })
@@ -148,39 +185,27 @@ $('#focusContextNodeOff')
     }
   });
 
-$('#curvesLinks')
-  .click(function() {
-    myGraph.customLinks.curvesLinks = true;
+$('#curvesLinksCheckbox').checkbox({
+  onChecked:function() {
+    myGraph.config.curvesLinks = "On";
     myGraph.refreshGraph();
-    $('#curvesLinksOff').show();
-    $('#curvesLinks').hide();
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
+  },
+  onUnchecked: function() {
+    myGraph.config.curvesLinks = "Off";
+    myGraph.refreshGraph();
+  },
+});
 
-$('#curvesLinksOff')
-  .click(function() {
-    myGraph.customLinks.curvesLinks = false;
+$('#openNodeOnHoverCheckbox').checkbox({
+  onChecked:function() {
+    myGraph.config.openNodeOnHover = "On";
     myGraph.refreshGraph();
-    $('#curvesLinksOff').hide();
-    $('#curvesLinks').show();
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
+  },
+  onUnchecked: function() {
+    myGraph.config.openNodeOnHover = "Off";
+    myGraph.refreshGraph();
+  }
+});
 
 $('#activeForceCheckbox').checkbox({
   onChecked: function() {

@@ -8,7 +8,7 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
   }
 
   if (thisGraph.state.selectedNode){
-    thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode,d);
+    thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode,thisGraph.state.selectedNode);
   }
 
   //If it still exist somthing "selected", set to "unselected"
@@ -32,7 +32,7 @@ FluidGraph.prototype.bgOnMouseMove = function(d){
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
   // update drag line
-  if (thisGraph.customLinks.curvesLinks)
+  if (thisGraph.config.curvesLinks == "On")
   {
     thisGraph.drag_line.attr("d", function(d) {
              var dx = xycoords[0] - thisGraph.state.mouseDownNode.x,
@@ -72,7 +72,7 @@ FluidGraph.prototype.bgOnMouseUp = function(d){
   var xycoords = d3.mouse(thisGraph.bgElement.node());
 
   thisGraph.drag_line.attr("visibility", "hidden");
-  thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode);
+  thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode, thisGraph.state.mouseDownNode);
   var newnodeidentifier = thisGraph.addNode.call(this, thisGraph,
                                               {x:xycoords[0],y:xycoords[1]});
 

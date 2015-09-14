@@ -3,7 +3,7 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
 
   if (thisGraph.config.debug) console.log("drawLinks start");
 
-  if (thisGraph.customLinks.curvesLinks)
+  if (thisGraph.config.curvesLinks == "On")
   {
     svgLinks.attr("id", "link")
             .attr("class", "link")
@@ -22,7 +22,7 @@ FluidGraph.prototype.drawLinks = function(svgLinks){
                       })
             .style("fill", "none")
   }
-  else { //false
+  else { //Off
     svgLinks.attr("id", "link")
             .attr("class", "link")
             .attr("stroke", thisGraph.customLinks.strokeColor)

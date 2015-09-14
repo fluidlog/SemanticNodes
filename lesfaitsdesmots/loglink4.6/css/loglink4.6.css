@@ -12,10 +12,10 @@ path {
   stroke: #999;
 }
 .nodecircle {
-  stroke: #DDD;
+  stroke-width: 10px;
 }
 .nodecircle.selected {
-  stroke: #999;
+  stroke-width: 20px;
 }
 .circle_id {
   pointer-events: none;
