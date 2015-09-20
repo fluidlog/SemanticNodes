@@ -7,7 +7,7 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
     thisGraph.removeSelectFromLinks();
   }
 
-  if (thisGraph.state.selectedNode){
+  if (thisGraph.state.selectedNode && thisGraph.state.svgMouseDownNode){
     thisGraph.fixUnfixNode(thisGraph.state.svgMouseDownNode,thisGraph.state.selectedNode);
   }
 
@@ -16,7 +16,9 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
   d3.selectAll("#nodecircle.selected").classed(thisGraph.consts.selectedClass, false);
 
   if (thisGraph.state.editedNode)
+  {
     thisGraph.closeNode.call(thisGraph, "edited")
+  }
 
   if (thisGraph.config.debug) console.log("bgOnMouseDown start");
 }
@@ -65,7 +67,6 @@ FluidGraph.prototype.bgOnMouseUp = function(d){
   if (!thisGraph.state.mouseDownNode)
   {
     thisGraph.resetMouseVars();
-    if (thisGraph.config.debug) console.log("bgOnMouseUp end");
     return;
   }
 

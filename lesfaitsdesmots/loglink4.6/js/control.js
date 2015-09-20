@@ -242,3 +242,14 @@ $('#activeElasticCheckbox').checkbox({
       myGraph.refreshGraph();
   }
 });
+
+$('#displayIdCheckbox').checkbox({
+  onChecked: function() {
+    myGraph.config.displayId = "On";
+    myGraph.refreshGraph();
+  },
+  onUnchecked: function() {
+    myGraph.config.displayId = "Off";
+    myGraph.refreshGraph();
+  }
+});

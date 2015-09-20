@@ -24,6 +24,11 @@ function menuInitialisation(myGraph) {
   else
     $('#activeElasticCheckbox').checkbox('uncheck');
 
+  if (myGraph.config.displayId == 'On')
+    $('#displayIdCheckbox').checkbox('check');
+  else
+    $('#displayIdCheckbox').checkbox('uncheck');
+
   if (myGraph.config.debug) console.log("checkboxInitialisation end");
 }
 
@@ -47,6 +52,7 @@ var FluidGraph = function (firstBgElement,d3data){
     elastic : "Off",
     curvesLinks : "On",
     openNodeOnHover : "Off",
+    displayId : "Off",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
@@ -55,9 +61,12 @@ var FluidGraph = function (firstBgElement,d3data){
     newGraphName : "Untilted",
     bringNodeToFrontOnHover : false,
     repulseNeighbourOnHover : false,
+    awsomeStrokeNode : true,
+    remindSelectedNodeOnSave : true,
   };
 
   thisGraph.customNodes = {
+    strokeColor : "#CCC",
     strokeWidth : "10px",
     strokeOpacity : .5,
     listType : ["without", "project","actor","idea","ressource"],
@@ -75,7 +84,6 @@ var FluidGraph = function (firstBgElement,d3data){
                       "without" : "255,255,255",
                       "gray" : "200,200,200"},
     imageType : {"project" : "lab", "actor" : "user", "idea" : "idea", "ressource" : "tree", "without" : "circle thin"},
-    displayId : false,
     displayType : true,
     displayText : true,
     cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
@@ -95,6 +103,23 @@ var FluidGraph = function (firstBgElement,d3data){
     blankNodeLabel : "New...",
     blankNodeType : "without",
   }
+
+  if (thisGraph.config.awsomeStrokeNode == true)
+  {
+    thisGraph.customNodes.strokeColorType = {"project" : "#CCC",
+                  "actor" : "#CCC",
+                  "idea" : "#CCC",
+                  "ressource" : "#CCC",
+                  "without" : "#CCC"}
+  }
+  else {
+    thisGraph.customNodes.strokeColorType = {"project" : "#89A5E5",
+                  "actor" : "#F285B9",
+                  "idea" : "#FFD98D",
+                  "ressource" : "#CDF989",
+                  "without" : "#999"}
+  }
+
 
   thisGraph.nodeTypeIcon = {
     r : 13,
@@ -165,6 +190,7 @@ var FluidGraph = function (firstBgElement,d3data){
     mouseUpNode : null,
     lastKeyDown : -1,
     editedNode : null,
+    editedIndexNode : null,
     openedNode : null,
   }
 }
@@ -326,9 +352,9 @@ FluidGraph.prototype.activateForce = function(){
 FluidGraph.prototype.drawGraph = function(d3dataFc){
   var thisGraph = this;
 
-  var dataToDraw = d3dataFc || thisGraph.d3data;
-
   if (thisGraph.config.debug) console.log("drawGraph start");
+
+  var dataToDraw = d3dataFc || thisGraph.d3data;
 
   if (typeof dataToDraw.nodes != "undefined")
   {
@@ -483,17 +509,6 @@ FluidGraph.prototype.movexy = function(d){
   if (thisGraph.config.debug) console.log("movexy end");
 }
 
-FluidGraph.prototype.resetMouseVars = function()
-{
-  if (thisGraph.config.debug) console.log("resetMouseVars start");
-
-  thisGraph.state.mouseDownNode = null;
-  thisGraph.state.mouseUpNode = null;
-  thisGraph.state.mouseDownLink = null;
-
-  if (thisGraph.config.debug) console.log("resetMouseVars end");
-}
-
 FluidGraph.prototype.newGraph = function() {
   thisGraph = this;
 
@@ -502,6 +517,7 @@ FluidGraph.prototype.newGraph = function() {
   thisGraph.clearGraph();
   thisGraph.changeGraphName();
   thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
+  thisGraph.initDragLine()
   thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("newGraph end");
@@ -513,8 +529,10 @@ FluidGraph.prototype.clearGraph = function() {
   if (thisGraph.config.debug) console.log("clearGraph start");
 
   thisGraph.resetMouseVars();
+  thisGraph.state.selectedNode = null;
   thisGraph.d3data.nodes = [];
   thisGraph.d3data.edges = [];
+  thisGraph.graphName = thisGraph.config.newGraphName;
   d3.selectAll("#node").remove();
   d3.selectAll("#link").remove();
   d3.selectAll("#drag_line").remove();
@@ -640,6 +658,13 @@ FluidGraph.prototype.saveGraph = function() {
 
   thisGraph.changeGraphName();
   thisGraph.selectedGraphName = thisGraph.graphName;
+
+  if (thisGraph.config.remindSelectedNodeOnSave == false)
+  {
+    thisGraph.d3data.nodes.forEach(function(node, i){
+      if (node.fixed == true) node.fixed = false;
+    });
+  }
 
   localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName,thisGraph.jsonifyGraph())
 
@@ -853,4 +878,15 @@ FluidGraph.prototype.deleteGraph = function(skipPrompt) {
   }
 
   if (thisGraph.config.debug) console.log("deleteGraph end");
+}
+
+FluidGraph.prototype.resetMouseVars = function()
+{
+  if (thisGraph.config.debug) console.log("resetMouseVars start");
+
+  thisGraph.state.mouseDownNode = null;
+  thisGraph.state.mouseUpNode = null;
+  thisGraph.state.mouseDownLink = null;
+
+  if (thisGraph.config.debug) console.log("resetMouseVars end");
 }

@@ -8,28 +8,30 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
   var rectCircle;
   rectCircle = svgNodes
     .append("rect")
+    .attr("id", "nodecircle")
+    .attr("class", "nodecircle")
     .attr("x", -thisGraph.customNodes.widthClosed / 2)
     .attr("y", -thisGraph.customNodes.heightClosed / 2)
     .attr("width", thisGraph.customNodes.widthClosed)
     .attr("height", thisGraph.customNodes.heightClosed)
     .attr("rx", thisGraph.customNodes.curvesCorners)
     .attr("ry", thisGraph.customNodes.curvesCorners)
-
-  rectCircle
-    .attr("id", "nodecircle")
-    .attr("class", "nodecircle")
     .style("fill", function(d) {
       return thisGraph.customNodes.colorType[d.type]
     })
     .style("stroke", function(d) {
-      return thisGraph.customNodes.colorType[d.type]
+      if (thisGraph.config.remindSelectedNodeOnSave == true)
+        if (d.fixed == true)
+          thisGraph.replaceSelectNode.call(thisGraph, d3.select(this), d);
+
+      return thisGraph.customNodes.strokeColorType[d.type];
     })
     // .style("stroke-width", thisGraph.customNodes.strokeWidth)
     .style("stroke-opacity", thisGraph.customNodes.strokeOpacity)
     .style("cursor", thisGraph.customNodes.cursor)
     .style("opacity", 1)
 
-  if (thisGraph.customNodes.displayId)
+  if (thisGraph.config.displayId == "On")
     thisGraph.displayId(svgNodes)
 
   if (thisGraph.customNodes.displayType)
@@ -44,7 +46,7 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
 FluidGraph.prototype.displayText = function(svgNodes) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("displayId start");
+  if (thisGraph.config.debug) console.log("displayText start");
 
   var fo_content_closed_node_label = svgNodes
     .append("foreignObject")
@@ -111,7 +113,7 @@ FluidGraph.prototype.displayText = function(svgNodes) {
     .on("dblclick",function(d){
       thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
 
-  if (thisGraph.config.debug) console.log("displayId end");
+  if (thisGraph.config.debug) console.log("displayText end");
 }
 
 FluidGraph.prototype.displayId = function(svgNodes) {
@@ -185,6 +187,18 @@ FluidGraph.prototype.displayType = function(svgNodes) {
   if (thisGraph.config.debug) console.log("displayType end");
 }
 
+FluidGraph.prototype.changeIdNode = function(node,id) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("changeIdNode start");
+
+  var el = d3.select(node);
+  var text_id = el.select("#text_id");
+  text_id.text(id);
+
+  if (thisGraph.config.debug) console.log("changeIdNode end");
+}
+
 FluidGraph.prototype.changeTypeNode = function(node,type) {
   thisGraph = this;
 
@@ -194,7 +208,7 @@ FluidGraph.prototype.changeTypeNode = function(node,type) {
 
   var nodecircle = el.select("#nodecircle");
   nodecircle.style("fill", thisGraph.customNodes.colorType[type]);
-  nodecircle.style("stroke", thisGraph.customNodes.colorType[type]);
+  nodecircle.style("stroke", thisGraph.customNodes.strokeColorType[type]);
 
   var type_el = el.select("#fo_type_image");
   type_el.select('#fo_i_type_image').remove();
@@ -208,16 +222,6 @@ FluidGraph.prototype.changeTypeNode = function(node,type) {
   circle_id_el.style("fill", function(d) { return thisGraph.customNodes.colorType[type] } );
 
   if (thisGraph.config.debug) console.log("displayType end");
-}
-
-FluidGraph.prototype.changeLabelNode = function(node,type) {
-  thisGraph = this;
-
-  if (thisGraph.config.debug) console.log("changeLabelNode start");
-
-  var el = d3.select(node);
-
-  if (thisGraph.config.debug) console.log("changeLabelNode end");
 }
 
 FluidGraph.prototype.editNode = function(d3node, d) {
@@ -289,6 +293,7 @@ FluidGraph.prototype.editNode = function(d3node, d) {
     })
 
   thisGraph.state.editedNode = d3node.node();
+  thisGraph.state.editedIndexNode = thisGraph.d3data.nodes.indexOf(d);
 
   if (thisGraph.config.debug) console.log("editNode end");
 }
@@ -314,6 +319,12 @@ FluidGraph.prototype.displayContentEditedNode = function(d3node, d) {
         .attr("y", -thisGraph.customNodes.heightEdited/2)
         .attr("width", thisGraph.customNodes.widthEdited)
         .attr("height", thisGraph.customNodes.heightEdited)
+        .on("mousedown",null)
+        .on("mouseup",null)
+        .on("mouseover",null)
+        .on("dblclick",function(d){
+          d3.event.stopPropagation();
+        })
 
   var fo_xhtml_content_edited_node_label = fo_content_edited_node_label
         .append('xhtml:div')
@@ -335,6 +346,35 @@ FluidGraph.prototype.displayContentEditedNode = function(d3node, d) {
         .append("div")
         .attr("class", "ui form top attached segment")
         .attr("style", "position:static;margin-top:0px;padding:0px")
+
+      /*
+       *
+       * Id
+       *
+       * */
+
+  if (thisGraph.config.displayId == "On")
+  {
+    var field_id = form_segment
+           .append("div")
+           .attr("class", "id")
+           .attr("style", "margin:0px")
+
+    //Node label Id
+    var node_label_type = field_id
+          .append("label")
+          .attr("style", "margin:0;")
+          .html("<b>Id</b>")
+
+    //content Id
+    var select_type = field_id
+          .append("input")
+          .attr("id", "input_id")
+          .attr("style", "padding:0px; margin-left:20px; width:50px")
+          .attr("value", function() {
+              return d.id;
+          })
+  }
 
       /*
        *
@@ -588,16 +628,25 @@ FluidGraph.prototype.closeNode = function(typeOfNode) {
     var el = d3.select(thisGraph.state.editedNode);
     var p_el = d3.select(thisGraph.state.editedNode.parentNode);
 
+    var input_id = p_el.select("#input_id");
     var type_node_select = p_el.select("#select_type");
     var description_node_textarea = p_el.select("#textarea_label_edit_node");
 
-    var type_node = type_node_select.node().value;
-    var description_node = description_node_textarea.node().value;
-    if (description_node == "")
-      description_node = thisGraph.customNodes.blankNodeLabel;
+    if (thisGraph.config.displayId == "On")
+    {
+      var interger_input_id = parseInt(input_id.node().value, 10);
+      if (interger_input_id)
+        thisGraph.state.editedNode.__data__.id = interger_input_id;
+      else
+        thisGraph.state.editedNode.__data__.id = thisGraph.state.editedIndexNode;
+    }
 
-    thisGraph.state.editedNode.__data__.type = type_node;
-    thisGraph.state.editedNode.__data__.label = description_node;
+    thisGraph.state.editedNode.__data__.type = type_node_select.node().value;
+
+    if (description_node_textarea.node().value == "")
+      thisGraph.state.editedNode.__data__.label = thisGraph.customNodes.blankNodeLabel;
+    else
+      thisGraph.state.editedNode.__data__.label = description_node_textarea.node().value;
 
     thisGraph.saveEditNode();
 
@@ -660,11 +709,10 @@ FluidGraph.prototype.saveEditNode = function() {
 
   if (thisGraph.config.debug) console.log("saveEditNode start");
 
-  var openedNodeData = thisGraph.state.editedNode.__data__;
-  thisGraph.d3data.nodes[openedNodeData.id].type = openedNodeData.type;
-  thisGraph.d3data.nodes[openedNodeData.id].label = openedNodeData.label;
-  thisGraph.changeTypeNode(thisGraph.state.editedNode,openedNodeData.type);
-  thisGraph.changeLabelNode(thisGraph.state.editedNode,openedNodeData.label);
+  var editedNodeData = thisGraph.state.editedNode.__data__;
+  thisGraph.d3data.nodes[thisGraph.state.editedIndexNode] = editedNodeData;
+  thisGraph.changeIdNode(thisGraph.state.editedNode,editedNodeData.id);
+  thisGraph.changeTypeNode(thisGraph.state.editedNode,editedNodeData.type);
 
   if (thisGraph.config.debug) console.log("saveEditNode end");
 }
@@ -813,15 +861,13 @@ FluidGraph.prototype.fixUnfixNode = function(d3node, d) {
   var status;
 
   if (d.fixed == true) {
-    d.fixed = false;
-    status = "unfixed";
     thisGraph.removeSelectFromNode();
+    status = "unfixed";
     return false;
   }
   else {
-    d.fixed = true;
-    status = "fixed";
     thisGraph.replaceSelectNode(nodecircle, d);
+    status = "fixed";
     return true;
   }
 
@@ -832,6 +878,7 @@ FluidGraph.prototype.fixUnfixNode = function(d3node, d) {
 FluidGraph.prototype.replaceSelectNode = function(nodecircle, d) {
   var thisGraph = this;
   nodecircle.classed(thisGraph.consts.selectedClass, true);
+  d.fixed = true;
   if (thisGraph.state.selectedNode) {
     thisGraph.removeSelectFromNode();
   }
@@ -840,8 +887,12 @@ FluidGraph.prototype.replaceSelectNode = function(nodecircle, d) {
 
 FluidGraph.prototype.removeSelectFromNode = function() {
   var thisGraph = this;
-  thisGraph.svgNodesEnter.filter(function(cd) {
-    return cd.id === thisGraph.state.selectedNode.id;
+  thisGraph.svgNodesEnter.filter(function(node) {
+    if (node.id === thisGraph.state.selectedNode.id)
+    {
+      node.fixed = false;
+      return true;
+    }
   }).select("#nodecircle").classed(thisGraph.consts.selectedClass, false);
   thisGraph.state.selectedNode = null;
 };
@@ -897,7 +948,9 @@ FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
   if (thisGraph.config.debug) console.log("nodeOnMouseDown start");
 
   if (thisGraph.state.editedNode)
+  {
     var editedNode = thisGraph.state.editedNode
+  }
 
   if (d3node.node() != editedNode)
   {
@@ -962,6 +1015,15 @@ FluidGraph.prototype.nodeOnDragMove = function(d, i) {
 
   if (thisGraph.config.debug) console.log("nodeOnDragMove start");
 
+  if (thisGraph.state.editedNode)
+  {
+    if (thisGraph.state.editedNode.__data__.id === d.id)
+      return;
+    else thisGraph.closeNode.call(thisGraph, "edited");
+  }
+    // if (thisGraph.state.openedNode)
+    //   thisGraph.closeNode.call(thisGraph, "opened");
+
   if (d.fixed != true) //false or undefined
   {
     //drag node
@@ -1012,14 +1074,12 @@ FluidGraph.prototype.deleteNode = function(nodeIdentifier) {
     index = thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes, nodeIdentifier);
 
     //delete node
-    var tab = ["a","b","c"];
-    tab.splice(1,1);
-    var id = thisGraph.d3data.nodes.indexOf(index);
-
     thisGraph.d3data.nodes.splice(index, 1);
 
     //delete edges linked to this (old) node
     thisGraph.spliceLinksForNode(index);
+
+    thisGraph.removeSelectFromNode();
     thisGraph.state.selectedNode = null;
     thisGraph.drawGraph();
   } else {
