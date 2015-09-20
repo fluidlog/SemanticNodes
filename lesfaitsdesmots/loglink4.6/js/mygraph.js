@@ -51,8 +51,8 @@ var FluidGraph = function (firstBgElement,d3data){
     force : "Off",
     elastic : "Off",
     curvesLinks : "On",
-    openNodeOnHover : "Off",
-    displayId : "Off",
+    openNodeOnHover : "On",
+    displayId : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
@@ -87,13 +87,19 @@ var FluidGraph = function (firstBgElement,d3data){
     displayType : true,
     displayText : true,
     cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
+    cursorOpen : "default", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
     widthClosed : 80,
 		heightClosed : 80,
     widthOpened : 160,
-		heightOpened : 230,
+    heightOpened : 230,
+    heightOpenedNeighbour : 30,
+    heightOpenedTopMax : 50,
+    heightOpenedBottomMax : 25,
+    heightOpenedNeighboursMax : 200,
     widthEdited : 200,
 		heightEdited : 200,
-		curvesCorners : 50,
+    curvesCornersClosedNode : 50,
+    curvesCornersOpenedNode : 20,
 		widthStrokeHover : 20,
 		transitionEasing : "elastic", //Values : linear (default), elastic
     transitionDurationOpen : 300,
@@ -124,16 +130,13 @@ var FluidGraph = function (firstBgElement,d3data){
   thisGraph.nodeTypeIcon = {
     r : 13,
     cxClosed : 0,
-    cxOpened : 0,
     cxEdited : 0,
     cyClosed : (thisGraph.customNodes.heightClosed/2)-10,
-    cyOpened : (thisGraph.customNodes.heightOpened/2)-10,
     cyEdited : (thisGraph.customNodes.heightEdited/2)-10,
     xClosed : -11,
     xOpened : -11,
     xEdited : -11,
     yClosed : (thisGraph.customNodes.heightClosed/2)-20,
-    yOpened : (thisGraph.customNodes.heightOpened/2)-20,
     yEdited : (thisGraph.customNodes.heightEdited/2)-20,
   }
 
@@ -141,14 +144,10 @@ var FluidGraph = function (firstBgElement,d3data){
     r : 10,
     cxClosed : 0,
     cyClosed : -(thisGraph.customNodes.heightClosed/2)+6,
-    cxOpened : 0,
-    cyOpened : -(thisGraph.customNodes.heightOpened/2),
     cxEdited : 0,
     cyEdited : -(thisGraph.customNodes.heightOpened/2),
     dxClosed : 0,
     dyClosed : -(thisGraph.customNodes.heightClosed/2)+10,
-    dxOpened : 0,
-    dyOpened : -(thisGraph.customNodes.heightOpened/2)+5,
     dxEdited : 0,
     dyEdited : -(thisGraph.customNodes.heightOpened/2)+5,
   }
@@ -159,6 +158,7 @@ var FluidGraph = function (firstBgElement,d3data){
     strokeOpacity : .5,
     widthMax : 160,
 		heightMax : thisGraph.customNodes.heightClosed,
+    curvesCorners : thisGraph.customNodes.curvesCornersOpenedNode,
   }
 
   thisGraph.customLinks = {
@@ -518,6 +518,7 @@ FluidGraph.prototype.newGraph = function() {
   thisGraph.changeGraphName();
   thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
   thisGraph.initDragLine()
+  localStorage.removeItem(thisGraph.config.version+"|openedGraph");
   thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("newGraph end");
@@ -549,6 +550,7 @@ FluidGraph.prototype.refreshGraph = function() {
   if (thisGraph.config.force == "On")
     thisGraph.activateForce();
 
+  thisGraph.state.openedNode = null;
   d3.selectAll("#node").remove();
   d3.selectAll("#link").remove();
   d3.select("#drag_line").remove();
@@ -737,12 +739,7 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
     option.text(value[0])
   });
 
-  var txtRes = localStorage.getItem(thisGraph.config.version+"|"+thisGraph.selectedGraphName);
-
-  thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
-
-  thisGraph.graphName = thisGraph.selectedGraphName;
-  thisGraph.changeGraphName();
+  thisGraph.loadGraph(thisGraph.selectedGraphName);
 
   d3.select("#contentOpenGraphModalPreview").remove();
 
@@ -772,6 +769,21 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
 
 }
 
+FluidGraph.prototype.loadGraph = function(graphName) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("loadGraph start");
+
+  var txtRes = localStorage.getItem(thisGraph.config.version+"|"+graphName);
+
+  thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
+
+  thisGraph.graphName = graphName;
+  thisGraph.changeGraphName();
+
+  if (thisGraph.config.debug) console.log("loadGraph end");
+}
+
 FluidGraph.prototype.openGraph = function() {
   thisGraph = this;
 
@@ -784,8 +796,32 @@ FluidGraph.prototype.openGraph = function() {
 
   thisGraph.initDragLine()
   thisGraph.drawGraph();
+  thisGraph.rememberOpenedGraph();
 
   if (thisGraph.config.debug) console.log("openGraph end");
+}
+
+FluidGraph.prototype.rememberOpenedGraph = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("rememberGraphOpened start");
+
+  localStorage.setItem(thisGraph.config.version+"|openedGraph",thisGraph.graphName)
+
+  if (thisGraph.config.debug) console.log("rememberGraphOpened end");
+}
+
+FluidGraph.prototype.getOpenedGraph = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("rememberGraphOpened start");
+
+  var openedGraph;
+  openedGraph = localStorage.getItem(thisGraph.config.version+"|openedGraph");
+
+  if (thisGraph.config.debug) console.log("rememberGraphOpened end");
+
+  return openedGraph;
 }
 
 FluidGraph.prototype.displayContentManageGraphModal = function() {

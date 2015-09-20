@@ -60,26 +60,9 @@ path {
 .label_closed_node {
   padding: 2px;
   text-align: center;
-  -moz-border-radius: 20px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
-}
-.label_closed_node_hidden {
-  visibility: hidden;
 }
 .fo_div_image {
-  /*    	    background-color: rgba(255,0,0,.3);
- */
   text-align: center;
-}
-.fo_div_centered p {
-  /*    	    background-color: rgba(255,0,0,.3);
- */
-  margin: 0;
-  text-align: center;
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
 }
 .fo_xhtml_content_edited_node_label {
   display: flex;
@@ -88,26 +71,14 @@ path {
   align-content:center;
   align-items:center;
 }
-.open_node_label {
-  padding-top: 10px;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
-
-
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
+.open_node_neighbours {
+  background-color: rgba(255,255,255,.2);
+  overflow: auto;
+  padding: 2px;
 }
 .open_node_neighbour {
   padding: 2px;
   margin-left: 5px;
   margin-right: 5px;
   text-align: center;
-
-  -moz-border-radius: 20px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
 }
