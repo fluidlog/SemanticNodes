@@ -51,8 +51,8 @@ var FluidGraph = function (firstBgElement,d3data){
     force : "Off",
     elastic : "Off",
     curvesLinks : "On",
-    openNodeOnHover : "On",
-    displayId : "On",
+    openNodeOnHover : "Off",
+    displayId : "Off",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
     charge : -1000,
@@ -206,6 +206,7 @@ FluidGraph.prototype.consts =  {
   DELETE_KEY: 46,
   ENTER_KEY: 13,
   nodeRadius: 50,
+  OPENED_GRAPH_KEY: "openedGraph"
 };
 
 /*
@@ -518,7 +519,7 @@ FluidGraph.prototype.newGraph = function() {
   thisGraph.changeGraphName();
   thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
   thisGraph.initDragLine()
-  localStorage.removeItem(thisGraph.config.version+"|openedGraph");
+  localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.consts.OPENED_GRAPH_KEY);
   thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("newGraph end");
@@ -687,6 +688,7 @@ FluidGraph.prototype.getContentLocalStorage = function() {
              keyvalue[0] = key.split("|").pop();
              keyvalue[1] = localStorage.getItem(key)
 
+            if (keyvalue[0] != thisGraph.consts.OPENED_GRAPH_KEY)
              thisGraph.listOfLocalGraphs.push(keyvalue)
            }
        });
@@ -806,7 +808,7 @@ FluidGraph.prototype.rememberOpenedGraph = function() {
 
   if (thisGraph.config.debug) console.log("rememberGraphOpened start");
 
-  localStorage.setItem(thisGraph.config.version+"|openedGraph",thisGraph.graphName)
+  localStorage.setItem(thisGraph.config.version+"|"+thisGraph.consts.OPENED_GRAPH_KEY,thisGraph.graphName)
 
   if (thisGraph.config.debug) console.log("rememberGraphOpened end");
 }
@@ -817,7 +819,7 @@ FluidGraph.prototype.getOpenedGraph = function() {
   if (thisGraph.config.debug) console.log("rememberGraphOpened start");
 
   var openedGraph;
-  openedGraph = localStorage.getItem(thisGraph.config.version+"|openedGraph");
+  openedGraph = localStorage.getItem(thisGraph.config.version+"|"+thisGraph.consts.OPENED_GRAPH_KEY);
 
   if (thisGraph.config.debug) console.log("rememberGraphOpened end");
 
