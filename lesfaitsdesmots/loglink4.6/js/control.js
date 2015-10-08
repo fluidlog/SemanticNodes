@@ -56,13 +56,15 @@ $("#saveGraph").click(function () {
             onApprove : function()
               {
                 thisGraph.graphName = $('#graphNameInput').val();
-                myGraph.saveGraph();
+                myGraph.saveGraphToLocalStorage();
+                myGraph.saveGraphToSemForms();
               }
             })
       .modal('show');
   }
   else {
-    myGraph.saveGraph();
+    myGraph.saveGraphToLocalStorage();
+    myGraph.saveGraphToSemForms();
   }
 })
 .popup({

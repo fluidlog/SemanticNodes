@@ -20,6 +20,11 @@ FluidGraph.prototype.bgOnMouseDown = function(d){
     thisGraph.closeNode.call(thisGraph, "edited")
   }
 
+  if (thisGraph.state.editedLinkLabel)
+  {
+    thisGraph.saveEditedLinkLabel.call(thisGraph)
+  }
+
   if (thisGraph.config.debug) console.log("bgOnMouseDown start");
 }
 

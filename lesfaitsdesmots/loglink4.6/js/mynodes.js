@@ -744,7 +744,6 @@ FluidGraph.prototype.saveEditNode = function() {
   if (thisGraph.config.debug) console.log("saveEditNode end");
 }
 
-
 FluidGraph.prototype.nodeOnMouseOver = function(d3node, d) {
   thisGraph = this;
 

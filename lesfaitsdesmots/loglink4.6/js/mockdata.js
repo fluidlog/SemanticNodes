@@ -11,7 +11,7 @@ data[1] = {
       nodes: [
               {id:0, label: "A", type:"project", x:100, y:100, identifier:"http://fluidlog.com/0" },
               {id:1, label: "B", type:"idea", x:200, y:200, identifier:"http://fluidlog.com/1" },
-              {id:1, label: "C", type:"project", x:300, y:300, identifier:"http://fluidlog.com/2" },
+              {id:2, label: "C", type:"project", x:300, y:300, identifier:"http://fluidlog.com/2" },
       ],
       edges: [
               { source: 0, target: 1 },
@@ -44,5 +44,5 @@ $.mockjax({
   url : '/data/d3data',
   dataType : 'json',
   responseTime : 2000,
-  responseText : data[0],
+  responseText : data[1],
 });
