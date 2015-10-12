@@ -50,7 +50,7 @@ var FluidGraph = function (firstBgElement,d3data){
     bgElementType : "panzoom", //choixe : "panzoom" or "simple"
     force : "Off",
     elastic : "Off",
-    curvesLinks : "Off",
+    curvesLinks : "On",
     openNodeOnHover : "Off",
     displayId : "Off",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
@@ -547,9 +547,7 @@ FluidGraph.prototype.clearGraph = function() {
   thisGraph.d3data.nodes = [];
   thisGraph.d3data.edges = [];
   thisGraph.graphName = thisGraph.config.newGraphName;
-  d3.selectAll("#node").remove();
-  d3.selectAll("#link").remove();
-  d3.selectAll("#drag_line").remove();
+  thisGraph.removeSvgElements();
 
   if (thisGraph.config.debug) console.log("clearGraph end");
 }
@@ -564,10 +562,8 @@ FluidGraph.prototype.refreshGraph = function() {
     thisGraph.activateForce();
 
   thisGraph.state.openedNode = null;
-  d3.selectAll("#node").remove();
-  d3.selectAll("#link").remove();
-  d3.select("#drag_line").remove();
-  thisGraph.initDragLine()
+  thisGraph.removeSvgElements();
+  thisGraph.initDragLine();
   thisGraph.drawGraph();
 
   if (thisGraph.config.debug) console.log("refreshGraph end");
@@ -697,6 +693,9 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
     option.text(value[0])
   });
 
+  if (!thisGraph.selectedGraphName)
+    thisGraph.selectedGraphName = thisGraph.graphName;
+
   thisGraph.loadGraph(thisGraph.selectedGraphName);
 
   d3.select("#contentOpenGraphModalPreview").remove();
@@ -748,15 +747,25 @@ FluidGraph.prototype.openGraph = function() {
   if (thisGraph.config.debug) console.log("openGraph start");
 
   thisGraph.resetMouseVars();
-  d3.selectAll("#node").remove();
-  d3.selectAll("#link").remove();
-  d3.selectAll("#drag_line").remove();
-
-  thisGraph.initDragLine()
+  thisGraph.removeSvgElements();
+  thisGraph.initDragLine();
   thisGraph.drawGraph();
   thisGraph.rememberOpenedGraph();
 
   if (thisGraph.config.debug) console.log("openGraph end");
+}
+
+FluidGraph.prototype.removeSvgElements = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("removeSvgElements start");
+
+  d3.selectAll("#node").remove();
+  d3.selectAll("#link").remove();
+  d3.selectAll(".linksLabel").remove();
+  d3.selectAll("#drag_line").remove();
+
+  if (thisGraph.config.debug) console.log("removeSvgElements end");
 }
 
 FluidGraph.prototype.rememberOpenedGraph = function() {
