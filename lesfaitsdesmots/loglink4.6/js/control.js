@@ -57,14 +57,14 @@ $("#saveGraph").click(function () {
               {
                 thisGraph.graphName = $('#graphNameInput').val();
                 myGraph.saveGraphToLocalStorage();
-                // myGraph.saveGraphToSemForms();
+                //myGraph.saveGraphToSemForms();
               }
             })
       .modal('show');
   }
   else {
     myGraph.saveGraphToLocalStorage();
-    // myGraph.saveGraphToSemForms();
+    //myGraph.saveGraphToSemForms();
   }
 })
 .popup({
@@ -106,6 +106,38 @@ $("#manageGraph").click(function () {
   }
 });
 
+$('#focusContextNode')
+  .click(function() {
+    myGraph.focusContextNode(); //On selected node
+    $('#focusContextNodeOff').show();
+    $('#focusContextNode').hide();
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
+$('#focusContextNodeOff')
+  .click(function() {
+    myGraph.focusContextNodeOff();
+    $('#focusContextNodeOff').hide();
+    $('#focusContextNode').show();
+  })
+  .popup({
+    inline: true,
+    hoverable: true,
+    position: 'bottom left',
+    delay: {
+      show: 100,
+      hide: 500
+    }
+  });
+
 $('#sidebarButton').click(function(){
     $('.right.sidebar').sidebar('toggle');
 });
@@ -144,38 +176,6 @@ $('#sidebarMenuUploadGraphItem').click(function() {
 $('#sidebarMenuDownloadGraphItem')
   .click(function() {
     myGraph.downloadGraph(myGraph);
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
-
-$('#focusContextNode')
-  .click(function() {
-    myGraph.focusContextNode(); //On selected node
-    $('#focusContextNodeOff').show();
-    $('#focusContextNode').hide();
-  })
-  .popup({
-    inline: true,
-    hoverable: true,
-    position: 'bottom left',
-    delay: {
-      show: 100,
-      hide: 500
-    }
-  });
-
-$('#focusContextNodeOff')
-  .click(function() {
-    myGraph.focusContextNodeOff();
-    $('#focusContextNodeOff').hide();
-    $('#focusContextNode').show();
   })
   .popup({
     inline: true,

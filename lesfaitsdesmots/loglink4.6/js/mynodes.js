@@ -10,10 +10,26 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     .append("rect")
     .attr("id", "nodecircle")
     .attr("class", "nodecircle")
-    .attr("x", -thisGraph.customNodes.widthClosed / 2)
-    .attr("y", -thisGraph.customNodes.heightClosed / 2)
-    .attr("width", thisGraph.customNodes.widthClosed)
-    .attr("height", thisGraph.customNodes.heightClosed)
+    .attr("x", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var x = -radius;
+      return x;
+    })
+    .attr("y", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var y = -radius;
+      return y;
+    })
+    .attr("width", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var width = radius*2;
+      return width;
+    })
+    .attr("height", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var height = radius*2;
+      return height;
+    })
     .attr("rx", thisGraph.customNodes.curvesCornersClosedNode)
     .attr("ry", thisGraph.customNodes.curvesCornersClosedNode)
     .style("fill", function(d) {
@@ -41,6 +57,30 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     thisGraph.displayText(svgNodes)
 
   if (thisGraph.config.debug) console.log("drawNodes end");
+}
+
+FluidGraph.prototype.getProportionalRadius = function(d) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("getProportionalRadius start");
+
+  var radius;
+
+  if (thisGraph.config.proportionalNodeSize == "On")
+  {
+    var neighbourNodesAndLinks = thisGraph.getNeighbourNodesAndLinks(d);
+    var nbNeighbourNodes = neighbourNodesAndLinks.nodes.length;
+    var indiceProp = 1;
+
+    radius = (thisGraph.customNodes.widthClosed / 2) + (nbNeighbourNodes*indiceProp);
+    if (radius > thisGraph.customNodes.maxRadius)
+      radius = thisGraph.customNodes.maxRadius
+  }
+  else radius = thisGraph.customNodes.maxRadius
+
+  if (thisGraph.config.debug) console.log("getProportionalRadius end");
+
+  return radius
 }
 
 FluidGraph.prototype.displayText = function(svgNodes) {
@@ -87,7 +127,14 @@ FluidGraph.prototype.displayText = function(svgNodes) {
     .on("mouseup",function(d){
       thisGraph.nodeOnMouseUp.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
     .on("dblclick",function(d){
-      thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)})
+      if (thisGraph.config.displayExternGraph == true)
+      {
+        thisGraph.displayExternalGraph.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)
+      }
+      else {
+        thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode.parentNode), d)
+      }
+    })
 
   //Rect to put events
   var fo_content_closed_node_events = svgNodes
@@ -101,11 +148,16 @@ FluidGraph.prototype.displayText = function(svgNodes) {
   var fo_xhtml_content_closed_node_events = fo_content_closed_node_events
     .append('xhtml:div')
     .attr("class", "fo_xhtml_content_closed_node_events")
-    .attr("style", "margin-left:" + thisGraph.customNodes.widthClosed/2 + "px;"
-                  + "padding:" + thisGraph.customNodes.widthClosed/2 + "px;"
-                  + "width:"+thisGraph.customNodes.widthClosed+"px;"
-                  + "height:"+thisGraph.customNodes.heightClosed+"px;position:static;"
-                  + "cursor:" + thisGraph.customNodes.cursor + ";")
+    .attr("style", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var marginLeft = (thisGraph.customNodesText.widthMax - radius*2)/2
+      var style = "margin-left:" + marginLeft + "px;"
+                  + "padding:" + radius + "px;"
+                  + "width:"+ radius*2 + "px;"
+                  + "height:"+ radius*2 + "px;position:static;"
+                  + "cursor:" + thisGraph.customNodes.cursor + ";"
+      return style;
+    })
 
     .on("mousedown",function(d){
       thisGraph.nodeOnMouseDown.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
@@ -114,7 +166,14 @@ FluidGraph.prototype.displayText = function(svgNodes) {
     .on("mouseover",function(d){
       thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
     .on("dblclick",function(d){
-      thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
+        if (thisGraph.config.displayExternalGraph == true)
+        {
+          thisGraph.displayExternalGraph.call(thisGraph, d3.select(this.parentNode.parentNode), d)
+        }
+        else {
+          thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d)
+        }
+      })
 
   if (thisGraph.config.debug) console.log("displayText end");
 }
@@ -722,10 +781,26 @@ FluidGraph.prototype.closeNode = function(typeOfNode) {
   el.select("#nodecircle")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationClose)
-    .attr("x", -thisGraph.customNodes.widthClosed/2)
-    .attr("y", -thisGraph.customNodes.heightClosed/2)
-    .attr("width", thisGraph.customNodes.widthClosed)
-    .attr("height", thisGraph.customNodes.heightClosed)
+    .attr("x", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var x = -radius;
+      return x;
+    })
+    .attr("y", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var y= -radius;
+      return y;
+    })
+    .attr("width", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var width = radius*2;
+      return width;
+    })
+    .attr("height", function (d){
+      var radius = thisGraph.getProportionalRadius(d);
+      var height = radius*2;
+      return height;
+    })
     .attr("rx", thisGraph.customNodes.curvesCornersClosedNode)
     .attr("ry", thisGraph.customNodes.curvesCornersClosedNode)
 

@@ -53,6 +53,7 @@ var FluidGraph = function (firstBgElement,d3data){
     curvesLinks : "On",
     openNodeOnHover : "Off",
     displayId : "Off",
+    proportionalNodeSize : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     uriSemFormsBase : "http://localhost:9000/ldp/fluidlog/", //Warning : with LDP, no uriBase... :-)
     linkDistance : 100,
@@ -64,6 +65,7 @@ var FluidGraph = function (firstBgElement,d3data){
     repulseNeighbourOnHover : false,
     awsomeStrokeNode : true,
     remindSelectedNodeOnSave : true,
+    displayExternalGraph : false,
   };
 
   thisGraph.customNodes = {
@@ -89,8 +91,9 @@ var FluidGraph = function (firstBgElement,d3data){
     displayText : true,
     cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
     cursorOpen : "default", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
-    widthClosed : 80,
-		heightClosed : 80,
+    widthClosed : 50,
+		heightClosed : 50,
+    maxRadius : 40,
     widthOpened : 160,
     heightOpened : 230,
     heightOpenedNeighbour : 30,
@@ -157,7 +160,7 @@ var FluidGraph = function (firstBgElement,d3data){
     FontFamily : "Helvetica Neue, Helvetica, Arial, sans-serif;",
     strokeOpacity : .5,
     widthMax : 160,
-		heightMax : thisGraph.customNodes.heightClosed,
+		heightMax : 60,
     curvesCorners : thisGraph.customNodes.curvesCornersOpenedNode,
   }
 
@@ -905,9 +908,9 @@ FluidGraph.prototype.saveGraphToSemForms = function() {
   if (thisGraph.config.debug) console.log("saveGraphToSemForms start");
 
   var jsonLd = thisGraph.d3DataToJsonLd();
-  localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName+".json-ld",JSON.strignify(jsonLd));
+  // localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName+".json-ld",window.JSON.stringify(jsonLd));
 
-  var myStore = new MyStore({ container : "https://localhost:8443/2013/people/", //thisGraph.config.uriSemFormsBase,
+  var myStore = new MyStore({ container : thisGraph.config.uriSemFormsBase, //"https://localhost:8443/2013/people/"
                               context : "http://owl.openinitiative.com/oicontext.jsonld",
                               template : "",
                               partials : ""});
@@ -961,4 +964,42 @@ FluidGraph.prototype.saveGraphToLocalStorage = function() {
   localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName,thisGraph.d3DataToJsonD3())
 
   if (thisGraph.config.debug) console.log("saveGraphToLocalStorage end");
+}
+
+FluidGraph.prototype.displayExternalGraph = function(d3node, d) {
+  thisGraph = this;
+  if (thisGraph.config.debug) console.log("displayExternGraph start");
+
+  d3.event.stopPropagation();
+
+  externalUri = d.identifier;
+
+  thisGraph.d3data = thisGraph.getExternalD3Data(externalUri)
+
+  thisGraph.resetMouseVars();
+  thisGraph.removeSvgElements();
+  thisGraph.initDragLine();
+  thisGraph.drawGraph();
+
+  if (thisGraph.config.debug) console.log("displayExternGraph end");
+}
+
+FluidGraph.prototype.getExternalD3Data = function(externalUri) {
+  var d3data;
+
+  //Appelle main.php de manière synchrone. C'est à dire, attend la réponse avant de continuer
+  $.ajax({
+    type: 'GET',
+    url: externalUri,
+    dataType: 'json',
+    success: function(t_data) {
+      d3data = t_data;
+      return false;
+    },
+    error: function(t_data) {
+      console.log("Erreur Ajax : Message=" + t_data + " (Fonction getd3data()) !");
+    },
+    async: false
+  });
+  return d3data;
 }
