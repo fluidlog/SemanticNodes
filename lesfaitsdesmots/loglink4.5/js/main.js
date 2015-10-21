@@ -36,7 +36,7 @@ Code lié au formulaire de gauche
 
   window.storepeople = new MyStore({
       container: "https://localhost:8443/2013/people/",
-      context: "http://ld.hackers4peace.net/contexts/plp.jsonld",
+      context: "http://owl.openinitiative.com/oicontext.jsonld",
       template: $("#main-template-people").html(),
       partials: {'profilepeople': $("#profile-template-people").html()},
   });
@@ -46,7 +46,7 @@ Code lié au formulaire de gauche
 
   window.storetodo = new MyStore({
       container: "https://localhost:8443/2013/todos/",
-      context: "http://owl.openinitiative.com/oitodo.jsonld",
+      context: "http://owl.openinitiative.com/oicontext.jsonld",
       template: $("#main-template-todo").html(),
       partials: {'profiletodo': $("#profile-template-todo").html()},
   });
@@ -411,7 +411,7 @@ Code lié au formulaire de gauche
   function addNewPeople() {
       var name = $('#name').val();
       var description = $('#description').val();
-      var data =  {"@context": "http://ld.hackers4peace.net/contexts/plp.jsonld", about: {name:name, description: description}};
+      var data =  {"@context": "http://owl.openinitiative.com/oicontext.jsonld", about: {name:name, description: description}};
       $('#name').attr("placeholder", "Name ?") ;
       $('#description').attr("placeholder", "Description ?") ;
       window.storepeople.save(data);
@@ -422,7 +422,7 @@ Code lié au formulaire de gauche
   function addNewTodo() {
       var assignee_uri = $('#assigneeselect').val();
       var label = $('#label').val();
-      var data =  {"@context": "http://owl.openinitiative.com/oitodo.jsonld", todos: {assignee:assignee_uri, label: label}};
+      var data =  {"@context": "http://owl.openinitiative.com/oicontext.jsonld", todos: {assignee:assignee_uri, label: label}};
       $('#label').attr("placeholder", "Libellé ?") ;
       window.storetodo.save(data);
       window.storetodo.render("#div-todo");

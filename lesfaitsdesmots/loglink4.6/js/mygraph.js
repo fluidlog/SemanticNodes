@@ -52,10 +52,12 @@ var FluidGraph = function (firstBgElement,d3data){
     elastic : "Off",
     curvesLinks : "On",
     openNodeOnHover : "Off",
-    displayId : "Off",
+    displayId : "On",
     proportionalNodeSize : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
-    uriSemFormsBase : "http://localhost:9000/ldp/fluidlog/", //Warning : with LDP, no uriBase... :-)
+    // Rwwplay : "https://localhost:8443/2013/fluidlog/",
+    // SemForms : "http://localhost:9000/ldp/fluidlog/",
+    uriExternalStore : "http://localhost:9000/ldp/fluidlog/",
     linkDistance : 100,
     charge : -1000,
     debug : false,
@@ -546,13 +548,19 @@ FluidGraph.prototype.clearGraph = function() {
   if (thisGraph.config.debug) console.log("clearGraph start");
 
   thisGraph.resetMouseVars();
-  thisGraph.state.selectedNode = null;
+  thisGraph.resetStateNode();
   thisGraph.d3data.nodes = [];
   thisGraph.d3data.edges = [];
   thisGraph.graphName = thisGraph.config.newGraphName;
   thisGraph.removeSvgElements();
 
   if (thisGraph.config.debug) console.log("clearGraph end");
+}
+
+FluidGraph.prototype.resetStateNode = function() {
+  thisGraph.state.selectedNode = null;
+  thisGraph.state.openedNode = null;
+  thisGraph.state.editedNode = null;
 }
 
 FluidGraph.prototype.refreshGraph = function() {
@@ -564,7 +572,7 @@ FluidGraph.prototype.refreshGraph = function() {
   if (thisGraph.config.force == "On")
     thisGraph.activateForce();
 
-  thisGraph.state.openedNode = null;
+  thisGraph.resetStateNode();
   thisGraph.removeSvgElements();
   thisGraph.initDragLine();
   thisGraph.drawGraph();
@@ -734,9 +742,36 @@ FluidGraph.prototype.loadGraph = function(graphName) {
 
   if (thisGraph.config.debug) console.log("loadGraph start");
 
-  var txtRes = localStorage.getItem(thisGraph.config.version+"|"+graphName);
+  // https://ldp.openinitiative.com:8443/2013/people/
+  // https://www.wikidata.org/wiki/
+  // externalStoreSemForms = new MyStore({
+  //     container: thisGraph.config.uriExternalStore,
+  //     context: "http://owl.openinitiative.com/oicontext.jsonld",
+  //     template: "",
+  //     partials: "",
+  // });
 
-  thisGraph.d3data = thisGraph.jsonD3ToD3Data(txtRes);
+  var ExternalGraph;
+
+  // With Rwwplay
+  // externalStoreRwwplay.list(externalStoreRwwplay.container).then(function(list) {
+  //   list.forEach(function(item) {
+  //     externalStoreRwwplay.get(item,externalStoreRwwplay.container).then(function(graph) {
+  //             console.log("graph : "+graph);
+  //             ExternalGraph = graph;
+  //     });
+  //   });
+  // });
+
+//externalStoreSemForms.get("http://localhost:9000/ldp/fluidlog/unnamed").then(console.log.bind(console))
+  // externalStoreSemForms.get(thisGraph.config.uriExternalStore+"unnamed").then(function(graph) {
+  //             console.log("graph : "+graph);
+  //             ExternalGraph = graph;
+  // });
+
+  var localGraph = localStorage.getItem(thisGraph.config.version+"|"+graphName);
+
+  thisGraph.d3data = thisGraph.jsonD3ToD3Data(localGraph); //ExternalGraph
 
   thisGraph.graphName = graphName;
   thisGraph.changeGraphName();
@@ -903,14 +938,14 @@ FluidGraph.prototype.resetMouseVars = function()
   if (thisGraph.config.debug) console.log("resetMouseVars end");
 }
 
-FluidGraph.prototype.saveGraphToSemForms = function() {
+FluidGraph.prototype.saveGraphToExternalStore = function() {
   thisGraph = this;
-  if (thisGraph.config.debug) console.log("saveGraphToSemForms start");
+  if (thisGraph.config.debug) console.log("saveGraphToExternalStore start");
 
   var jsonLd = thisGraph.d3DataToJsonLd();
   // localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName+".json-ld",window.JSON.stringify(jsonLd));
 
-  var myStore = new MyStore({ container : thisGraph.config.uriSemFormsBase, //"https://localhost:8443/2013/people/"
+  var myStore = new MyStore({ container : thisGraph.config.uriExternalStore,
                               context : "http://owl.openinitiative.com/oicontext.jsonld",
                               template : "",
                               partials : ""});
@@ -920,7 +955,7 @@ FluidGraph.prototype.saveGraphToSemForms = function() {
   console.log("jsonLd " + jsonLd)
 
   // var urlNameGraph = encodeURIComponent(thisGraph.graphName)
-  // var semFormsUrl = thisGraph.config.uriSemFormsBase+urlNameGraph
+  // var semFormsUrl = thisGraph.config.uriExternalStore+urlNameGraph
   // $.ajax(
   //   {
   //     type: 'POST',
@@ -944,7 +979,7 @@ FluidGraph.prototype.saveGraphToSemForms = function() {
   //   }
   // );
 
-  if (thisGraph.config.debug) console.log("saveGraphToSemForms end");
+  if (thisGraph.config.debug) console.log("saveGraphToExternalStore end");
 }
 
 FluidGraph.prototype.saveGraphToLocalStorage = function() {
@@ -977,6 +1012,7 @@ FluidGraph.prototype.displayExternalGraph = function(d3node, d) {
   thisGraph.d3data = thisGraph.getExternalD3Data(externalUri)
 
   thisGraph.resetMouseVars();
+  thisGraph.resetStateNode();
   thisGraph.removeSvgElements();
   thisGraph.initDragLine();
   thisGraph.drawGraph();

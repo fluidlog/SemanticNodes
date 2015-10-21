@@ -26,11 +26,14 @@ $(document).ready()
 //  console.log(JSON.stringify(d3data));
   var myGraph = new FluidGraph("#chart", d3data)
 
+  myGraph.initSgvContainer("bgElement");
+
   var openedGraph = myGraph.getOpenedGraph();
   if (openedGraph)
     myGraph.loadGraph(openedGraph);
-
-  myGraph.initSgvContainer("bgElement");
+  else {
+    myGraph.newGraph();
+  }
 
   var checkboxIsInitialized = false;
   menuInitialisation(myGraph);
@@ -44,5 +47,4 @@ $(document).ready()
   checkboxIsInitialized = true;
 
   myGraph.drawGraph();
-
 }
