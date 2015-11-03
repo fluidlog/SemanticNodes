@@ -47,4 +47,28 @@ $(document).ready()
   checkboxIsInitialized = true;
 
   myGraph.drawGraph();
+
+  var rwwplay = "https://localhost:8443/2013/fluidlog/";
+  var sf = "http://localhost:9000/ldp/fluidlog/"
+  // dbpedia : http://dbpedia.org/resource/ (John_Lennon)
+
+  var serverUri = rwwplay;
+  var contextmap = {
+    "@context":{
+      "av" : "http://www.assemblee-virtuelle.org/ontologies/v1.owl#"
+    }}
+
+  var store = new MyStore({ container : serverUri,
+                            context : contextmap,
+                            template : "",
+                            partials : ""})
+
+  var jsonLd = {"@type" : "av:Organization"}
+
+  // store.save(jsonLd);
+
+  // store.get("https://localhost:8443/2013/fluidlog/").then(function(object){
+  //   console.log("object : "+object);
+  // });
+
 }

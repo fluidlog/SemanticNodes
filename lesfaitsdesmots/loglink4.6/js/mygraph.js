@@ -52,7 +52,7 @@ var FluidGraph = function (firstBgElement,d3data){
     elastic : "Off",
     curvesLinks : "On",
     openNodeOnHover : "Off",
-    displayId : "On",
+    displayId : "Off",
     proportionalNodeSize : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     // Rwwplay : "https://localhost:8443/2013/fluidlog/",
@@ -67,7 +67,7 @@ var FluidGraph = function (firstBgElement,d3data){
     repulseNeighbourOnHover : false,
     awsomeStrokeNode : true,
     remindSelectedNodeOnSave : true,
-    displayExternalGraph : false,
+    editGraphMode : true, // default : true
   };
 
   thisGraph.customNodes = {
@@ -279,7 +279,10 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
         .on("zoom", function(d){thisGraph.rescale.call(this, thisGraph, d)}))
       .on("dblclick.zoom", null)
       .on("click", null)
-      .on("dblclick", function(d){thisGraph.addNode.call(this, thisGraph, d)})
+      .on("dblclick", function(d){
+        if (thisGraph.config.editGraphMode == true)
+          thisGraph.addNode.call(this, thisGraph, d)
+        })
       .append('g')
       .attr('id', bgElementId)
       .on("mousedown", function(d){
@@ -347,8 +350,8 @@ FluidGraph.prototype.activateForce = function(){
                         .nodes(thisGraph.d3data.nodes)
                         .links(thisGraph.d3data.edges)
                         .size([thisGraph.width, thisGraph.height])
-                        .linkDistance(100)
-                        .charge(-1000)
+                        .linkDistance(thisGraph.config.linkDistance)
+                        .charge(thisGraph.config.charge)
 
   if (thisGraph.config.elastic == "On")  {
     thisGraph.force.start()
@@ -952,32 +955,7 @@ FluidGraph.prototype.saveGraphToExternalStore = function() {
 
   myStore.save(jsonLd);
 
-  console.log("jsonLd " + jsonLd)
-
-  // var urlNameGraph = encodeURIComponent(thisGraph.graphName)
-  // var semFormsUrl = thisGraph.config.uriExternalStore+urlNameGraph
-  // $.ajax(
-  //   {
-  //     type: 'POST',
-  //     url: "http://localhost:9000/ldp/fluidlog", //thisGraph.config.uriSemFormsBase,
-  //     dataType: 'json',
-  //     headers : {
-  //       Accept : "application/json-ld",
-  //       "Content-Type" : "application/json-ld",
-  //       "Slug" : "carto1"
-  //     },
-  //     data: jsonLd,
-  //     // Slug : urlNameGraph,
-  //     // async: true,
-  //     success: function(t_data) {
-  //       d3data = t_data;
-  //       return false;
-  //     },
-  //     error: function(t_data) {
-  //       console.log("Erreur Ajax : Message="+t_data+" (Fonction getSemFormsData()) !");
-  //     },
-  //   }
-  // );
+  console.log("jsonLd " + JSON.stringify(jsonLd));
 
   if (thisGraph.config.debug) console.log("saveGraphToExternalStore end");
 }
@@ -1009,13 +987,18 @@ FluidGraph.prototype.displayExternalGraph = function(d3node, d) {
 
   externalUri = d.identifier;
 
-  thisGraph.d3data = thisGraph.getExternalD3Data(externalUri)
+  var externalD3Data = thisGraph.getExternalD3Data(externalUri)
 
-  thisGraph.resetMouseVars();
-  thisGraph.resetStateNode();
-  thisGraph.removeSvgElements();
-  thisGraph.initDragLine();
-  thisGraph.drawGraph();
+  if (externalD3Data)
+  {
+    thisGraph.d3data = externalD3Data;
+
+    thisGraph.resetMouseVars();
+    thisGraph.resetStateNode();
+    thisGraph.removeSvgElements();
+    thisGraph.initDragLine();
+    thisGraph.drawGraph();
+  }
 
   if (thisGraph.config.debug) console.log("displayExternGraph end");
 }
