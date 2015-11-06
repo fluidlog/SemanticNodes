@@ -868,9 +868,18 @@ d3.selection.prototype.moveToFront = function() {
   });
 };
 
-FluidGraph.prototype.searchIndexOfNodeId = function(o, searchTerm) {
+FluidGraph.prototype.searchIndexNodeFromIdentifier = function(o, searchTerm) {
   for (var i = 0, len = o.length; i < len; i++) {
-    if (o[i].identifier === searchTerm) return i;
+    if (o[i].identifier === searchTerm)
+      return i;
+  }
+  return -1;
+}
+
+FluidGraph.prototype.searchIdNodeFromIdentifier = function(o, searchTerm) {
+  for (var i = 0, len = o.length; i < len; i++) {
+    if (o[i].identifier === searchTerm)
+      return o[i].id;
   }
   return -1;
 }
@@ -904,8 +913,8 @@ FluidGraph.prototype.getNeighbourNodesAndLinks = function(rootNode) {
     //links
     if (isConnected(rootNode, node) && rootNode.id != node.id) {
       neighbours.edges.push({
-        source: thisGraph.searchIndexOfNodeId(neighbours.nodes, rootNode.identifier),
-        target: thisGraph.searchIndexOfNodeId(neighbours.nodes, node.identifier)
+        source: thisGraph.searchIndexNodeFromIdentifier(neighbours.nodes, rootNode.identifier),
+        target: thisGraph.searchIndexNodeFromIdentifier(neighbours.nodes, node.identifier)
       });
     }
   });
@@ -1016,9 +1025,9 @@ FluidGraph.prototype.addNode = function(thisGraph, newnode) {
   if (typeof newnode.type == "undefined")
     newnode.type = thisGraph.customNodes.typeOfNewNode;
   if (typeof newnode.identifier == "undefined")
-    newnode.identifier = thisGraph.config.uriBase + (thisGraph.d3data.nodes.length);
+    newnode.identifier = thisGraph.config.uriBase + thisGraph.getNodeId();
   if (typeof newnode.id == "undefined")
-    newnode.id = thisGraph.nodeidct++;
+    newnode.id = thisGraph.getNodeId();
 
   if (typeof newnode.px == "undefined")
     newnode.px = xy[0];
@@ -1037,6 +1046,21 @@ FluidGraph.prototype.addNode = function(thisGraph, newnode) {
 
   if (thisGraph.config.debug) console.log("addnode end");
   return newnode.identifier;
+}
+
+FluidGraph.prototype.getNodeId = function() {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("getNodeId start");
+  var nextNodeId = 0;
+
+  thisGraph.d3data.nodes.forEach(function (node){
+    if (node.id > nextNodeId)
+      nextNodeId = node.id;
+  })
+
+  if (thisGraph.config.debug) console.log("getNodeId end");
+  return nextNodeId+1;
 }
 
 FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
@@ -1171,16 +1195,19 @@ FluidGraph.prototype.deleteNode = function(nodeIdentifier) {
 
   if (thisGraph.config.debug) console.log("deleteNode start");
 
-  if (thisGraph.d3data.nodes.length > 0) {
-    //delete args or the first if not arg.
-    var nodeIdentifier = nodeIdentifier || thisGraph.d3data.nodes[0].identifier;
-    index = thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes, nodeIdentifier);
+  if (thisGraph.d3data.nodes.length) {
+    //delete args or the first if not arg (console).
+    if (!nodeIdentifier)
+      var nodeIdentifier = thisGraph.d3data.nodes[0].identifier;
+
+    var index = thisGraph.searchIndexNodeFromIdentifier(thisGraph.d3data.nodes, nodeIdentifier);
+    var id = thisGraph.searchIdNodeFromIdentifier(thisGraph.d3data.nodes, nodeIdentifier);
 
     //delete node
     thisGraph.d3data.nodes.splice(index, 1);
 
     //delete edges linked to this (old) node
-    thisGraph.spliceLinksForNode(index);
+    thisGraph.spliceLinksForNode(id);
 
     thisGraph.removeSelectFromNode();
     thisGraph.state.selectedNode = null;

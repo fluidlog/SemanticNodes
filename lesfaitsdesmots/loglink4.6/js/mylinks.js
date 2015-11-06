@@ -191,8 +191,8 @@ FluidGraph.prototype.addLink = function(sourceid, targetid)
   if (thisGraph.config.debug) console.log("addLink start");
 
   // draw link between mouseDownNode and this new node
-  var sourceObj = thisGraph.d3data.nodes[thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes,sourceid)];
-  var targetObj = thisGraph.d3data.nodes[thisGraph.searchIndexOfNodeId(thisGraph.d3data.nodes,targetid)];
+  var sourceObj = thisGraph.d3data.nodes[thisGraph.searchIndexNodeFromIdentifier(thisGraph.d3data.nodes,sourceid)];
+  var targetObj = thisGraph.d3data.nodes[thisGraph.searchIndexNodeFromIdentifier(thisGraph.d3data.nodes,targetid)];
   var newlink = { source: sourceObj,
                   target: targetObj,
                   type : "loglink:linkedto"};

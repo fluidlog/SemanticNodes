@@ -52,7 +52,7 @@ var FluidGraph = function (firstBgElement,d3data){
     elastic : "Off",
     curvesLinks : "On",
     openNodeOnHover : "Off",
-    displayId : "Off",
+    displayId : "On",
     proportionalNodeSize : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     // Rwwplay : "https://localhost:8443/2013/fluidlog/",
@@ -190,9 +190,9 @@ var FluidGraph = function (firstBgElement,d3data){
   thisGraph.bgElement = null,
   thisGraph.svgNodesEnter = [],
   thisGraph.svgLinksEnter = [],
+  thisGraph.svgLinksLabelEnter = [],
   thisGraph.width = window.innerWidth - 30,
   thisGraph.height = window.innerHeight - 30,
-  thisGraph.nodeidct = null,
 
   //mouse event vars
   thisGraph.state = {
@@ -378,10 +378,8 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
   if (typeof dataToDraw.nodes != "undefined")
   {
     //Update of the nodes
-    thisGraph.nodeidct = 0;
     dataToDraw.nodes.forEach(function(node)
             {
-              thisGraph.nodeidct++;
               if (typeof dataToDraw.nodes.px == "undefined")
               {
                 node.px = node.x;
@@ -392,7 +390,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
             });
 
     thisGraph.svgNodesEnter = thisGraph.bgElement.selectAll("#node")
-    				              .data(dataToDraw.nodes)
+    				              .data(dataToDraw.nodes, function(d) { return d.id;})
 
     thisGraph.svgNodes = thisGraph.svgNodesEnter
                                 .enter()
@@ -434,7 +432,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
             });
 
     thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#link")
-                  			.data(dataToDraw.edges)
+                  			.data(dataToDraw.edges, function(d) { return d.source.id + "-" + d.target.id; })
 
     if (thisGraph.config.curvesLinks == "On")
     {
@@ -461,11 +459,13 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
 
     thisGraph.drawLinks(thisGraph.svgLinks);
 
-    //delete link if there's less object in svgLinks array than in DOM
+    //delete link if there's less object in svgLinksEnter array than in DOM
     thisGraph.svgLinksEnter.exit().remove();
 
-    thisGraph.svgLinksLabelEnter = thisGraph.bgElement.selectAll("#linksLabel")
-        .data(dataToDraw.edges)
+    thisGraph.svgLinksLabelEnter = thisGraph.bgElement.selectAll(".linksLabel")
+        .data(dataToDraw.edges, function(d) { return d.source.id + "-" + d.target.id; })
+
+    thisGraph.svgLinksLabel  =  thisGraph.svgLinksLabelEnter
         .enter()
     		.insert("text", "#node")
         .attr("class", "linksLabel")
@@ -479,6 +479,9 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
         .text(function(d) {
           return d.type;
         });
+
+    //delete label link if there's less object in svgLinksLabelEnter array than in DOM
+    thisGraph.svgLinksLabelEnter.exit().remove();
 
     if (thisGraph.config.force == "Off")
     {
