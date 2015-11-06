@@ -52,7 +52,7 @@ var FluidGraph = function (firstBgElement,d3data){
     elastic : "Off",
     curvesLinks : "On",
     openNodeOnHover : "Off",
-    displayId : "On",
+    displayId : "Off",
     proportionalNodeSize : "On",
     uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
     // Rwwplay : "https://localhost:8443/2013/fluidlog/",
@@ -978,6 +978,8 @@ FluidGraph.prototype.saveGraphToLocalStorage = function() {
   }
 
   localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName,thisGraph.d3DataToJsonD3())
+
+  $("#message").text("Locally saved!").show().delay(1000).fadeOut();
 
   if (thisGraph.config.debug) console.log("saveGraphToLocalStorage end");
 }
