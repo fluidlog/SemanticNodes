@@ -57,14 +57,14 @@ $("#saveGraph").click(function () {
               {
                 thisGraph.graphName = $('#graphNameInput').val();
                 myGraph.saveGraphToLocalStorage();
-                myGraph.saveGraphToExternalStore();
+                //myGraph.saveGraphToExternalStore();
               }
             })
       .modal('show');
   }
   else {
     myGraph.saveGraphToLocalStorage();
-    myGraph.saveGraphToExternalStore();
+    //myGraph.saveGraphToExternalStore();
   }
 })
 .popup({
