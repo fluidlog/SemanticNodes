@@ -47,8 +47,8 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     .style("cursor", thisGraph.customNodes.cursor)
     .style("opacity", 1)
 
-  if (thisGraph.config.displayId == "On")
-    thisGraph.displayId(svgNodes)
+  if (thisGraph.config.displayIndex == "On")
+    thisGraph.displayIndex(svgNodes)
 
   if (thisGraph.customNodes.displayType)
     thisGraph.displayType(svgNodes)
@@ -173,37 +173,37 @@ FluidGraph.prototype.displayText = function(svgNodes) {
   if (thisGraph.config.debug) console.log("displayText end");
 }
 
-FluidGraph.prototype.displayId = function(svgNodes) {
+FluidGraph.prototype.displayIndex = function(svgNodes) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("displayId start");
+  if (thisGraph.config.debug) console.log("displayIndex start");
 
-  /* id circle */
+  /* index circle */
   svgNodes
     .append("circle")
-    .attr("id", "circle_id")
-    .attr("class", "circle_id")
-    .attr("cx", thisGraph.nodeIdCircle.cxClosed)
-    .attr("cy", thisGraph.nodeIdCircle.cyClosed)
-    .attr("r", thisGraph.nodeIdCircle.r)
+    .attr("id", "circle_index")
+    .attr("class", "circle_index")
+    .attr("cx", thisGraph.nodeIndexCircle.cxClosed)
+    .attr("cy", thisGraph.nodeIndexCircle.cyClosed)
+    .attr("r", thisGraph.nodeIndexCircle.r)
     .attr("fill", function(d) {
-      return thisGraph.customNodes.colorType[d.type];
+      return thisGraph.customNodes.colorType[d.type] || thisGraph.customNodes.colorType[d["@type"]];
     })
 
-  /* Text of id */
+  /* Text of index */
   svgNodes
     .append("text")
-    .attr("id", "text_id")
-    .attr("class", "text_id")
-    .attr("dx", thisGraph.nodeIdCircle.dxClosed)
-    .attr("dy", thisGraph.nodeIdCircle.dyClosed)
+    .attr("id", "text_index")
+    .attr("class", "text_index")
+    .attr("dx", thisGraph.nodeIndexCircle.dxClosed)
+    .attr("dy", thisGraph.nodeIndexCircle.dyClosed)
     .attr("fill", "#EEE")
     .attr("font-weight", "bold")
     .text(function(d) {
       return d.index;
     })
 
-  if (thisGraph.config.debug) console.log("displayId end");
+  if (thisGraph.config.debug) console.log("displayIndex end");
 }
 
 FluidGraph.prototype.displayType = function(svgNodes) {

@@ -17,22 +17,22 @@ path {
 .nodecircle.selected {
   stroke-width: 20px;
 }
-.circle_id {
+.circle_index {
   pointer-events: none;
   stroke-width: 2px;
   cursor: pointer;
 }
-.circle_id_selected {
+.circle_index_selected {
   stroke: #999;
   fill: #999;
 }
-.text_id {
+.text_index {
   font-size: 12px;
   text-anchor: middle;
   pointer-events: none;
   font-family: "Helvetica Neue, Helvetica, Arial, sans-serif;";
 }
-.text_id_selected {
+.text_index_selected {
   stroke: #EEE;
   fill: #EEE;
 }
