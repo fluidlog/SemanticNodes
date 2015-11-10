@@ -32,198 +32,6 @@ function menuInitialisation(myGraph) {
   if (myGraph.config.debug) console.log("checkboxInitialisation end");
 }
 
-// define graph object
-var FluidGraph = function (firstBgElement,d3data){
-  /*
-  *
-  *           Initialisation
-  *
-  ****************************/
-
-  //Help to assure that it's the "this" of myGraph object
-  var thisGraph = this;
-
-  thisGraph.config = {
-    backgroundColor : "#EEE",
-    xNewNode : 200,
-    yNewNode : 100,
-    bgElementType : "panzoom", //choixe : "panzoom" or "simple"
-    force : "Off",
-    elastic : "Off",
-    curvesLinks : "On",
-    openNodeOnHover : "Off",
-    displayId : "Off",
-    proportionalNodeSize : "On",
-    uriBase : "http://fluidlog.com/", //Warning : with LDP, no uriBase... :-)
-    // Rwwplay : "https://localhost:8443/2013/fluidlog/",
-    // SemForms : "http://localhost:9000/ldp/fluidlog/",
-    uriExternalStore : "http://localhost:9000/ldp/fluidlog/",
-    linkDistance : 100,
-    charge : -1000,
-    debug : false,
-    version : "loglink46",
-    newGraphName : "Untilted",
-    bringNodeToFrontOnHover : false,
-    repulseNeighbourOnHover : false,
-    awsomeStrokeNode : true,
-    remindSelectedNodeOnSave : true,
-    editGraphMode : true, // default : true
-  };
-
-  thisGraph.customNodes = {
-    strokeColor : "#CCC",
-    strokeWidth : "10px",
-    strokeOpacity : .5,
-    listType : ["without", "project","actor","idea","ressource"],
-    colorType : {"project" : "#89A5E5",
-                  "actor" : "#F285B9",
-                  "idea" : "#FFD98D",
-                  "ressource" : "#CDF989",
-                  "without" : "#999",
-                  "gray" : "gray"},
-    typeOfNewNode : "without",
-  	colorTypeRgba : {"project" : "137,165,229",
-                      "actor" : "242,133,185",
-                      "idea" : "255,217,141",
-                      "ressource" : "205,249,137",
-                      "without" : "255,255,255",
-                      "gray" : "200,200,200"},
-    imageType : {"project" : "lab", "actor" : "user", "idea" : "idea", "ressource" : "tree", "without" : "circle thin"},
-    displayType : true,
-    displayText : true,
-    cursor : "move", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
-    cursorOpen : "default", //Value : grab or move (default), pointer, context-menu, text, crosshair, default
-    widthClosed : 50,
-		heightClosed : 50,
-    maxRadius : 40,
-    widthOpened : 160,
-    heightOpened : 230,
-    heightOpenedNeighbour : 30,
-    heightOpenedTopMax : 50,
-    heightOpenedBottomMax : 25,
-    heightOpenedNeighboursMax : 200,
-    widthEdited : 200,
-		heightEdited : 200,
-    curvesCornersClosedNode : 50,
-    curvesCornersOpenedNode : 20,
-		widthStrokeHover : 20,
-		transitionEasing : "elastic", //Values : linear (default), elastic
-    transitionDurationOpen : 300,
-    transitionDurationEdit : 1000,
-		transitionDurationClose : 300,
-		transitionDelay : 0,
-    blankNodeLabel : "New...",
-    blankNodeType : "without",
-  }
-
-  if (thisGraph.config.awsomeStrokeNode == true)
-  {
-    thisGraph.customNodes.strokeColorType = {"project" : "#CCC",
-                  "actor" : "#CCC",
-                  "idea" : "#CCC",
-                  "ressource" : "#CCC",
-                  "without" : "#CCC"}
-  }
-  else {
-    thisGraph.customNodes.strokeColorType = {"project" : "#89A5E5",
-                  "actor" : "#F285B9",
-                  "idea" : "#FFD98D",
-                  "ressource" : "#CDF989",
-                  "without" : "#999"}
-  }
-
-  thisGraph.nodeTypeIcon = {
-    r : 13,
-    cxClosed : 0,
-    cxEdited : 0,
-    cyClosed : (thisGraph.customNodes.heightClosed/2)-10,
-    cyEdited : (thisGraph.customNodes.heightEdited/2)-10,
-    xClosed : -11,
-    xOpened : -11,
-    xEdited : -11,
-    yClosed : (thisGraph.customNodes.heightClosed/2)-20,
-    yEdited : (thisGraph.customNodes.heightEdited/2)-20,
-  }
-
-  thisGraph.nodeIdCircle = {
-    r : 10,
-    cxClosed : 0,
-    cyClosed : -(thisGraph.customNodes.heightClosed/2)+6,
-    cxEdited : 0,
-    cyEdited : -(thisGraph.customNodes.heightOpened/2),
-    dxClosed : 0,
-    dyClosed : -(thisGraph.customNodes.heightClosed/2)+10,
-    dxEdited : 0,
-    dyEdited : -(thisGraph.customNodes.heightOpened/2)+5,
-  }
-
-  thisGraph.customNodesText = {
-    fontSize : 14,
-    FontFamily : "Helvetica Neue, Helvetica, Arial, sans-serif;",
-    strokeOpacity : .5,
-    widthMax : 160,
-		heightMax : 60,
-    curvesCorners : thisGraph.customNodes.curvesCornersOpenedNode,
-  }
-
-  thisGraph.customLinks = {
-    strokeWidth: 7,
-    strokeColor: "#DDD",
-    strokeSelectedColor: "#999",
-  }
-
-  thisGraph.customLinksLabel = {
-    width : 200,
-    height : 80,
-    fillColor : "#CCC",
-    strokeColor : "#DDD",
-    curvesCorners : 20,
-    blankNodeLabel : "loglink:linkto",
-  }
-
-  thisGraph.graphName = thisGraph.config.newGraphName;
-  thisGraph.listOfLocalGraphs = [];
-  thisGraph.selectedGraphName = null;
-  thisGraph.graphToDeleteName = null;
-  thisGraph.firstBgElement = firstBgElement || [],
-  thisGraph.d3data = d3data || [],
-  thisGraph.bgElement = null,
-  thisGraph.svgNodesEnter = [],
-  thisGraph.svgLinksEnter = [],
-  thisGraph.svgLinksLabelEnter = [],
-  thisGraph.width = window.innerWidth - 30,
-  thisGraph.height = window.innerHeight - 30,
-
-  //mouse event vars
-  thisGraph.state = {
-    selectedNode : null,
-    selectedLink : null,
-    mouseDownNode : null,
-    mouseDownLink : null,
-    svgMouseDownNode : null,
-    mouseUpNode : null,
-    lastKeyDown : -1,
-    editedNode : null,
-    editedIndexNode : null,
-    openedNode : null,
-    editedLinkLabel : null,
-  }
-}
-
-// Come from : https://github.com/cjrd/directed-graph-creator/blob/master/graph-creator.js
-FluidGraph.prototype.consts =  {
-  selectedClass: "selected",
-  connectClass: "connect-node",
-  circleGClass: "conceptG",
-  graphClass: "graph",
-  activeEditId: "active-editing",
-  BACKSPACE_KEY: 8,
-  DELETE_KEY: 46,
-  ENTER_KEY: 13,
-  nodeRadius: 50,
-  OPENED_GRAPH_KEY: "openedGraph"
-};
-
 /*
 *
 *           functions
@@ -242,7 +50,7 @@ FluidGraph.prototype.rescale = function(thisGraph){
 }
 
 //Create a balise SVG with events
-FluidGraph.prototype.initSgvContainer = function(bgElementId){
+FluidGraph.prototype.initSgvContainer = function(firstBgElement){
   var thisGraph = this;
 
   if (thisGraph.config.debug) console.log("initSgvContainer start");
@@ -255,7 +63,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
     thisGraph.bgKeyUp.call(thisGraph);
   });
 
-  var div = thisGraph.firstBgElement;
+  var div = firstBgElement;
   var svg;
 
   if (thisGraph.config.bgElementType == "simple")  {
@@ -264,7 +72,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
           .attr("width", thisGraph.width)
           .attr("height", thisGraph.height)
           .append('g')
-          .attr('id', bgElementId)
+          .attr('id', "bgElement")
   }
   else  {  //panzoom
     var outer = d3.select(div)
@@ -284,7 +92,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
           thisGraph.addNode.call(this, thisGraph, d)
         })
       .append('g')
-      .attr('id', bgElementId)
+      .attr('id', "bgElement")
       .on("mousedown", function(d){
         thisGraph.bgOnMouseDown.call(thisGraph, d)})
       .on("mousemove", function(d){
@@ -300,7 +108,7 @@ FluidGraph.prototype.initSgvContainer = function(bgElementId){
           .attr('fill', thisGraph.config.backgroundColor)
   }
 
-  thisGraph.bgElement = d3.select("#"+bgElementId);
+  thisGraph.bgElement = d3.select("#bgElement");
 
   thisGraph.initDragLine();
 
@@ -390,7 +198,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
             });
 
     thisGraph.svgNodesEnter = thisGraph.bgElement.selectAll("#node")
-    				              .data(dataToDraw.nodes, function(d) { return d.id;})
+    				              .data(dataToDraw.nodes, function(d) { return d.index;})
 
     thisGraph.svgNodes = thisGraph.svgNodesEnter
                                 .enter()
@@ -432,7 +240,7 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
             });
 
     thisGraph.svgLinksEnter = thisGraph.bgElement.selectAll("#link")
-                  			.data(dataToDraw.edges, function(d) { return d.source.id + "-" + d.target.id; })
+                  			.data(dataToDraw.edges, function(d) { return d.source.index + "-" + d.target.index; })
 
     if (thisGraph.config.curvesLinks == "On")
     {
@@ -463,13 +271,13 @@ FluidGraph.prototype.drawGraph = function(d3dataFc){
     thisGraph.svgLinksEnter.exit().remove();
 
     thisGraph.svgLinksLabelEnter = thisGraph.bgElement.selectAll(".linksLabel")
-        .data(dataToDraw.edges, function(d) { return d.source.id + "-" + d.target.id; })
+        .data(dataToDraw.edges, function(d) { return d.source.index + "-" + d.target.index; })
 
     thisGraph.svgLinksLabel  =  thisGraph.svgLinksLabelEnter
         .enter()
     		.insert("text", "#node")
         .attr("class", "linksLabel")
-        .attr("id", function(d) { return "edge" + d.source.id + "_" + d.target.id })
+        .attr("id", function(d) { return "edge" + d.source.index + "_" + d.target.index })
     		.attr("x", function(d) { return d.source.x + (d.target.x - d.source.x)/2; })
         .attr("y", function(d) { return d.source.y + (d.target.y - d.source.y)/2; })
         .attr("text-anchor", "middle")
@@ -540,7 +348,7 @@ FluidGraph.prototype.newGraph = function() {
 
   thisGraph.clearGraph();
   thisGraph.changeGraphName();
-  thisGraph.d3data.nodes = [{id:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
+  thisGraph.d3data.nodes = [{index:0, label: thisGraph.customNodes.blankNodeLabel, type: thisGraph.customNodes.blankNodeType, x:200, y:200, identifier:"http://fluidlog.com/0" }];
   thisGraph.initDragLine()
   localStorage.removeItem(thisGraph.config.version+"|"+thisGraph.consts.OPENED_GRAPH_KEY);
   thisGraph.drawGraph();
@@ -713,7 +521,7 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
   if (!thisGraph.selectedGraphName)
     thisGraph.selectedGraphName = thisGraph.graphName;
 
-  thisGraph.loadGraph(thisGraph.selectedGraphName);
+  thisGraph.loadLocalGraph(thisGraph.selectedGraphName);
 
   d3.select("#contentOpenGraphModalPreview").remove();
 
@@ -741,48 +549,6 @@ FluidGraph.prototype.displayContentOpenGraphModal = function() {
 
   if (thisGraph.config.debug) console.log("displayContentOpenGraphModal end");
 
-}
-
-FluidGraph.prototype.loadGraph = function(graphName) {
-  thisGraph = this;
-
-  if (thisGraph.config.debug) console.log("loadGraph start");
-
-  // https://ldp.openinitiative.com:8443/2013/people/
-  // https://www.wikidata.org/wiki/
-  // externalStoreSemForms = new MyStore({
-  //     container: thisGraph.config.uriExternalStore,
-  //     context: "http://owl.openinitiative.com/oicontext.jsonld",
-  //     template: "",
-  //     partials: "",
-  // });
-
-  var ExternalGraph;
-
-  // With Rwwplay
-  // externalStoreRwwplay.list(externalStoreRwwplay.container).then(function(list) {
-  //   list.forEach(function(item) {
-  //     externalStoreRwwplay.get(item,externalStoreRwwplay.container).then(function(graph) {
-  //             console.log("graph : "+graph);
-  //             ExternalGraph = graph;
-  //     });
-  //   });
-  // });
-
-//externalStoreSemForms.get("http://localhost:9000/ldp/fluidlog/unnamed").then(console.log.bind(console))
-  // externalStoreSemForms.get(thisGraph.config.uriExternalStore+"unnamed").then(function(graph) {
-  //             console.log("graph : "+graph);
-  //             ExternalGraph = graph;
-  // });
-
-  var localGraph = localStorage.getItem(thisGraph.config.version+"|"+graphName);
-
-  thisGraph.d3data = thisGraph.jsonD3ToD3Data(localGraph); //ExternalGraph
-
-  thisGraph.graphName = graphName;
-  thisGraph.changeGraphName();
-
-  if (thisGraph.config.debug) console.log("loadGraph end");
 }
 
 FluidGraph.prototype.openGraph = function() {
@@ -944,25 +710,6 @@ FluidGraph.prototype.resetMouseVars = function()
   if (thisGraph.config.debug) console.log("resetMouseVars end");
 }
 
-FluidGraph.prototype.saveGraphToExternalStore = function() {
-  thisGraph = this;
-  if (thisGraph.config.debug) console.log("saveGraphToExternalStore start");
-
-  var jsonLd = thisGraph.d3DataToJsonLd();
-  // localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName+".json-ld",window.JSON.stringify(jsonLd));
-
-  var myStore = new MyStore({ container : thisGraph.config.uriExternalStore,
-                              context : "http://owl.openinitiative.com/oicontext.jsonld",
-                              template : "",
-                              partials : ""});
-
-  myStore.save(jsonLd);
-
-  console.log("jsonLd " + JSON.stringify(jsonLd));
-
-  if (thisGraph.config.debug) console.log("saveGraphToExternalStore end");
-}
-
 FluidGraph.prototype.saveGraphToLocalStorage = function() {
   thisGraph = this;
   if (thisGraph.config.debug) console.log("saveGraphToLocalStorage start");
@@ -1026,4 +773,91 @@ FluidGraph.prototype.getExternalD3Data = function(externalUri) {
     async: false
   });
   return d3data;
+}
+
+FluidGraph.prototype.saveGraphToExternalStore = function() {
+  thisGraph = this;
+  if (thisGraph.config.debug) console.log("saveGraphToExternalStore start");
+
+  // var jsonLd = thisGraph.d3DataToJsonLd();
+  // localStorage.setItem(thisGraph.config.version+"|"+thisGraph.graphName+".json-ld",window.JSON.stringify(jsonLd));
+
+  // var serverUri = "https://localhost:8443/2013/fluidlog/";
+  // var contextmap = {
+  //   "@context":{
+  //     "av" : "http://www.assemblee-virtuelle.org/ontologies/v1.owl#"
+  //   }}
+
+
+  var jsonLd = {
+    "nodes" : [
+      { "@id" : "http://fluidlog.com/node/0",
+        "@type":"av:project",
+        "index":"0",
+        "label":"A",
+        "x" : "101",
+        "y" : "102"},
+      { "@id" : "http://fluidlog.com/node/1",
+        "@type":"av:idea",
+        "index":"1",
+        "label":"B",
+        "x" : "203",
+        "y" : "204"},
+      { "@id" : "http://fluidlog.com/node/2",
+        "@type":"av:project",
+        "index":"2",
+        "label":"C",
+        "x" : "305",
+        "y" : "306"},
+    ],
+    "edges" : [
+      { "@id" : "http://fluidlog.com/edge/0",
+        "@type":"loglink:linkedto",
+        "source" : "http://fluidlog.com/node/0",
+        "target" : "http://fluidlog.com/node/1"},
+      { "@id" : "http://fluidlog.com/edge/1",
+        "@type":"loglink:linkedto",
+        "source" : "http://fluidlog.com/node/1",
+        "target" : "http://fluidlog.com/node/2"},
+    ]
+  }
+
+  store.save(jsonLd);
+
+  console.log("jsonLd " + JSON.stringify(jsonLd));
+
+  if (thisGraph.config.debug) console.log("saveGraphToExternalStore end");
+}
+
+FluidGraph.prototype.loadLocalGraph = function(graphName) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("loadLocalGraph start");
+
+  var localGraph = localStorage.getItem(thisGraph.config.version+"|"+graphName);
+  thisGraph.d3data = thisGraph.jsonD3ToD3Data(JSON.parse(localGraph)); //ExternalGraph or localGraph
+  thisGraph.graphName = graphName;
+  thisGraph.changeGraphName();
+
+  if (thisGraph.config.debug) console.log("loadLocalGraph end");
+}
+
+FluidGraph.prototype.loadExternalGraph = function(graphName) {
+  thisGraph = this;
+
+  if (thisGraph.config.debug) console.log("loadExternalGraph start");
+
+  var externalGraph;
+  store.get("https://localhost:8443/2013/fluidlog/"+graphName).then(function(ldpObject){
+    console.log("loadExternalGraph ldpObject : "+JSON.stringify(ldpObject));
+    externalGraph = ldpObject;
+    thisGraph.d3data = thisGraph.jsonLdToD3Data(externalGraph); //ExternalGraph or localGraph
+
+    thisGraph.graphName = graphName;
+    thisGraph.changeGraphName();
+    thisGraph.drawGraph();
+
+    if (thisGraph.config.debug) console.log("loadExternalGraph end");
+    return true;
+  });
 }

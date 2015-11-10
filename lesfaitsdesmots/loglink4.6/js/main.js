@@ -12,7 +12,7 @@ function getD3Data() {
       return false;
     },
     error: function(t_data) {
-      console.log("Erreur Ajax : Message=" + t_data + " (Fonction getd3data()) !");
+      console.log("Erreur Ajax : Message=" + t_data + " (Fonction getD3Data()) !");
     },
     async: false
   });
@@ -21,19 +21,26 @@ function getD3Data() {
 
 $(document).ready()
 {
-  var d3data = getD3Data();
+  //Load default graph (Démo, explaination...)
+  // var d3data = getD3Data();
 
-//  console.log(JSON.stringify(d3data));
-  var myGraph = new FluidGraph("#chart", d3data)
+  //  console.log(JSON.stringify(d3data));
+  var myGraph = new FluidGraph();
 
-  myGraph.initSgvContainer("bgElement");
+  myGraph.initSgvContainer("#chart");
+
+  var store = new MyStore({ container : myGraph.externalStore.uri,
+                            context : myGraph.externalStore.context,
+                            template : "",
+                            partials : ""})
 
   var openedGraph = myGraph.getOpenedGraph();
   if (openedGraph)
-    myGraph.loadGraph(openedGraph);
-  else {
-    myGraph.newGraph();
+  {
+    myGraph.loadLocalGraph(openedGraph);
+    //myGraph.loadExternalGraph("0d38f431ba");
   }
+  else myGraph.newGraph();
 
   var checkboxIsInitialized = false;
   menuInitialisation(myGraph);
@@ -47,28 +54,4 @@ $(document).ready()
   checkboxIsInitialized = true;
 
   myGraph.drawGraph();
-
-  var rwwplay = "https://localhost:8443/2013/fluidlog/";
-  var sf = "http://localhost:9000/ldp/fluidlog/"
-  // dbpedia : http://dbpedia.org/resource/ (John_Lennon)
-
-  var serverUri = rwwplay;
-  var contextmap = {
-    "@context":{
-      "av" : "http://www.assemblee-virtuelle.org/ontologies/v1.owl#"
-    }}
-
-  var store = new MyStore({ container : serverUri,
-                            context : contextmap,
-                            template : "",
-                            partials : ""})
-
-  var jsonLd = {"@type" : "av:Organization"}
-
-  // store.save(jsonLd);
-
-  // store.get("https://localhost:8443/2013/fluidlog/").then(function(object){
-  //   console.log("object : "+object);
-  // });
-
 }

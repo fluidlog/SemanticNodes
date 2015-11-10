@@ -33,14 +33,14 @@ FluidGraph.prototype.drawNodes = function(svgNodes) {
     .attr("rx", thisGraph.customNodes.curvesCornersClosedNode)
     .attr("ry", thisGraph.customNodes.curvesCornersClosedNode)
     .style("fill", function(d) {
-      return thisGraph.customNodes.colorType[d.type]
+      return thisGraph.customNodes.colorType[d.type] || thisGraph.customNodes.colorType[d["@type"]];
     })
     .style("stroke", function(d) {
       if (thisGraph.config.remindSelectedNodeOnSave == true)
         if (d.fixed == true)
           thisGraph.replaceSelectNode.call(thisGraph, d3.select(this), d);
 
-      return thisGraph.customNodes.strokeColorType[d.type];
+      return thisGraph.customNodes.strokeColorType[d.type] || thisGraph.customNodes.strokeColorType[d["@type"]];
     })
     // .style("stroke-width", thisGraph.customNodes.strokeWidth)
     .style("stroke-opacity", thisGraph.customNodes.strokeOpacity)
@@ -109,10 +109,11 @@ FluidGraph.prototype.displayText = function(svgNodes) {
     .attr("id", "label_closed_node")
     .attr("class", "label_closed_node")
     .attr("style", function(d) {
-      return "background-color:rgba(" + thisGraph.customNodes.colorTypeRgba[d.type]
+      var color = thisGraph.customNodes.colorTypeRgba[d.type] || thisGraph.customNodes.colorTypeRgba[d["@type"]];
+      return "background-color:rgba(" + color
                                   + "," + thisGraph.customNodesText.strokeOpacity + ");"
                                   + "border: 1px solid rgba("
-                                  + thisGraph.customNodes.colorTypeRgba[d.type] + ","
+                                  + color + ","
                                   + thisGraph.customNodesText.strokeOpacity + ");"
                                   + "cursor:" + thisGraph.customNodes.cursor + ";"
                                   + "-moz-border-radius:" + thisGraph.customNodesText.curvesCorners + "px;"
@@ -199,7 +200,7 @@ FluidGraph.prototype.displayId = function(svgNodes) {
     .attr("fill", "#EEE")
     .attr("font-weight", "bold")
     .text(function(d) {
-      return d.id;
+      return d.index;
     })
 
   if (thisGraph.config.debug) console.log("displayId end");
@@ -243,16 +244,16 @@ FluidGraph.prototype.displayType = function(svgNodes) {
   if (thisGraph.config.debug) console.log("displayType end");
 }
 
-FluidGraph.prototype.changeIdNode = function(node,id) {
+FluidGraph.prototype.changeIndexNode = function(node,index) {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("changeIdNode start");
+  if (thisGraph.config.debug) console.log("changeIndexNode start");
 
   var el = d3.select(node);
-  var text_id = el.select("#text_id");
-  text_id.text(id);
+  var text_index = el.select("#text_index");
+  text_index.text(index);
 
-  if (thisGraph.config.debug) console.log("changeIdNode end");
+  if (thisGraph.config.debug) console.log("changeIndexNode end");
 }
 
 FluidGraph.prototype.changeTypeNode = function(node,type) {
@@ -274,8 +275,8 @@ FluidGraph.prototype.changeTypeNode = function(node,type) {
         .attr("class", "ui large " + thisGraph.customNodes.imageType[type] + " icon")
       .attr("style", "display:inline")
 
-  var circle_id_el = el.select("#circle_id");
-  circle_id_el.style("fill", function(d) { return thisGraph.customNodes.colorType[type] } );
+  var circle_index_el = el.select("#circle_index");
+  circle_index_el.style("fill", function(d) { return thisGraph.customNodes.colorType[type] } );
 
   if (thisGraph.config.debug) console.log("displayType end");
 }
@@ -297,22 +298,22 @@ FluidGraph.prototype.editNode = function(d3node, d) {
   el.select("#fo_content_closed_node_events").remove();
 
   el
-    .select("#circle_id")
+    .select("#circle_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("cx", thisGraph.nodeIdCircle.cxEdited)
-    .attr("cy", thisGraph.nodeIdCircle.cyEdited)
+    .attr("cx", thisGraph.nodeIndexCircle.cxEdited)
+    .attr("cy", thisGraph.nodeIndexCircle.cyEdited)
 
   el
-    .select("#text_id")
+    .select("#text_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationEdit)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("dx", thisGraph.nodeIdCircle.dxEdited)
-    .attr("dy", thisGraph.nodeIdCircle.dyEdited)
+    .attr("dx", thisGraph.nodeIndexCircle.dxEdited)
+    .attr("dy", thisGraph.nodeIndexCircle.dyEdited)
 
   el
     .select("#circle_type")
@@ -403,30 +404,30 @@ FluidGraph.prototype.displayContentEditedNode = function(d3node, d) {
 
       /*
        *
-       * Id
+       * index
        *
        * */
 
-  if (thisGraph.config.displayId == "On")
+  if (thisGraph.config.displayIndex == "On")
   {
-    var field_id = form_segment
+    var field_index = form_segment
            .append("div")
            .attr("class", "id")
            .attr("style", "margin:0px")
 
-    //Node label Id
-    var node_label_type = field_id
+    //Node label index
+    var node_label_type = field_index
           .append("label")
           .attr("style", "margin:0;")
-          .html("<b>Id</b>")
+          .html("<b>Index</b>")
 
-    //content Id
-    var select_type = field_id
+    //content index
+    var select_type = field_index
           .append("input")
-          .attr("id", "input_id")
+          .attr("id", "input_index")
           .attr("style", "padding:0px; margin-left:20px; width:50px")
           .attr("value", function() {
-              return d.id;
+              return d.index;
           })
   }
 
@@ -522,22 +523,22 @@ FluidGraph.prototype.openNode = function(d3node, d) {
                     + heightNeighbours
                     + thisGraph.customNodes.heightOpenedBottomMax;
   var yNodeCircle = -(totalHeight) / 2;
-  var cyCircleId = -(totalHeight/2);
+  var cyCircleIndex = -(totalHeight/2);
   var cyOpened = (totalHeight/2)-10;
   var yOpened = (totalHeight/2)-20;
   var dyOpened = -(totalHeight/2)+5;
   var ylabel = -15-totalHeight/2;
 
   el
-    .select("#circle_id")
+    .select("#circle_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationOpen)
     .delay(thisGraph.customNodes.transitionDelay)
     .ease(thisGraph.customNodes.transitionEasing)
-    .attr("cy", cyCircleId)
+    .attr("cy", cyCircleIndex)
 
   el
-    .select("#text_id")
+    .select("#text_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationOpen)
     .delay(thisGraph.customNodes.transitionDelay)
@@ -639,7 +640,7 @@ FluidGraph.prototype.displayContentOpenedNode = function(d3node, d, neighbours, 
   })
 
   neighbours.nodes.forEach(function(node,i){
-    if (node.id != d.id)
+    if (node.index != d.index)
     {
       if (node.type != "without")
       {
@@ -705,17 +706,17 @@ FluidGraph.prototype.closeNode = function(typeOfNode) {
     var el = d3.select(thisGraph.state.editedNode);
     var p_el = d3.select(thisGraph.state.editedNode.parentNode);
 
-    var input_id = p_el.select("#input_id");
+    var input_index = p_el.select("#input_index");
     var type_node_select = p_el.select("#select_type");
     var description_node_textarea = p_el.select("#textarea_label_edit_node");
 
-    if (thisGraph.config.displayId == "On")
+    if (thisGraph.config.displayIndex == "On")
     {
-      var interger_input_id = parseInt(input_id.node().value, 10);
-      if (interger_input_id)
-        thisGraph.state.editedNode.__data__.id = interger_input_id;
+      var interger_input_index = parseInt(input_index.node().value, 10);
+      if (interger_input_index)
+        thisGraph.state.editedNode.__data__.index = interger_input_index;
       else
-        thisGraph.state.editedNode.__data__.id = thisGraph.state.editedIndexNode;
+        thisGraph.state.editedNode.__data__.index = thisGraph.state.editedIndexNode;
     }
 
     thisGraph.state.editedNode.__data__.type = type_node_select.node().value;
@@ -749,16 +750,16 @@ FluidGraph.prototype.closeNode = function(typeOfNode) {
   }
 
   el
-    .select("#circle_id")
+    .select("#circle_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationClose)
-    .attr("cy", thisGraph.nodeIdCircle.cyClosed)
+    .attr("cy", thisGraph.nodeIndexCircle.cyClosed)
 
   el
-    .select("#text_id")
+    .select("#text_index")
     .transition()
     .duration(thisGraph.customNodes.transitionDurationClose)
-    .attr("dy", thisGraph.nodeIdCircle.dyClosed)
+    .attr("dy", thisGraph.nodeIndexCircle.dyClosed)
 
   el
     .select("#circle_type")
@@ -807,7 +808,7 @@ FluidGraph.prototype.saveEditNode = function() {
   if (thisGraph.config.debug) console.log("saveEditNode start");
 
   var editedNodeData = thisGraph.state.editedNode.__data__;
-  thisGraph.changeIdNode(thisGraph.state.editedNode,editedNodeData.id);
+  thisGraph.changeIndexNode(thisGraph.state.editedNode,editedNodeData.index);
   thisGraph.changeTypeNode(thisGraph.state.editedNode,editedNodeData.type);
 
   if (thisGraph.config.debug) console.log("saveEditNode end");
@@ -879,7 +880,7 @@ FluidGraph.prototype.searchIndexNodeFromIdentifier = function(o, searchTerm) {
 FluidGraph.prototype.searchIdNodeFromIdentifier = function(o, searchTerm) {
   for (var i = 0, len = o.length; i < len; i++) {
     if (o[i].identifier === searchTerm)
-      return o[i].id;
+      return o[i].index;
   }
   return -1;
 }
@@ -891,11 +892,11 @@ FluidGraph.prototype.getNeighbourNodesAndLinks = function(rootNode) {
 
   var linkedByIndex = {};
   thisGraph.d3data.edges.forEach(function(d) {
-    linkedByIndex[d.source.id + "," + d.target.id] = 1;
+    linkedByIndex[d.source.index + "," + d.target.index] = 1;
   });
 
   function isConnected(a, b) {
-    return linkedByIndex[a.id + "," + b.id] || linkedByIndex[b.id + "," + a.id] || a.id == b.id;
+    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
   }
 
   var neighbours = {};
@@ -907,11 +908,11 @@ FluidGraph.prototype.getNeighbourNodesAndLinks = function(rootNode) {
 
   thisGraph.d3data.nodes.forEach(function(node) {
     //Nodes
-    if (isConnected(rootNode, node) && rootNode.id != node.id) {
+    if (isConnected(rootNode, node) && rootNode.index != node.index) {
       neighbours.nodes.push(node);
     }
     //links
-    if (isConnected(rootNode, node) && rootNode.id != node.id) {
+    if (isConnected(rootNode, node) && rootNode.index != node.index) {
       neighbours.edges.push({
         source: thisGraph.searchIndexNodeFromIdentifier(neighbours.nodes, rootNode.identifier),
         target: thisGraph.searchIndexNodeFromIdentifier(neighbours.nodes, node.identifier)
@@ -994,7 +995,7 @@ FluidGraph.prototype.replaceSelectNode = function(nodecircle, d) {
 FluidGraph.prototype.removeSelectFromNode = function() {
   var thisGraph = this;
   thisGraph.svgNodesEnter.filter(function(node) {
-    if (node.id === thisGraph.state.selectedNode.id)
+    if (node.index === thisGraph.state.selectedNode.index)
     {
       node.fixed = false;
       return true;
@@ -1025,9 +1026,9 @@ FluidGraph.prototype.addNode = function(thisGraph, newnode) {
   if (typeof newnode.type == "undefined")
     newnode.type = thisGraph.customNodes.typeOfNewNode;
   if (typeof newnode.identifier == "undefined")
-    newnode.identifier = thisGraph.config.uriBase + thisGraph.getNodeId();
-  if (typeof newnode.id == "undefined")
-    newnode.id = thisGraph.getNodeId();
+    newnode.identifier = thisGraph.config.uriBase + thisGraph.getNodeIndex();
+  if (typeof newnode.index == "undefined")
+    newnode.index = thisGraph.getNodeIndex();
 
   if (typeof newnode.px == "undefined")
     newnode.px = xy[0];
@@ -1048,19 +1049,19 @@ FluidGraph.prototype.addNode = function(thisGraph, newnode) {
   return newnode.identifier;
 }
 
-FluidGraph.prototype.getNodeId = function() {
+FluidGraph.prototype.getNodeIndex = function() {
   thisGraph = this;
 
-  if (thisGraph.config.debug) console.log("getNodeId start");
-  var nextNodeId = 0;
+  if (thisGraph.config.debug) console.log("getNodeIndex start");
+  var nextNodeIndex = 0;
 
   thisGraph.d3data.nodes.forEach(function (node){
-    if (node.id > nextNodeId)
-      nextNodeId = node.id;
+    if (node.index > nextNodeIndex)
+      nextNodeIndex = node.index;
   })
 
-  if (thisGraph.config.debug) console.log("getNodeId end");
-  return nextNodeId+1;
+  if (thisGraph.config.debug) console.log("getNodeIndex end");
+  return nextNodeIndex+1;
 }
 
 FluidGraph.prototype.nodeOnMouseDown = function(d3node, d) {
@@ -1143,7 +1144,7 @@ FluidGraph.prototype.nodeOnDragMove = function(d, i) {
 
   if (thisGraph.state.editedNode)
   {
-    if (thisGraph.state.editedNode.__data__.id === d.id)
+    if (thisGraph.state.editedNode.__data__.index === d.index)
       return;
     else thisGraph.closeNode.call(thisGraph, "edited");
   }
