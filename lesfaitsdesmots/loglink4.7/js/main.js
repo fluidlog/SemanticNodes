@@ -21,11 +21,11 @@ function getD3Data() {
 
 $(document).ready()
 {
-  //Load default graph (Démo, explaination...)
-  var d3data = getD3Data();
-
   //  console.log(JSON.stringify(d3data));
   var myGraph = new FluidGraph();
+
+  //Load default graph (Démo, explaination...)
+  myGraph.d3data = getD3Data();
 
   myGraph.initSgvContainer("#chart");
 
@@ -38,9 +38,7 @@ $(document).ready()
   if (openedGraph)
   {
     myGraph.loadLocalGraph(openedGraph);
-    //myGraph.loadExternalGraph("0d38f431ba");
   }
-  else myGraph.newGraph();
 
   var checkboxIsInitialized = false;
   menuInitialisation(myGraph);
