@@ -42,14 +42,15 @@ data[2] = {
 
 data[3] = {
       nodes: [
-              {index:0, label: "Bienvenue... dans la Carto PAIR !", type:"av:project", x:300, y:50, identifier:"http://fluidlog.com/0" },
+              {index:0, label: "Bienvenue dans la Carto PAIR !", type:"av:project", x:300, y:50, identifier:"http://fluidlog.com/0" },
               {index:1, label: "Vous pouvez ajouter...", type:"av:idea", x:150, y:150, identifier:"http://fluidlog.com/1" },
               {index:2, label: "Des Projets", type:"av:project", x:300, y:200, identifier:"http://fluidlog.com/2" },
               {index:3, label: "Des Acteurs", type:"av:actor", x:400, y:200, identifier:"http://fluidlog.com/3" },
               {index:4, label: "Des Idées", type:"av:idea", x:500, y:200, identifier:"http://fluidlog.com/4" },
               {index:5, label: "Des Ressources", type:"av:ressource", x:600, y:200, identifier:"http://fluidlog.com/5" },
-              {index:6, label: "Et faire des liens entre les noeuds", type:"av:idea", x:300, y:300, identifier:"http://fluidlog.com/6" },
+              {index:6, label: "Faire des liens entre les noeuds", type:"av:idea", x:300, y:300, identifier:"http://fluidlog.com/6" },
               {index:7, label: "Pour cartographier un réseau PAIR à PAIR !", type:"av:project", x:600, y:300, identifier:"http://fluidlog.com/7" },
+              {index:8, label: "Pour plus d'infos, lisez l'aide (menu en haut à droite) !", type:"av:ressource", x:500, y:400, identifier:"http://fluidlog.com/7" },
       ],
       edges: [
               { source: 0, target: 1 },
@@ -59,6 +60,7 @@ data[3] = {
               { source: 4, target: 5 },
               { source: 4, target: 6 },
               { source: 4, target: 7 },
+              { source: 4, target: 8 },
       ]
 }
 

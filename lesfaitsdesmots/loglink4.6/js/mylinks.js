@@ -46,7 +46,7 @@ FluidGraph.prototype.linkEdit = function(d3Edge, edgeData){
   var el = d3Edge;
   var p_el = d3.select(d3Edge.node().parentNode);
 
-  var searchLabelId = "#edge" + edgeData.source.id + "_" + edgeData.target.id;
+  var searchLabelId = "#edge" + edgeData.source.index + "_" + edgeData.target.index;
   d3.select(searchLabelId).attr("visibility", "hidden");
 
   thisGraph.state.editedLinkLabel = d3Edge.node();
@@ -150,7 +150,7 @@ FluidGraph.prototype.spliceLinksForNode = function (nodeid) {
 
   var toSplice = thisGraph.d3data.edges.filter(
     function(l) {
-      return (l.source.id === nodeid) || (l.target.id === nodeid); });
+      return (l.source.index === nodeid) || (l.target.index === nodeid); });
 
   toSplice.map(
     function(l) {
@@ -161,7 +161,7 @@ FluidGraph.prototype.replaceSelectLinks = function(d3Edge, edgeData){
   var thisGraph = this;
   d3Edge.classed(thisGraph.consts.selectedClass, true);
 
-  var searchLabelId = "#edge" + edgeData.source.id + "_" + edgeData.target.id;
+  var searchLabelId = "#edge" + edgeData.source.index + "_" + edgeData.target.index;
   d3.select(searchLabelId).attr("visibility", "visible");
 
   if (thisGraph.state.selectedLink){
@@ -264,7 +264,7 @@ FluidGraph.prototype.saveEditedLinkLabel = function() {
   thisGraph.state.editedLinkLabel.__data__.type = linkLabelNewText;
 
   //Modification of linklabel
-  var searchLabelId = "#edge" + thisGraph.state.editedLinkLabel.__data__.source.id + "_" + thisGraph.state.editedLinkLabel.__data__.target.id;
+  var searchLabelId = "#edge" + thisGraph.state.editedLinkLabel.__data__.source.index + "_" + thisGraph.state.editedLinkLabel.__data__.target.index;
   d3.select(searchLabelId).text(linkLabelNewText);
 
   d3.select("#linkEditBox").remove();
