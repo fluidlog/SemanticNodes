@@ -62,7 +62,7 @@ FluidGraph.prototype.jsonD3ToD3Data = function(jsonObj) {
 
   newNodes = jsonObj.nodes;
   newNodes.forEach(function(node,i){
-    newNodes[i].index = node.index || node.id;
+    newNodes[i].index = typeof node.index != "undefined" ? node.index : node.id ;
     if (!node.type.includes("av:"))
     newNodes[i].type = "av:"+node.type;
   });

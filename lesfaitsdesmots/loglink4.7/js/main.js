@@ -22,7 +22,7 @@ function getD3Data() {
 $(document).ready()
 {
   //Load default graph (Démo, explaination...)
-  // var d3data = getD3Data();
+  var d3data = getD3Data();
 
   //  console.log(JSON.stringify(d3data));
   var myGraph = new FluidGraph();

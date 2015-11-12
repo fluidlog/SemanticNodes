@@ -1,0 +1,3 @@
+[submodule "lesfaitsdesmots/loglink4.7/assets/fluidgraph"]
+	path = lesfaitsdesmots/loglink4.7/assets/fluidgraph
+	url = https://github.com/fluidlog/fluidgraph.git

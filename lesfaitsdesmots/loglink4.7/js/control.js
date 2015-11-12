@@ -26,15 +26,19 @@ $('#newGraph')
 
 $('#openGraph').click(function() {
   myGraph.getContentLocalStorage();
-  myGraph.displayContentOpenGraphModal();
-  $('#openGraphModal')
-    .modal({
-          onApprove : function()
-            {
-              myGraph.openGraph();
-            }
-          })
-    .modal('show');
+  if (myGraph.listOfLocalGraphs.length)
+  {
+    myGraph.displayContentOpenGraphModal();
+    $('#openGraphModal')
+      .modal({
+            onApprove : function()
+              {
+                myGraph.openGraph();
+              }
+            })
+      .modal('show');
+  }
+  else alert("No graph in local storage !")
 })
 .popup({
   inline: true,
