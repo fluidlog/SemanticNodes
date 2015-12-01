@@ -1,0 +1,154 @@
+rect
+{
+	fill: #333
+}
+
+.node {
+	cursor: pointer;
+}
+
+.overlay{
+		background-color:#AAA;
+}
+
+.label_closed_node {
+	font-size:14px;
+}
+
+.ghostCircle.show{
+		display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+		display: none;
+}
+
+.fo_xhtml_closed{
+   	/* background-color: rgba(255,0,0,.3); */
+
+	width: 200px;
+	height: 200px;
+    padding-top: 80px;
+    margin: 0px;
+    overflow: auto;
+}
+
+.fo_xhtml_opened{
+   	/* background-color: rgba(255,0,0,.3); */
+
+	width: 200px;
+	height: 200px;
+    padding: 20px;
+    margin: 0px;
+}
+
+.fo_text_node{
+/*    	    background-color: rgba(255,0,0,.3);
+ */
+    border: 2px solid rgba(255,0,0,.3);
+	padding: 2px;
+    text-align: center;
+
+    -moz-border-radius:    20px;
+    -webkit-border-radius: 20px;
+    border-radius:         20px;
+}
+
+.fo_div_image{
+/*    	    background-color: rgba(255,0,0,.3);
+ */
+    text-align: center;
+}
+
+.fo_div_centered p{
+/*    	    background-color: rgba(255,0,0,.3);
+ */
+	margin: 0;
+    text-align: center;
+
+    -moz-border-radius:    10px;
+    -webkit-border-radius: 10px;
+    border-radius:         10px;
+}
+
+.node_opacity
+{
+	opacity:.2;
+}
+
+.circle_highlight1
+{
+  	stroke-width: 2px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.circle_highlight2
+{
+  	stroke-width: 5px;
+	stroke: #FF6;
+  	fill: transparent;
+}
+
+.text_id {
+  font-size: 12px;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: "Helvetica Neue, Helvetica, Arial, sans-serif;";
+}
+
+.text_id_selected {
+  stroke: #EEE;
+  fill: #EEE;
+}
+
+.circle_type {
+  pointer-events: none;
+  cursor:pointer;
+  stroke-opacity: .5;
+  fill: transparent;
+  stroke: #DDD;
+  stroke-width:3px;
+}
+
+.circle_type_selected {
+  stroke: #999;
+}
+
+.circle_change_type {
+  stroke: #DDD;
+  fill: white;
+  pointer-events: none;
+  stroke-width:2px;
+  cursor:pointer;
+}
+.node_circle
+{
+	stroke: #DDD;
+}
+
+.node_selected {
+	stroke: #888;
+}
+
+.drag_line {
+  stroke: #999;
+  stroke-width: 5;
+  pointer-events: none;
+}
+
+.drag_line_hidden {
+  stroke: #999;
+  stroke-width: 0;
+  pointer-events: none;
+}
+
+.link {
+  stroke: #DDD;
+  stroke-width: 7;
+  cursor: pointer;
+}
+
+.link_selected {
+  stroke: #999;
+}

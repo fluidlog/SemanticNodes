@@ -1,0 +1,18 @@
+{
+ "name": "Test",
+ "children": [
+  {
+   "name": "cat 1",
+   "children": [
+    {"name": "subcat 1-a", "size": 1082},
+    {"name": "subcat 1-b", "size": 1082}
+   ]
+  },
+  {
+   "name": "cat 2",
+   "children": [
+    {"name": "subcat 2-a", "size": 1082}
+   ]
+  }  
+ ]
+}

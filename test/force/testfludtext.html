@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--[if lt IE 9]>
+Votre navigateur est obsolète.
+Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
+<![endif]-->
+  <meta charset="utf-8">
+  <title>testfludtext</title>
+  <script src="js/jquery-2.1.3.js"></script>
+
+  <!--         <script src="js/d3.v2.min.js"></script>
+ -->
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  <script src="js/semantic1.12.1.js"></script>
+  <link rel="stylesheet" href="css/testfludtext.css" />
+  <link rel="stylesheet" href="css/semantic1.12.1.css" />
+</head>
+
+<body style="margin:50px;border:1px solid black">
+
+  <div class="ui four column grid">
+    <div class="column">
+
+      <div class="ui top attached segment" style="margin:0px;padding:0px;width:200px;height:100px;background-color: rgba(255,200,200,.8)">
+        <div class="ui top attached right label">Exemple 1</div>
+        <div id="exemple1">
+          <svg>
+            <rect x="0" y="0" rx="10" ry="10" width="30" height="30" style="stroke: rgb(170, 170, 170); stroke-width: 5px; opacity: 0.8;">
+            </rect>
+            <text x="0" y="15" fill="red"> text1
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui top attached segment" style="margin:0px;padding:0px;width:200px;height:100px;background-color: rgba(255,200,200,.5)">
+        <div class="ui top attached right label">Exemple 2</div>
+        <div id="exemple2">
+          <div class="rectangle">
+            <p>
+              Rectangle en HTML 5
+            </p>
+          </div>
+          <div class="fo_xhtml">
+            <p class="fo_p_node" style="background-color:rgba(137,165,229,.5);border: 2px solid rgba(137,165,229,.5);">
+              text2
+              <br>text2
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui top attached segment" style="margin:0px;padding:0px;
+                                                  background-color: rgba(255,200,200,.5)">
+        <div class="ui top attached right label">Exemple 2bis</div>
+        <div id="exemple2">
+          <div class="rectangle">
+            <p>
+              Rectangle
+            </p>
+          </div>
+          <div class="fo_xhtml" style="	display: flex;
+                                      	flex-direction:column;
+                                      	justify-content:center;
+                                      	align-content:center;
+                                        align-items:center">
+            <div class="fo_p_node" style="order:2;
+                                          flex-grow:0;
+                                          ">
+                div : flexbox 1
+            </div>
+            <div class="fo_p_node" style="order:1;
+                                          flex-grow:0">
+                div : flexbox 2
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui top attached segment" style="margin:0px;padding:0px;width:200px;height:100px;background-color: rgba(255,200,200,.3)">
+        <div class="ui top attached right label">Exemple 3</div>
+        <div id="exemple3">
+          <svg>
+            <g>
+              <rect x="0" y="0" rx="10" ry="10" width="30" height="30" style="stroke: rgb(170, 170, 170); stroke-width: 5px; opacity: 0.5;">
+              </rect>
+              <foreignObject id="fo_closed_flud" x=0 y=0 width="50" height="50" style="background-color:rgba(130,130,130,.5);">
+                <div class="fo_xhtml">
+                  <p class="fo_p_node" style="background-color:rgba(137,165,229,.5);border: 2px solid rgba(137,165,229,.5);">
+                    text3
+                  </p>
+                </div>
+              </foreignObject>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui three column grid">
+    <div class="column">
+      <div class="ui top attached segment" style="margin:0px;padding:0px;width:200px;height:100px;background-color: rgba(150,200,200,.8)">
+        <div class="ui top attached right label">Exemple 4</div>
+        <div id="_chart">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/testfludtext.js"></script>
+</body>
+
+</html>

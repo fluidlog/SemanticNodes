@@ -1,0 +1,37 @@
+/* Styles for our labels */
+
+.htmlLabel {
+    font-family: arial,helvetica,'sans-serif';
+    font-size: 12px;
+    padding: 8px;
+    background-color: rgba(255,255,255,.3)
+}
+.htmlLabel p {
+    margin: 0;
+}
+.bar-label {
+    font-size: 18px;
+    text-align: center;
+}
+p.description {
+     margin-top: 8px;   
+}
+
+/* Assign styles to bars based on division labels */
+.com {
+    fill: goldenrod;
+}
+.sci {
+    fill: royalblue;
+}
+.ops {
+    fill: crimson;
+}
+
+svg {
+    border: 1px #000 solid;
+}
+
+#backdrop {
+    fill: oldlace;   
+}
