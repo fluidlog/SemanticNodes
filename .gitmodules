@@ -1,3 +1,9 @@
 [submodule "lesfaitsdesmots/loglink4.7/assets/fluidgraph"]
 	path = lesfaitsdesmots/loglink4.7/assets/fluidgraph
 	url = https://github.com/fluidlog/fluidgraph.git
+[submodule "lesfaitsdesmots/loglink7.1/assets/LDP-framework"]
+	path = lesfaitsdesmots/loglink7.1/assets/LDP-framework
+	url = https://github.com/Open-Initiative/LDP-framework.git
+[submodule "lesfaitsdesmots/loglink7.1/assets/fluidgraph"]
+	path = lesfaitsdesmots/loglink7.1/assets/fluidgraph
+	url = https://github.com/fluidlog/fluidgraph.git

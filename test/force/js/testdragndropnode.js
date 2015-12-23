@@ -5,12 +5,12 @@ var FontFamily = "Helvetica Neue, Helvetica, Arial, sans-serif;";
 var n = 100;
 var message_offline = "Connectez-vous à internet pour pouvoir continuer";
 var debug = true;
-var duration = 1000;
+var duration = 500;
 // variables for drag/drop
-var selectedNode = null;
-var selectedNodeSvg = null;
+var targetNode = null;
+var targetNodeSvg = null;
 var draggingNode = null;
-var domNode = null;
+var svgNode = null;
 var dNode = null;
 
 var width = window.innerWidth - 10,
@@ -76,11 +76,11 @@ force.start();
 for (var i = n * n; i > 0; --i) force.tick();
 force.stop();
 
-function initiateDrag(d, domNode) {
+function initiateDrag(d, svgNode) {
     draggingNode = d;
-    d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
+    d3.select(svgNode).select('.ghostCircle').attr('pointer-events', 'none');
     d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
-    d3.select(domNode).attr('class', 'node activeDrag');
+    d3.select(svgNode).attr('class', 'node activeDrag');
 
 		//Make drag node on the back (first of the list)
 		svg.selectAll("g.node").sort(function(a, b) { // select the parent and sort the path's
@@ -100,19 +100,17 @@ dragListener = d3.behavior.drag()
 		// it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
 })
 .on("drag", function(d) {
-		if (dragStarted) {
-				domNode = this;
-				initiateDrag(d, domNode);
-		}
-
 		draggingNode = d;
+		if (dragStarted) {
+				initiateDrag(d, this);
+		}
 
 		draggingNode.x += d3.event.dx;
 		draggingNode.y += d3.event.dy;
-    movexy();
+	  movexy();
 		updateTempConnector();
 }).on("dragend", function(d) {
-		domNode = this;
+		svgNode = this;
 		draggingNode = d;
 
 		//Make node ordred by index
@@ -121,10 +119,10 @@ dragListener = d3.behavior.drag()
         else return -1; // a is the hovered element, bring "a" to the front
     });
 
-		if (selectedNode) {
-			console.log("selectedNode :"+selectedNode.index)
+		if (targetNode) {
+			console.log("targetNode :"+targetNode.index)
 
-			d3.select(domNode)
+			d3.select(svgNode)
 					.transition()
 					.duration(duration)
 					.attr("transform", function (d){ return "translate("+d.px+","+d.py+")" })
@@ -154,11 +152,11 @@ dragListener = d3.behavior.drag()
 });
 
 function endDrag() {
-		selectedNode = null;
+		targetNode = null;
 		d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-		d3.select(domNode).attr('class', 'node');
+		d3.select(svgNode).attr('class', 'node');
 		// now restore the mouseover event or we won't be able to drag a 2nd time
-		d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
+		d3.select(svgNode).select('.ghostCircle').attr('pointer-events', '');
 		updateTempConnector();
 		if (draggingNode !== null) {
 				// centerNode(draggingNode);
@@ -169,23 +167,23 @@ function endDrag() {
 function drawLink ()
 {
 	//Search if there is a link between the two nodes
-	var searchLink1 = d3.select("#edge"+draggingNode.index+"_"+selectedNode.index);
-	var searchLink2 = d3.select("#edge"+selectedNode.index+"_"+draggingNode.index);
+	var searchLink1 = d3.select("#edge"+draggingNode.index+"_"+targetNode.index);
+	var searchLink2 = d3.select("#edge"+targetNode.index+"_"+draggingNode.index);
 
 	if (!searchLink1.node() && !searchLink2.node())
 	{
 		// Add new edge between the two nodes
-		var sourceObj = selectedNode;
+		var sourceObj = targetNode;
 		var targetObj = draggingNode;
-		var newlink = { type : "loglink:linkedto",
+		var datalink = { type : "loglink:linkedto",
 										source: sourceObj,
 										target: targetObj,
 									};
 
-		dataset.edges.push(newlink);
+		dataset.edges.push(datalink);
 
 		var newLink = d3.svg.diagonal()
-				.source({"x":selectedNode.x, "y":selectedNode.y})
+				.source({"x":targetNode.x, "y":targetNode.y})
 				.target({"x":draggingNode.x, "y":draggingNode.y})
 				// .projection(function(d) { return [d.y, d.x]; });
 
@@ -195,7 +193,7 @@ function drawLink ()
 				.attr("stroke", "#ccc")
 				.attr("stroke-width", "1.5px")
 				.style("fill", "none")
-				.attr("id", "edge"+draggingNode.index + "_" + selectedNode.index)
+				.attr("id", "edge"+draggingNode.index + "_" + targetNode.index)
 				.attr("d", newLink)
 
 		totalLengthPath = newPath.node().getTotalLength();
@@ -226,13 +224,13 @@ function movexy()
 // Function to update the temporary connector indicating dragging affiliation
 var updateTempConnector = function() {
     var data = [];
-    if (draggingNode !== null && selectedNode !== null) {
+    if (draggingNode !== null && targetNode !== null) {
         data = [{
-            source: {x1 : selectedNode.x, y1 : selectedNode.y},
+            source: {x1 : targetNode.x, y1 : targetNode.y},
             target: {x2 : draggingNode.x, y2 : draggingNode.y}
         }];
     }
-    tempConnector = svg.selectAll(".templink").data(data);
+    var tempConnector = svg.selectAll(".templink").data(data);
 
 		tempConnector.enter()
 				.insert("line", ".node")
@@ -338,13 +336,13 @@ function rescale() {
 			+ " scale(" + scale + ")");
 }
 
-var overCircle = function(d, d3node) {
-	selectedNode = d;
-	selectedNodeSvg = d3node.node();
+var overCircle = function(d, d3Node) {
+	targetNode = d;
+	targetNodeSvg = d3Node.node();
 		updateTempConnector();
 };
-var outCircle = function(d, d3node) {
-		selectedNode = null;
-		selectedNodeSvg = null;
+var outCircle = function(d, d3Node) {
+		targetNode = null;
+		targetNodeSvg = null;
 		updateTempConnector();
 };
