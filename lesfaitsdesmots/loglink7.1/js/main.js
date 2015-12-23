@@ -89,8 +89,8 @@ $(document).ready()
                                       "loglink:ou" : "#899DD5",
                                       "loglink:comment" : "#B5F49D",
                                       "loglink:quand" : "#C381D3",
-                                      "loglink:combien" : "#AAA",
-                                      "loglink:without" : "#FFF"
+                                      "loglink:combien" : "#AAAAAA",
+                                      "loglink:without" : "#FFFFFF"
                                       };
 
   myGraph.customNodes.colorTypeRgba = {"loglink:qui" : "243,253,151",
@@ -102,6 +102,26 @@ $(document).ready()
                                         "loglink:combien" : "163,163,163",
                                         "loglink:without" : "255,255,255"
                                         };
+
+  myGraph.customNodes.strokeNeighbourColorType = {"loglink:qui" : "#CDCB14",
+                                      "loglink:quoi" : "#DA0918",
+                                      "loglink:pourquoi" : "#AB7C1A",
+                                      "loglink:ou" : "#1A398F",
+                                      "loglink:comment" : "#30AD02",
+                                      "loglink:quand" : "#6F1286",
+                                      "loglink:combien" : "#2F2B2B",
+                                      "loglink:without" : "#FFFFFF"
+                                    };
+
+  myGraph.customNodes.strokeNeighbourColorTypeRgba = {"loglink:qui" : "205,203,20",
+                                      "loglink:quoi" : "218,9,24",
+                                      "loglink:pourquoi" : "171,124,26",
+                                      "loglink:ou" : "26,57,143",
+                                      "loglink:comment" : "48,173,2",
+                                      "loglink:quand" : "111,18,134",
+                                      "loglink:combien" : "47,43,43",
+                                      "loglink:without" : "255,255,255"
+                                    };
 
   myGraph.customNodes.imageType = {"loglink:qui" : "yellow user",
                                     "loglink:quoi" : "red cube",
@@ -124,7 +144,20 @@ $(document).ready()
                             template : "",
                             partials : ""})
 
-  myGraph.openedGraph = myGraph.getOpenedGraph();
+  // location.hash = #https://ldp.virtual-assembly.org:8443/2013/cartopair/2a1499b5dc
+  if (window.location.hash)
+  {
+    // myGraph.ldpGraphName = https://ldp.virtual-assembly.org:8443/2013/cartopair/2a1499b5dc
+    myGraph.ldpGraphName = window.location.hash.substring(1);
+    myGraph.openedGraph = myGraph.ldpGraphName;
+    // myGraph.graphName = 2a1499b5dc
+    myGraph.graphName = myGraph.openedGraph.split("/").pop();
+    // myGraph.externalStore.uri = https://ldp.virtual-assembly.org:8443/2013/cartopair/
+    myGraph.externalStore.uri = myGraph.openedGraph.split(myGraph.graphName)[0];
+    myGraph.typeLdpServer = "external";
+  }
+  else
+    myGraph.openedGraph = myGraph.getOpenedGraph();
 
   if (myGraph.openedGraph)
   {
