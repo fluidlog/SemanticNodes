@@ -279,13 +279,13 @@ $('#activeElasticCheckbox').checkbox({
   }
 });
 
-$('#displayIdCheckbox').checkbox({
+$('#displayIndexCheckbox').checkbox({
   onChecked: function() {
-    myGraph.config.displayId = "On";
+    myGraph.config.displayIndex = "On";
     myGraph.refreshGraph();
   },
   onUnchecked: function() {
-    myGraph.config.displayId = "Off";
+    myGraph.config.displayIndex = "Off";
     myGraph.refreshGraph();
   }
 });

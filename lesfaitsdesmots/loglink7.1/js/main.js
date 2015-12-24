@@ -45,10 +45,10 @@ function menuInitialisation(myGraph) {
   else
     $('#activeElasticCheckbox').checkbox('uncheck');
 
-  if (myGraph.config.displayId == 'On')
-    $('#displayIdCheckbox').checkbox('check');
+  if (myGraph.config.displayIndex == 'On')
+    $('#displayIndexCheckbox').checkbox('check');
   else
-    $('#displayIdCheckbox').checkbox('uncheck');
+    $('#displayIndexCheckbox').checkbox('uncheck');
 
   if (myGraph.typeLdpServer == 'external')
   {
@@ -132,6 +132,19 @@ $(document).ready()
                                     "loglink:combien" : "grey money",
                                     "loglink:without" : "circle thin"};
 
+  myGraph.customNodes.strokeColorType = {"loglink:qui" : "#CDCB14",
+                                      "loglink:quoi" : "#DA0918",
+                                      "loglink:pourquoi" : "#AB7C1A",
+                                      "loglink:ou" : "#1A398F",
+                                      "loglink:comment" : "#30AD02",
+                                      "loglink:quand" : "#6F1286",
+                                      "loglink:combien" : "#2F2B2B",
+                                      "loglink:without" : "#FFFFFF"
+                                    };
+
+  // myGraph.config.awsomeStrokeNode = false;
+  myGraph.customNodes.strokeOpacity = .8;
+  myGraph.customNodes.strokeWidth = 3;
   myGraph.config.version = "loglink47";
   myGraph.customNodes.blankNodeType = "loglink:without"
   myGraph.externalStore.uri = "https://ldp.virtual-assembly.org:8443/2013/fludy/";
@@ -180,5 +193,9 @@ $(document).ready()
   checkboxIsInitialized = true;
 
   if (myGraph.d3Data.nodes.length > 0)
+  {
     myGraph.drawGraph();
+    if (thisGraph.config.force == "Off")
+      thisGraph.movexy.call(thisGraph);
+  }
 }
