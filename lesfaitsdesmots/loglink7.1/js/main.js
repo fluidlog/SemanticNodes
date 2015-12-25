@@ -144,7 +144,7 @@ $(document).ready()
 
   // myGraph.config.awsomeStrokeNode = false;
   myGraph.customNodes.strokeOpacity = .8;
-  myGraph.customNodes.strokeWidth = 3;
+  myGraph.customNodes.strokeWidth = 2;
   myGraph.config.version = "loglink47";
   myGraph.customNodes.blankNodeType = "loglink:without"
   myGraph.externalStore.uri = "https://ldp.virtual-assembly.org:8443/2013/fludy/";
@@ -198,4 +198,10 @@ $(document).ready()
     if (thisGraph.config.force == "Off")
       thisGraph.movexy.call(thisGraph);
   }
+
+  //For testing open first node
+  // var dNode = myGraph.d3Data.nodes[0];
+  // var d3Node = thisGraph.searchD3NodeFromD(dNode)
+  // myGraph.openNode(d3Node, dNode);
+
 }
