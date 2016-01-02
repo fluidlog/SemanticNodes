@@ -74,16 +74,56 @@ $(document).ready()
   var myGraph = new FluidGraph();
 
   myGraph.customNodes.listType = ["loglink:qui",
-                                      "loglink:quoi",
-                                      "loglink:pourquoi",
-                                      "loglink:ou",
-                                      "loglink:comment",
-                                      "loglink:quand",
-                                      "loglink:combien",
-                                      "loglink:without",
+                                  "loglink:pourquoi",
+                                  "loglink:quoi",
+                                  "loglink:ou",
+                                  "loglink:comment",
+                                  "loglink:quand",
+                                  "loglink:combien",
+                                  "loglink:without",
                                     ];
 
-  myGraph.customNodes.colorType = {"loglink:qui" : "#F3FD97",
+  // myGraph.customNodes.colorType = {"loglink:qui" : "#F3FD97",
+  //                                     "loglink:quoi" : "#FDA8AE",
+  //                                     "loglink:pourquoi" : "#FFDE98",
+  //                                     "loglink:ou" : "#899DD5",
+  //                                     "loglink:comment" : "#B5F49D",
+  //                                     "loglink:quand" : "#C381D3",
+  //                                     "loglink:combien" : "#AAAAAA",
+  //                                     "loglink:without" : "#FFFFFF"
+  //                                     };
+  //
+  // myGraph.customNodes.colorTypeRgba = {"loglink:qui" : "243,253,151",
+  //                                       "loglink:quoi" : "253,168,174",
+  //                                       "loglink:pourquoi" : "255,222,152",
+  //                                       "loglink:ou" : "137,157,213",
+  //                                       "loglink:comment" : "181,244,157",
+  //                                       "loglink:quand" : "195,129,211",
+  //                                       "loglink:combien" : "163,163,163",
+  //                                       "loglink:without" : "255,255,255"
+  //                                       };
+
+  myGraph.customNodes.colorType = {"loglink:qui" : "#FFF800",
+                                    "loglink:quoi" : "#FF0000",
+                                    "loglink:pourquoi" : "#FF7400",
+                                    "loglink:ou" : "#3C00FD",
+                                    "loglink:comment" : "#23FE00",
+                                    "loglink:quand" : "#9F00FD",
+                                    "loglink:combien" : "#AAAAAA",
+                                    "loglink:without" : "#FFFFFF"
+                                    };
+
+  myGraph.customNodes.colorTypeRgba = {"loglink:qui" : "255,248,0",
+                                        "loglink:quoi" : "255, 0, 0",
+                                        "loglink:pourquoi" : "255, 116, 0",
+                                        "loglink:ou" : "60, 0, 253",
+                                        "loglink:comment" : "35, 254, 0",
+                                        "loglink:quand" : "159, 0, 253",
+                                        "loglink:combien" : "163,163,163",
+                                        "loglink:without" : "255,255,255"
+                                        };
+
+  myGraph.customNodes.neighbourColorType = {"loglink:qui" : "#F3FD97",
                                       "loglink:quoi" : "#FDA8AE",
                                       "loglink:pourquoi" : "#FFDE98",
                                       "loglink:ou" : "#899DD5",
@@ -93,7 +133,7 @@ $(document).ready()
                                       "loglink:without" : "#FFFFFF"
                                       };
 
-  myGraph.customNodes.colorTypeRgba = {"loglink:qui" : "243,253,151",
+  myGraph.customNodes.neighbourColorTypeRgba = {"loglink:qui" : "243,253,151",
                                         "loglink:quoi" : "253,168,174",
                                         "loglink:pourquoi" : "255,222,152",
                                         "loglink:ou" : "137,157,213",
@@ -143,8 +183,8 @@ $(document).ready()
                                     };
 
   // myGraph.config.awsomeStrokeNode = false;
-  myGraph.customNodes.strokeOpacity = .8;
-  myGraph.customNodes.strokeWidth = 2;
+  myGraph.customNodes.strokeOpacity = 1;
+  myGraph.customNodes.strokeWidth = 0;
   myGraph.config.version = "loglink47";
   myGraph.customNodes.blankNodeType = "loglink:without"
   myGraph.externalStore.uri = "https://ldp.virtual-assembly.org:8443/2013/fludy/";
