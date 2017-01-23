@@ -234,11 +234,11 @@ $('#curvesLinksCheckbox').checkbox({
 
 $('#openNodeOnHoverCheckbox').checkbox({
   onChecked:function() {
-    myGraph.config.openNodeOnHover = "On";
+    myGraph.config.editGraphMode = true;
     myGraph.refreshGraph();
   },
   onUnchecked: function() {
-    myGraph.config.openNodeOnHover = "Off";
+    myGraph.config.editGraphMode = false;
     myGraph.refreshGraph();
   }
 });

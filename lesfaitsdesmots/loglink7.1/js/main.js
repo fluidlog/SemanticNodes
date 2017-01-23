@@ -30,7 +30,7 @@ function menuInitialisation(myGraph) {
   else
     $('#curvesLinksCheckbox').checkbox('uncheck');
 
-  if (myGraph.config.openNodeOnHover == 'On')
+  if (myGraph.config.editGraphMode == true)
     $('#openNodeOnHoverCheckbox').checkbox('check');
   else
     $('#openNodeOnHoverCheckbox').checkbox('uncheck');
@@ -183,12 +183,15 @@ $(document).ready()
                                     };
 
   // myGraph.config.awsomeStrokeNode = false;
-  myGraph.customNodes.strokeOpacity = 1;
-  myGraph.customNodes.strokeWidth = 0;
   myGraph.config.version = "loglink47";
   myGraph.customNodes.blankNodeType = "loglink:without"
   myGraph.externalStore.uri = "https://ldp.virtual-assembly.org:8443/2013/fludy/";
   myGraph.mockData0 = getMockData(5);
+  myGraph.customNodes.strokeOpacity = 1;
+  myGraph.customNodes.strokeWidth = 0;
+  myGraph.customNodes.widthClosed = 30;
+  myGraph.customNodes.displayType = "Off";
+  myGraph.config.editGraphMode = false;
 
   myGraph.initSvgContainer("#chart");
 
