@@ -164,7 +164,7 @@ FluidGraph.prototype.displayText = function(svgNodes) {
     .on("mouseover",function(d){
       thisGraph.nodeOnMouseOver.call(thisGraph, d3.select(this.parentNode.parentNode), d)})
     .on("dblclick",function(d){
-      if (thisGraph.config.editGraphMode == true)
+      if (thisGraph.config.editWithDoubleClick == true)
         thisGraph.editNode.call(thisGraph, d3.select(this.parentNode.parentNode), d);
       else
         thisGraph.displayExternalGraph.call(thisGraph, d3.select(this.parentNode.parentNode), d);

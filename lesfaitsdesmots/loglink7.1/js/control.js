@@ -232,13 +232,36 @@ $('#curvesLinksCheckbox').checkbox({
   },
 });
 
-$('#openNodeOnHoverCheckbox').checkbox({
+$('#editGraphModeCheckbox').checkbox({
   onChecked:function() {
     myGraph.config.editGraphMode = true;
+    myGraph.config.allowDraggingNode = true;
+    myGraph.config.allowModifyLink = true;
+    myGraph.config.allowOpenNode = true;
+    myGraph.config.editWithDoubleClick = true;
+    myGraph.config.newNodeWithDoubleClickOnBg = true;
+    myGraph.config.allowDragOnBg = true;
     myGraph.refreshGraph();
   },
   onUnchecked: function() {
     myGraph.config.editGraphMode = false;
+    myGraph.config.allowDraggingNode = false;
+    myGraph.config.allowModifyLink = false;
+    myGraph.config.allowOpenNode = false;
+    myGraph.config.editWithDoubleClick = false;
+    myGraph.config.newNodeWithDoubleClickOnBg = false;
+    myGraph.config.allowDragOnBg = false;
+    myGraph.refreshGraph();
+  }
+});
+
+$('#displayFlodCheckbox').checkbox({
+  onChecked:function() {
+    myGraph.config.clicOnNodeAction = "flod"
+    myGraph.refreshGraph();
+  },
+  onUnchecked: function() {
+    myGraph.config.clicOnNodeAction = "options"
     myGraph.refreshGraph();
   }
 });

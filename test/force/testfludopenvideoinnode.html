@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+<!--[if lt IE 9]>
+Votre navigateur est obsolète.
+Merci d'utiliser un navigateur récent : IE 9 (min), Firefox, Chrome ou Safari
+<![endif]-->
+		<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <title>Test Flud open vidéo in node</title>
+        <script src="js/jquery-2.1.3.js"></script>
+
+        <script src="js/d3.v2.min.js"></script>
+<!--  		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+ -->
+        <script src="js/semantic1.12.1.js"></script>
+ 		<link rel="stylesheet" href="css/testfludopenvideoinnode.css"/>
+ 		<link rel="stylesheet" href="css/semantic1.12.1.css"/>
+
+    </head>
+	<body>
+
+				<div class="ui segment" style="margin:10px">
+			        <div class="ui button" id="open_flud">
+			        	Open
+			        </div>
+			        <div class="ui button" id="close_flud">
+			        	Close
+			        </div>
+				</div>
+        <div style="margin:10px">
+          <video controls width='200px'>
+            <source src='https://www.youtube.com/embed/t3DhMLQsJA0' type="video/mp4"></source>
+          </video>
+          <iframe width="200px" src="https://www.youtube.com/embed/t3DhMLQsJA0" allowfullscreen></iframe>
+        </div>
+
+		    <div id="chart"></div>
+
+	    <script src="js/testfludopenvideoinnode.js"></script>
+	</body>
+</html>

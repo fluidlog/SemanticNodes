@@ -31,9 +31,14 @@ function menuInitialisation(myGraph) {
     $('#curvesLinksCheckbox').checkbox('uncheck');
 
   if (myGraph.config.editGraphMode == true)
-    $('#openNodeOnHoverCheckbox').checkbox('check');
+    $('#editGraphModeCheckbox').checkbox('check');
   else
-    $('#openNodeOnHoverCheckbox').checkbox('uncheck');
+    $('#editGraphModeCheckbox').checkbox('uncheck');
+
+  if (myGraph.config.clicOnNodeAction == "flod")
+    $('#displayFlodCheckbox').checkbox('check');
+  else
+    $('#displayFlodCheckbox').checkbox('uncheck');
 
   if (myGraph.config.force == 'On')
     $('#activeForceCheckbox').checkbox('check');
@@ -191,7 +196,24 @@ $(document).ready()
   myGraph.customNodes.strokeWidth = 0;
   myGraph.customNodes.widthClosed = 30;
   myGraph.customNodes.displayType = "Off";
-  myGraph.config.editGraphMode = false;
+  myGraph.config.editGraphMode = true;
+  myGraph.config.allowDraggingNode = true; // default : false
+  myGraph.config.allowModifyLink = true; // default : false
+  myGraph.config.allowOpenNode = true; // default : false
+  myGraph.config.editWithDoubleClick = false; // default : false
+  myGraph.config.newNodeWithDoubleClickOnBg = true; // default : false
+  myGraph.config.allowDragOnBg = true;
+  myGraph.config.clicOnNodeAction = "flod"; // options, flod, media
+  myGraph.config.customOptions = {
+    edit : true,
+    center : true,
+    focusContextOn : true,
+    focusContextOff : true,
+    hypertext : true,
+    close : false,
+    delete : false,
+  };
+
 
   myGraph.initSvgContainer("#chart");
 
